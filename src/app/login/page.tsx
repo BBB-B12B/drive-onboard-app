@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/logo";
+import { sampleAdminAccount, sampleEmployeeAccounts } from "@/data/sample-data";
 
 const formSchema = z.object({
   email: z.string().email({ message: "อีเมลไม่ถูกต้อง" }),
@@ -24,6 +26,25 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const adminEmail =
+    (process.env.NEXT_PUBLIC_ADMIN_EMAIL || sampleAdminAccount.email).toLowerCase();
+  const adminPassword =
+    process.env.NEXT_PUBLIC_ADMIN_PASSWORD || sampleAdminAccount.password;
+
+  const adminAccount = React.useMemo(
+    () => ({
+      ...sampleAdminAccount,
+      email: adminEmail,
+      password: adminPassword,
+    }),
+    [adminEmail, adminPassword]
+  );
+
+  const availableAccounts = React.useMemo(
+    () => [adminAccount, ...sampleEmployeeAccounts],
+    [adminAccount]
+  );
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,11 +52,24 @@ export default function LoginPage() {
       password: "",
     },
   });
-
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real app, you'd call Firebase Auth here.
-    // For this mock, we'll just use the email.
-    login(values.email);
+    const normalizedEmail = values.email.trim().toLowerCase();
+    const account = availableAccounts.find(
+      (candidate) => candidate.email.toLowerCase() === normalizedEmail
+    );
+
+    if (!account || account.password !== values.password) {
+      form.setError("password", { type: "manual", message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
+      form.setError("email", { type: "manual", message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
+      return;
+    }
+
+    login({
+      email: account.email,
+      name: account.name,
+      avatarUrl: account.avatarUrl,
+      role: account.role === "admin" ? "admin" : "employee",
+    });
   }
 
   return (

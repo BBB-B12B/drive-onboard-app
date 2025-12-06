@@ -10,10 +10,12 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Logo } from "@/components/logo";
+import type { ElementType } from "react";
 import {
   LayoutDashboard,
   LogOut,
   UserCircle,
+  ClipboardList,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -25,12 +27,17 @@ export function SidebarNav() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
-  const menuItems: { href: string, label: string, icon: React.ElementType }[] = [
-    // {
-    //   href: "/dashboard",
-    //   label: "แดชบอร์ด",
-    //   icon: LayoutDashboard,
-    // },
+  const menuItems: { href: string; label: string; icon: ElementType }[] = [
+    {
+      href: "/dashboard",
+      label: "แดชบอร์ด",
+      icon: LayoutDashboard,
+    },
+    {
+      href: "/dashboard/daily-report",
+      label: "Daily Report",
+      icon: ClipboardList,
+    },
   ];
 
   return (

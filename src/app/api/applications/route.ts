@@ -3,6 +3,7 @@ import { r2 } from '@/app/api/r2/_client';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { NextRequest, NextResponse } from 'next/server';
+import { sampleApplications } from '@/data/sample-data';
 
 // Helper to get a JSON object from R2 using a cached fetch
 async function getJsonCached(bucket: string, key: string): Promise<any | null> {
@@ -41,8 +42,8 @@ async function getJsonCached(bucket: string, key: string): Promise<any | null> {
 export async function GET(_req: NextRequest) {
   const bucket = process.env.R2_BUCKET;
   if (!bucket) {
-    console.error('R2_BUCKET environment variable is not set.');
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    console.warn('R2_BUCKET environment variable is not set. Using sample application data.');
+    return NextResponse.json(sampleApplications);
   }
 
   try {
@@ -53,6 +54,6 @@ export async function GET(_req: NextRequest) {
     return NextResponse.json(applicationIndex || []);
   } catch (error) {
     console.error('[Applications GET Error]', error);
-    return NextResponse.json({ error: 'Failed to retrieve application list.' }, { status: 500 });
+    return NextResponse.json(sampleApplications);
   }
 }

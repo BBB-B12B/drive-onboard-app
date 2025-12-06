@@ -1,6 +1,9 @@
 
-import { ApplicationsClient } from "@/components/dashboard/applications-client";
+import { format } from "date-fns";
+import { auth } from "@/auth";
+import { DashboardTabs } from "@/components/dashboard/dashboard-tabs";
 import type { AppRow } from "@/lib/types";
+import type { DailyReportSummaryRow } from "@/lib/daily-report";
 
 // Helper to fetch data directly on the server
 async function getApplications(): Promise<AppRow[]> {
@@ -21,9 +24,33 @@ async function getApplications(): Promise<AppRow[]> {
   }
 }
 
+async function getDailyReportSummary(email: string, month: string): Promise<DailyReportSummaryRow[]> {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9002';
+  try {
+    const res = await fetch(`${baseUrl}/api/daily-reports/summary?email=${email}&month=${month}`, { cache: 'no-store' });
+    if (!res.ok) {
+      console.error("Failed to fetch daily report summary:", await res.text());
+      return [];
+    }
+    return await res.json();
+  } catch (error) {
+    console.error("Error in getDailyReportSummary:", error);
+    return [];
+  }
+}
+
 
 export default async function DashboardPage() {
+  const session = await auth();
   const applications = await getApplications();
+  const today = new Date();
+  const todayStr = format(today, "yyyy-MM-dd");
+  const monthStr = format(today, "yyyy-MM");
+
+  let dailyReportSummary: DailyReportSummaryRow[] = [];
+  if (session?.user?.email) {
+    dailyReportSummary = await getDailyReportSummary(session.user.email, monthStr);
+  }
 
   return (
     <div className="space-y-6">
@@ -33,7 +60,11 @@ export default async function DashboardPage() {
           ภาพรวมและจัดการใบสมัครพนักงานขับรถทั้งหมด
         </p>
       </div>
-      <ApplicationsClient initialApplications={applications} />
+      <DashboardTabs
+        initialApplications={applications}
+        initialDailyReportDate={todayStr}
+        initialDailyReportSummary={dailyReportSummary}
+      />
     </div>
   );
 }

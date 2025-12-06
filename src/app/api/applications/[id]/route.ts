@@ -3,6 +3,7 @@ import { r2 } from '@/app/api/r2/_client';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { NextRequest, NextResponse } from 'next/server';
+import { sampleManifests } from '@/data/sample-data';
 
 // Helper to get a JSON object from R2 using a cached fetch
 async function getJsonCached(bucket: string, key: string): Promise<any | null> {
@@ -49,8 +50,12 @@ export async function GET(
 
   const bucket = process.env.R2_BUCKET;
   if (!bucket) {
-    console.error('R2_BUCKET environment variable is not set.');
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+    console.warn('R2_BUCKET environment variable is not set. Using sample manifest data.');
+    const sample = sampleManifests[appId];
+    if (sample) {
+      return NextResponse.json(sample);
+    }
+    return NextResponse.json({ error: 'Application not found' }, { status: 404 });
   }
 
   try {
@@ -58,12 +63,20 @@ export async function GET(
     const manifest = await getJsonCached(bucket, manifestKey);
 
     if (!manifest) {
+      const sample = sampleManifests[appId];
+      if (sample) {
+        return NextResponse.json(sample);
+      }
       return NextResponse.json({ error: 'Application not found' }, { status: 404 });
     }
 
     return NextResponse.json(manifest);
   } catch (error) {
     console.error(`[App ${appId} GET Error]`, error);
+    const sample = sampleManifests[appId];
+    if (sample) {
+      return NextResponse.json(sample);
+    }
     return NextResponse.json({ error: 'Failed to retrieve application data.' }, { status: 500 });
   }
 }

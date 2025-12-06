@@ -91,3 +91,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom styles for Day Picker */
+.rdp-day_today:not(.rdp-day_outside) {
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.rdp-day_completed:not(.rdp-day_outside) {
+  font-weight: bold;
+  color: hsl(var(--success));
+  background-color: hsl(var(--success) / 0.1);
+}
+
+.rdp-day_completed:hover:not(.rdp-day_outside) {
+    background-color: hsl(var(--success) / 0.2);
+}
+
+.rdp-day_completed.rdp-day_today:not(.rdp-day_outside) {
+    background-color: hsl(var(--success) / 0.15);
+    border: 2px solid hsl(var(--primary));
+}

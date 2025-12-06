@@ -3,7 +3,20 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, value, onChange, ...props }, ref) => {
+    const isFileInput = type === "file"
+    const resolvedValue =
+      isFileInput
+        ? undefined
+        : value !== undefined
+          ? value ?? ""
+          : typeof onChange === "function"
+            ? ""
+            : undefined
+
+    const valueProps =
+      resolvedValue !== undefined ? { value: resolvedValue } : undefined
+
     return (
       <input
         type={type}
@@ -12,6 +25,8 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           className
         )}
         ref={ref}
+        {...valueProps}
+        onChange={onChange}
         {...props}
       />
     )

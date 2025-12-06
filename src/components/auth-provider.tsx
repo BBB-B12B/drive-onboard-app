@@ -7,11 +7,12 @@ interface User {
   email: string;
   name: string;
   avatarUrl?: string;
+  role?: "admin" | "employee";
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string) => void;
+  login: (userInfo: User) => void;
   logout: () => void;
   loading: boolean;
 }
@@ -60,8 +61,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  const login = (email: string) => {
-    const newUser: User = { email, name: "ผู้ดูแลระบบ", avatarUrl: "https://picsum.photos/seed/admin/100/100" };
+  const login = (userInfo: User) => {
+    const newUser: User = {
+      email: userInfo.email,
+      name: userInfo.name,
+      avatarUrl: userInfo.avatarUrl ?? "https://picsum.photos/seed/admin/100/100",
+      role: userInfo.role,
+    };
     localStorage.setItem("driveonboard_user", JSON.stringify(newUser));
     setUser(newUser);
     router.push("/dashboard");

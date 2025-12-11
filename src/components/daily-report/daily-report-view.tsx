@@ -28,6 +28,8 @@ type SlotUploadingState = Record<string, boolean>;
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic"];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const MAX_DIMENSION = 1400;
+const TARGET_QUALITY = 0.6;
 
 async function md5Base64(file: File) {
   const SparkMD5 = (await import("spark-md5")).default;
@@ -41,6 +43,44 @@ async function md5Base64(file: File) {
     .map((pair) => String.fromCharCode(parseInt(pair, 16)))
     .join("");
   return btoa(binary);
+}
+
+async function compressImage(file: File): Promise<File> {
+  if (!file.type.startsWith("image/")) return file;
+
+  try {
+    const bitmap = await createImageBitmap(file);
+    let { width, height } = bitmap;
+    const scale = Math.min(1, MAX_DIMENSION / Math.max(width, height));
+    if (scale < 1) {
+      width = Math.max(1, Math.round(width * scale));
+      height = Math.max(1, Math.round(height * scale));
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(
+        (b) => resolve(b),
+        "image/webp",
+        TARGET_QUALITY
+      )
+    );
+
+    if (!blob) return file;
+
+    const compressedName =
+      workingFile.name.replace(/\.[^.]+$/, "") + ".webp";
+    return new File([blob], compressedName, { type: "image/webp" });
+  } catch (error) {
+    console.warn("compressImage failed, fallback to original", error);
+    return file;
+  }
 }
 
 export function DailyReportView() {
@@ -339,6 +379,7 @@ export function DailyReportView() {
     async (slotId: string, file: File) => {
 
       if (!selectedEmail) return;
+      let workingFile = file;
 
 
 
@@ -360,7 +401,10 @@ export function DailyReportView() {
 
 
 
-      if (!ACCEPTED_TYPES.includes(file.type)) {
+      // Compress/resize to WebP quality 60, 1400px max
+      workingFile = await compressImage(file);
+
+      if (!ACCEPTED_TYPES.includes(workingFile.type)) {
 
         toast({
 
@@ -378,7 +422,7 @@ export function DailyReportView() {
 
 
 
-      if (file.size > MAX_IMAGE_SIZE) {
+      if (workingFile.size > MAX_IMAGE_SIZE) {
 
         toast({
 
@@ -402,7 +446,7 @@ export function DailyReportView() {
 
       try {
 
-        const md5 = await md5Base64(file);
+        const md5 = await md5Base64(workingFile);
 
 
 
@@ -420,11 +464,11 @@ export function DailyReportView() {
 
             slotId,
 
-            fileName: file.name,
+            fileName: workingFile.name,
 
-            mime: file.type,
+            mime: workingFile.type,
 
-            size: file.size,
+            size: workingFile.size,
 
             md5,
 
@@ -452,11 +496,11 @@ export function DailyReportView() {
 
           method: "PUT",
 
-          body: file,
+          body: workingFile,
 
           headers: {
 
-            "Content-Type": file.type,
+            "Content-Type": workingFile.type,
 
             "Content-MD5": md5,
 
@@ -496,7 +540,7 @@ export function DailyReportView() {
 
             r2Key: key,
 
-            fileName: file.name,
+            fileName: workingFile.name,
 
           }),
 

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { CalendarIcon, Loader2, RefreshCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Popover,
   PopoverContent,
@@ -45,10 +46,13 @@ async function md5Base64(file: File) {
 export function DailyReportView() {
 
   const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
   const { toast } = useToast();
 
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
+  const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
+  const [userOptions, setUserOptions] = useState<{ email: string; name: string }[]>([]);
 
   const [calendarMonth, setCalendarMonth] = useState(() => new Date());
 
@@ -91,22 +95,9 @@ export function DailyReportView() {
 
 
     const isReadOnly = useMemo(() => {
-
-
-
-      // Reports can be edited for today and up to 2 days in the past (total 3 days).
-
-
-
-      // After that, they become read-only.
-
-
-
+      if (isAdmin) return false;
       return differenceInDays(startOfDay(new Date()), startOfDay(selectedDate)) > 2;
-
-
-
-    }, [selectedDate]);
+    }, [selectedDate, isAdmin]);
 
 
 
@@ -114,15 +105,39 @@ export function DailyReportView() {
 
 
 
-    const report = reportCache[selectedDateStr] ?? null;
+    const cacheKey = `${selectedEmail ?? ""}:${selectedDateStr}`;
+    const report = reportCache[cacheKey] ?? null;
 
 
 
   useEffect(() => {
+    if (selectedEmail && !selectedEmail) {
+      setSelectedEmail(user.email ?? null);
+    }
+  }, [selectedEmail, selectedEmail]);
 
-    if (!user?.email) return;
+  useEffect(() => {
+    if (isAdmin) {
+      const loadUsers = async () => {
+        try {
+          const res = await fetch("/api/users", { cache: "no-store" });
+          if (!res.ok) return;
+          const list = (await res.json()) as { email: string; name: string }[];
+          setUserOptions(list);
+          if (!selectedEmail && list.length > 0) {
+            setSelectedEmail(list[0].email);
+          }
+        } catch (error) {
+          console.error("Failed to load users", error);
+        }
+      };
+      void loadUsers();
+    }
+  }, [isAdmin, selectedEmail]);
 
+  useEffect(() => {
 
+    if (!selectedEmail) return;
 
     const fetchSummary = async () => {
 
@@ -130,7 +145,7 @@ export function DailyReportView() {
 
       const query = new URLSearchParams({
 
-        email: user.email!,
+        email: selectedEmail,
 
         month: monthStr,
 
@@ -144,9 +159,16 @@ export function DailyReportView() {
 
         if (res.ok) {
 
-          const { completedDates: datesStr } = (await res.json()) as { completedDates: string[] };
-
-          const dates = datesStr.map(dateStr => parse(dateStr, "yyyy-MM-dd", new Date()));
+          const payload = await res.json().catch(() => null);
+          const datesStr: string[] = Array.isArray(payload?.completedDates)
+            ? payload.completedDates
+            : Array.isArray(payload)
+            ? payload
+                .filter((row: any) => (row?.uploadedCount ?? 0) > 0)
+                .map((row: any) => row?.date)
+                .filter(Boolean)
+            : [];
+          const dates = datesStr.map((dateStr) => parse(dateStr, "yyyy-MM-dd", new Date()));
 
           setCompletedDates(dates);
 
@@ -166,7 +188,7 @@ export function DailyReportView() {
 
     void fetchSummary();
 
-  }, [user?.email, calendarMonth]);
+  }, [selectedEmail, calendarMonth]);
 
 
 
@@ -212,7 +234,7 @@ export function DailyReportView() {
 
   const loadReport = useCallback(async () => {
 
-    if (!user?.email) return;
+    if (!selectedEmail) return;
 
 
 
@@ -234,7 +256,7 @@ export function DailyReportView() {
 
       const query = new URLSearchParams({
 
-        email: user.email,
+        email: selectedEmail,
 
         date: selectedDateStr,
 
@@ -258,17 +280,17 @@ export function DailyReportView() {
 
       const data: DailyReportResponse = await res.json();
 
-      setReportCache(prev => ({ ...prev, [selectedDateStr]: data }));
+      setReportCache(prev => ({ ...prev, [cacheKey]: data }));
 
     } catch (error) {
 
       console.error("[DailyReport] load error", error);
 
-      if (user?.email) {
+      if (selectedEmail) {
 
-        const sample = getSampleDailyReport(user.email, selectedDateStr);
+        const sample = getSampleDailyReport(selectedEmail, selectedDateStr);
 
-        setReportCache(prev => ({ ...prev, [selectedDateStr]: sample }));
+        setReportCache(prev => ({ ...prev, [cacheKey]: sample }));
 
         setIsSampleData(true);
 
@@ -286,7 +308,7 @@ export function DailyReportView() {
 
           const newCache = { ...prev };
 
-          delete newCache[selectedDateStr];
+          delete newCache[cacheKey];
 
           return newCache;
 
@@ -300,7 +322,7 @@ export function DailyReportView() {
 
     }
 
-  }, [selectedDateStr, toast, user?.email, reportCache]);
+  }, [selectedDateStr, selectedEmail, toast, cacheKey]);
 
 
 
@@ -316,7 +338,7 @@ export function DailyReportView() {
 
     async (slotId: string, file: File) => {
 
-      if (!user?.email) return;
+      if (!selectedEmail) return;
 
 
 
@@ -388,11 +410,11 @@ export function DailyReportView() {
 
           method: "POST",
 
-          headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json" },
 
-          body: JSON.stringify({
+            body: JSON.stringify({
 
-            email: user.email,
+            email: selectedEmail,
 
             date: selectedDateStr,
 
@@ -462,11 +484,11 @@ export function DailyReportView() {
 
           method: "POST",
 
-          headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json" },
 
-          body: JSON.stringify({
+            body: JSON.stringify({
 
-            email: user.email,
+            email: selectedEmail,
 
             date: selectedDateStr,
 
@@ -494,7 +516,7 @@ export function DailyReportView() {
 
         const updated: DailyReportResponse = await saveRes.json();
 
-        setReportCache(prev => ({ ...prev, [selectedDateStr]: updated }));
+        setReportCache(prev => ({ ...prev, [cacheKey]: updated }));
 
 
 
@@ -554,7 +576,7 @@ export function DailyReportView() {
 
     },
 
-    [isSampleData, selectedDate, selectedDateStr, slots, toast, user?.email, setReportCache]
+    [isSampleData, selectedDate, selectedDateStr, slots, toast, selectedEmail, setReportCache]
 
   );
 
@@ -564,7 +586,7 @@ export function DailyReportView() {
 
     async (slotId: string) => {
 
-      if (!user?.email) return;
+      if (!selectedEmail) return;
 
 
 
@@ -600,7 +622,7 @@ export function DailyReportView() {
 
           body: JSON.stringify({
 
-            email: user.email,
+            email: selectedEmail,
 
             date: selectedDateStr,
 
@@ -624,7 +646,7 @@ export function DailyReportView() {
 
         const updated: DailyReportResponse = await res.json();
 
-        setReportCache(prev => ({ ...prev, [selectedDateStr]: updated }));
+        setReportCache(prev => ({ ...prev, [cacheKey]: updated }));
 
 
 
@@ -670,13 +692,13 @@ export function DailyReportView() {
 
     },
 
-    [isSampleData, selectedDateStr, slots, toast, user?.email, setReportCache]
+    [isSampleData, selectedDateStr, slots, toast, selectedEmail, setReportCache]
 
   );
 
 
 
-  if (!user?.email) {
+  if (!selectedEmail) {
 
     return (
 
@@ -790,17 +812,42 @@ export function DailyReportView() {
 
                             </PopoverContent>
 
-                          </Popover>
+                        </Popover>
 
-                          <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
 
-                            ระบบจะแยกบันทึกตามวันที่ที่เลือก (แก้ไขได้เฉพาะ 3 วันล่าสุด)
+                          ระบบจะแยกบันทึกตามวันที่ที่เลือก
 
-                          </p>
+                        </p>
 
+                      </div>
+
+                      {isAdmin && (
+                        <div className="space-y-2">
+                          <Label>เลือกผู้ขับ</Label>
+                          <Select
+                            value={selectedEmail ?? ""}
+                            onValueChange={(val) => {
+                              setSelectedEmail(val);
+                              setReportCache({});
+                              setCompletedDates([]);
+                            }}
+                          >
+                            <SelectTrigger className="w-[220px]">
+                              <SelectValue placeholder="เลือกผู้ขับ" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {userOptions.map((u) => (
+                                <SelectItem key={u.email} value={u.email}>
+                                  {u.name || u.email}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
+                      )}
 
-                        <div className="flex gap-2">
+                      <div className="flex gap-2">
 
                           <Button
 
@@ -948,7 +995,7 @@ export function DailyReportView() {
 
                                     : isReadOnly
 
-                                    ? "ไม่สามารถแก้ไขข้อมูลย้อนหลังเกิน 3 วันได้"
+                                    ? "ไม่สามารถแก้ไขข้อมูลย้อนหลังเกิน 3 วันได้ (เฉพาะพนักงาน)"
 
                                     : undefined
 
@@ -1025,8 +1072,3 @@ export function DailyReportView() {
   );
 
 }
-
-
-
-
-

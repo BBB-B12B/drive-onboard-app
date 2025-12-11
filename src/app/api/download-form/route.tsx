@@ -2,13 +2,16 @@
 export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { renderToStaticMarkup } from 'react-dom/server';
+// import { renderToStaticMarkup } from 'react-dom/server'; // <-- REMOVE THIS
 import {
   ApplicationFormTemplate,
   TransportContractTemplate,
   GuaranteeContractTemplate,
 } from './templates'; // <-- Import จากไฟล์ templates.tsx
 import type { Manifest } from '@/lib/types'; // <-- คุณต้องมีไฟล์นี้ในโปรเจกต์ของคุณ
+
+// Dynamically require renderToStaticMarkup to avoid Next.js build errors
+const renderToStaticMarkup = require('react-dom/server').renderToStaticMarkup;
 
 /**
  * นี่คือ "ที่อยู่" ของโรงงาน PDF (Google Apps Script) ที่คุณ Deploy ไว้

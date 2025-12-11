@@ -9,17 +9,28 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
 type ApplicationsClientProps = {
-    initialApplications: AppRow[];
-}
+  initialApplications: AppRow[];
+  userRole?: string;
+  userEmail?: string;
+};
 
-export function ApplicationsClient({ initialApplications }: ApplicationsClientProps) {
+export function ApplicationsClient({ initialApplications, userRole, userEmail }: ApplicationsClientProps) {
   const [statusFilter, setStatusFilter] = useState<VerificationStatus | "all">("all");
   const { toast } = useToast();
   
   // No more local 'applications' state. We use the prop directly.
   // This ensures that when the parent Server Component re-renders with new data,
   // this component also re-renders with the fresh data.
-  const applications = initialApplications;
+  const isAdmin = userRole === "admin";
+  const applications = useMemo(() => {
+    if (isAdmin) return initialApplications;
+    // employee: แสดงเฉพาะของตัวเอง ถ้าหารายการไม่เจอ ให้ได้เป็น [] ไม่เห็นของคนอื่น
+    return initialApplications.filter(
+      (app) =>
+        app.appId === userEmail ||
+        app.fullName.toLowerCase().includes((userEmail ?? "").split("@")[0]?.toLowerCase() || "")
+    );
+  }, [initialApplications, isAdmin, userEmail]);
 
 
   const handleStatusFilter = (status: VerificationStatus | "all") => {
@@ -58,9 +69,9 @@ export function ApplicationsClient({ initialApplications }: ApplicationsClientPr
       />
       <ApplicationsTable 
           applications={filteredApplications} 
+          isAdmin={isAdmin}
           onDelete={handleDeleteApplication} 
       />
     </>
   );
 }
-

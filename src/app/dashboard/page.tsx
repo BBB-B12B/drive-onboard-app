@@ -4,6 +4,14 @@ import { auth } from "@/auth";
 import { DashboardTabs } from "@/components/dashboard/dashboard-tabs";
 import type { AppRow } from "@/lib/types";
 import type { DailyReportSummaryRow } from "@/lib/daily-report";
+import type { User } from "@/lib/types";
+import { startOfMonth, endOfMonth, formatISO } from "date-fns";
+
+// Force dynamic rendering to avoid headers()/cookies() sync warnings in App Router
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 // Helper to fetch data directly on the server
 async function getApplications(): Promise<AppRow[]> {
@@ -44,12 +52,28 @@ export default async function DashboardPage() {
   const session = await auth();
   const applications = await getApplications();
   const today = new Date();
-  const todayStr = format(today, "yyyy-MM-dd");
   const monthStr = format(today, "yyyy-MM");
+  const startStr = formatISO(startOfMonth(today), { representation: "date" });
+  const endOfMonthStr = formatISO(endOfMonth(today), { representation: "date" });
+  const todayStr = formatISO(today, { representation: "date" });
+  const endStr = endOfMonthStr > todayStr ? todayStr : endOfMonthStr;
 
   let dailyReportSummary: DailyReportSummaryRow[] = [];
-  if (session?.user?.email) {
-    dailyReportSummary = await getDailyReportSummary(session.user.email, monthStr);
+  const userRole = (session?.user as User | undefined)?.role;
+  if (userRole === "admin") {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9002';
+    const res = await fetch(`${baseUrl}/api/daily-reports/summary?startDate=${startStr}&endDate=${endStr}`, { cache: 'no-store' });
+    if (res.ok) {
+      dailyReportSummary = await res.json();
+    }
+  } else if (session?.user?.email) {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:9002"}/api/daily-reports/summary?email=${session.user.email}&startDate=${startStr}&endDate=${endStr}`,
+      { cache: "no-store" }
+    );
+    if (res.ok) {
+      dailyReportSummary = await res.json();
+    }
   }
 
   return (
@@ -62,8 +86,12 @@ export default async function DashboardPage() {
       </div>
       <DashboardTabs
         initialApplications={applications}
-        initialDailyReportDate={todayStr}
+        initialDailyReportDate={monthStr}
+        initialStartDate={startStr}
+        initialEndDate={endStr}
         initialDailyReportSummary={dailyReportSummary}
+        userEmail={session?.user?.email ?? ""}
+        userRole={userRole}
       />
     </div>
   );

@@ -75,10 +75,11 @@ const statusText: Record<VerificationStatus, string> = {
 
 type ApplicationsTableProps = {
   applications: AppRow[];
+  isAdmin?: boolean;
   onDelete: (applicationId: string) => void;
 };
 
-export function ApplicationsTable({ applications, onDelete }: ApplicationsTableProps) {
+export function ApplicationsTable({ applications, onDelete, isAdmin }: ApplicationsTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([{"id": "createdAt", "desc": true}]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -158,6 +159,7 @@ export function ApplicationsTable({ applications, onDelete }: ApplicationsTableP
         enableHiding: false,
         cell: ({ row }) => {
             const application = row.original;
+            const admin = Boolean(isAdmin);
             const isCurrentUpdating = isPending && updatingId === application.appId;
             const status = application.status;
 
@@ -169,7 +171,7 @@ export function ApplicationsTable({ applications, onDelete }: ApplicationsTableP
                         </Link>
                     </Button>
                     
-                    {status === 'pending' && (
+                    {admin && status === 'pending' && (
                         <>
                             <Button variant="success" size="sm" onClick={() => handleUpdateStatus(application.appId, 'approved')} disabled={isCurrentUpdating}>
                                 {isCurrentUpdating ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Check className="mr-1 h-4 w-4" />}
@@ -182,14 +184,14 @@ export function ApplicationsTable({ applications, onDelete }: ApplicationsTableP
                         </>
                     )}
                     
-                    {status === 'approved' && (
+                    {admin && status === 'approved' && (
                         <Button variant="secondary" size="sm" onClick={() => handleUpdateStatus(application.appId, 'terminated')} disabled={isCurrentUpdating}>
                             {isCurrentUpdating ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <UserX className="mr-1 h-4 w-4" />}
                             เลิกจ้าง
                         </Button>
                     )}
 
-                    <DropdownMenu>
+                    {admin && <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0" disabled={isCurrentUpdating}>
                                 <span className="sr-only">เปิดเมนู</span>
@@ -231,7 +233,8 @@ export function ApplicationsTable({ applications, onDelete }: ApplicationsTableP
                                 <span>ลบใบสมัคร</span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
-                    </DropdownMenu>
+                    </DropdownMenu>}
+                    
                 </div>
             );
         },
@@ -334,12 +337,14 @@ export function ApplicationsTable({ applications, onDelete }: ApplicationsTableP
             </Button>
           )}
         </div>
-        <Button asChild className="ml-auto">
-          <Link href="/apply">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            สร้างใบสมัครใหม่
-          </Link>
-        </Button>
+        {isAdmin && (
+          <Button asChild className="ml-auto">
+            <Link href="/apply">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              สร้างใบสมัครใหม่
+            </Link>
+          </Button>
+        )}
       </div>
       <div className="rounded-md border">
         <Table>

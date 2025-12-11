@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,35 +15,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/logo";
-import { sampleAdminAccount, sampleEmployeeAccounts } from "@/data/sample-data";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({ message: "อีเมลไม่ถูกต้อง" }),
-  password: z.string().min(6, { message: "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร" }),
+  password: z.string().min(1, { message: "กรุณากรอกรหัสผ่าน" }),
 });
 
 export default function LoginPage() {
-  const { login } = useAuth();
-  const adminEmail =
-    (process.env.NEXT_PUBLIC_ADMIN_EMAIL || sampleAdminAccount.email).toLowerCase();
-  const adminPassword =
-    process.env.NEXT_PUBLIC_ADMIN_PASSWORD || sampleAdminAccount.password;
-
-  const adminAccount = React.useMemo(
-    () => ({
-      ...sampleAdminAccount,
-      email: adminEmail,
-      password: adminPassword,
-    }),
-    [adminEmail, adminPassword]
-  );
-
-  const availableAccounts = React.useMemo(
-    () => [adminAccount, ...sampleEmployeeAccounts],
-    [adminAccount]
-  );
+  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,24 +35,23 @@ export default function LoginPage() {
       password: "",
     },
   });
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const normalizedEmail = values.email.trim().toLowerCase();
-    const account = availableAccounts.find(
-      (candidate) => candidate.email.toLowerCase() === normalizedEmail
-    );
 
-    if (!account || account.password !== values.password) {
-      form.setError("password", { type: "manual", message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
-      form.setError("email", { type: "manual", message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
-      return;
-    }
-
-    login({
-      email: account.email,
-      name: account.name,
-      avatarUrl: account.avatarUrl,
-      role: account.role === "admin" ? "admin" : "employee",
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsPending(true);
+    const result = await signIn("credentials", {
+      redirect: false,
+      email: values.email,
+      password: values.password,
     });
+
+    setIsPending(false);
+
+    if (result?.error) {
+      form.setError("password", { type: "manual", message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" });
+      form.setError("email", { type: "manual", message: " " }); // Add a space to trigger error display without a message
+    } else {
+      router.push("/dashboard");
+    }
   }
 
   return (
@@ -79,7 +61,7 @@ export default function LoginPage() {
           <div className="mb-4 flex justify-center">
             <Logo />
           </div>
-          <CardTitle className="text-2xl font-headline">เข้าสู่ระบบแอดมิน</CardTitle>
+          <CardTitle className="text-2xl font-headline">เข้าสู่ระบบ</CardTitle>
           <CardDescription>กรอกข้อมูลเพื่อเข้าสู่แดชบอร์ด</CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,7 +74,7 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>อีเมล</FormLabel>
                     <FormControl>
-                      <Input placeholder="admin@example.com" {...field} />
+                      <Input placeholder="admin@driveonboard.test" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -111,8 +93,8 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                เข้าสู่ระบบ
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
               </Button>
             </form>
           </Form>

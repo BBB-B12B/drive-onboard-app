@@ -17,8 +17,11 @@ import {
   DailyReportResponse,
   normalizeDailyReportRecord,
   sanitizeEmailForPath,
+  countUploadedSlots,
+  getDailyReportProgressStatus,
 } from "@/lib/daily-report";
 import { getSampleDailyReport } from "@/data/sample-data";
+import { upsertDailyReportSummary } from "@/lib/d1-daily-report";
 
 const putSchema = z.object({
   email: DailyReportEmailSchema,
@@ -161,20 +164,6 @@ export async function POST(req: NextRequest) {
   try {
     const input = putSchema.parse(await req.json());
 
-    const today = startOfDay(new Date());
-    const requestDate = startOfDay(new Date(input.date));
-    const diff = differenceInDays(today, requestDate);
-
-    if (diff < 0 || diff > 3) {
-      return NextResponse.json(
-        {
-          error:
-            "ไม่สามารถลงข้อมูลย้อนหลังเกิน 3 วัน หรือลงข้อมูลสำหรับวันในอนาคตได้",
-        },
-        { status: 400 }
-      );
-    }
-
     const { email, date, slotId, r2Key, fileName } = input;
 
     const emailSegment = sanitizeEmailForPath(email);
@@ -202,6 +191,21 @@ export async function POST(req: NextRequest) {
     record.updatedAt = new Date().toISOString();
 
     await putJson(bucket, reportKey, record);
+
+    // Fire-and-forget: update D1 summary index if configured
+    try {
+      const uploadedCount = countUploadedSlots(record);
+      await upsertDailyReportSummary({
+        email,
+        date,
+        uploadedCount,
+        totalSlots: dailyReportSlotOrder.length,
+        lastUpdated: record.updatedAt,
+        status: getDailyReportProgressStatus(uploadedCount, dailyReportSlotOrder.length),
+      });
+    } catch (e) {
+      console.warn("[DailyReport] failed to upsert D1 summary index", e);
+    }
 
     const response = await toResponse(record, bucket);
     return NextResponse.json(response);
@@ -267,6 +271,21 @@ export async function DELETE(req: NextRequest) {
     record.updatedAt = new Date().toISOString();
 
     await putJson(bucket, reportKey, record);
+
+    // Fire-and-forget: update D1 summary index if configured
+    try {
+      const uploadedCount = countUploadedSlots(record);
+      await upsertDailyReportSummary({
+        email,
+        date,
+        uploadedCount,
+        totalSlots: dailyReportSlotOrder.length,
+        lastUpdated: record.updatedAt,
+        status: getDailyReportProgressStatus(uploadedCount, dailyReportSlotOrder.length),
+      });
+    } catch (e) {
+      console.warn("[DailyReport] failed to upsert D1 summary index after delete", e);
+    }
 
     const response = await toResponse(record, bucket);
     return NextResponse.json(response);

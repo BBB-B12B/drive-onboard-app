@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+export const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  role: z.enum(['admin', 'employee']),
+  phone: z.string().optional(),
+  avatarUrl: z.string().optional(),
+  password: z.string().optional(),
+});
+export type User = z.infer<typeof UserSchema>;
+
 export type VerificationStatus = 'pending' | 'approved' | 'rejected' | 'terminated';
 
 // Minimal summary for index.json

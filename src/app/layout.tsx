@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/components/auth-provider';
+import { NextAuthProvider } from '@/components/session-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { Poppins, PT_Sans } from 'next/font/google';
@@ -32,10 +33,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn('antialiased min-h-screen bg-background', fontHeading.variable, fontBody.variable, 'font-body')}>
-        <AuthProvider>
-          {children}
-          <Toaster />
-        </AuthProvider>
+        <NextAuthProvider>
+          <AuthProvider>
+            {children}
+            <Toaster />
+          </AuthProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );

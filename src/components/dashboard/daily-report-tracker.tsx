@@ -26,36 +26,66 @@ import {
 type StatusFilter = "all" | "uploaded" | "partial" | "missing" | "complete";
 
 interface DailyReportTrackerProps {
-  initialDate: string;
+  initialDate: string; // month or start date string (yyyy-MM or yyyy-MM-dd)
+  initialStartDate?: string;
+  initialEndDate?: string;
   initialRows: DailyReportSummaryRow[];
+  userEmail?: string;
+  userRole?: string;
 }
+
+const normalizeRows = (value: unknown): DailyReportSummaryRow[] =>
+  Array.isArray(value) ? value as DailyReportSummaryRow[] : [];
 
 export function DailyReportTracker({
   initialDate,
+  initialStartDate,
+  initialEndDate,
   initialRows,
+  userEmail,
+  userRole,
 }: DailyReportTrackerProps) {
-  const [selectedDate, setSelectedDate] = useState(initialDate);
-  const [rows, setRows] = useState<DailyReportSummaryRow[]>(initialRows);
+  const todayStr = format(new Date(), "yyyy-MM-dd");
+  const isAdmin = userRole === "admin";
+  const [rows, setRows] = useState<DailyReportSummaryRow[]>(normalizeRows(initialRows));
+  const [startDate, setStartDate] = useState(
+    (initialStartDate ?? initialDate) > todayStr ? todayStr : initialStartDate ?? initialDate
+  );
+  const [endDate, setEndDate] = useState(
+    (initialEndDate ?? initialDate) > todayStr ? todayStr : initialEndDate ?? initialDate
+  );
   const [loading, setLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [nameFilter, setNameFilter] = useState<string>("");
   const { toast } = useToast();
 
   useEffect(() => {
-    setRows(initialRows);
+    setRows(normalizeRows(initialRows));
   }, [initialRows]);
 
-  const fetchSummary = async (date: string) => {
+  useEffect(() => {
+    if (startDate && endDate) {
+      void fetchSummary({ start: startDate, end: endDate });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate, endDate, userEmail, userRole]);
+
+  const fetchSummary = async ({ start, end }: { start: string; end: string }) => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/daily-reports/summary?date=${date}`, {
-        cache: "no-store",
-      });
+      const query = new URLSearchParams(
+        isAdmin
+          ? { startDate: start, endDate: end }
+          : { email: userEmail ?? "", startDate: start, endDate: end }
+      );
+      const url = `/api/daily-reports/summary?${query.toString()}`;
+      const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || "ไม่สามารถโหลดข้อมูลได้");
       }
-      const data: DailyReportSummaryRow[] = await res.json();
-      setRows(data);
+      const data = await res.json();
+      setRows(normalizeRows(data));
     } catch (error) {
       console.error("[DailyReportTracker] summary fetch error", error);
       toast({
@@ -69,17 +99,28 @@ export function DailyReportTracker({
     }
   };
 
-  const handleDateChange = async (value: string) => {
-    setSelectedDate(value);
-    if (!value) {
+  const handleDateChange = async (value: string, field: "start" | "end") => {
+    const clamped = value > todayStr ? todayStr : value;
+    const nextStart = field === "start" ? clamped : startDate;
+    const nextEnd = field === "end" ? clamped : endDate;
+
+    if (field === "start") {
+      setStartDate(nextStart);
+    } else {
+      setEndDate(nextEnd);
+    }
+
+    if (!nextStart || !nextEnd) {
       setRows([]);
       return;
     }
-    await fetchSummary(value);
+
+    await fetchSummary({ start: nextStart, end: nextEnd });
   };
 
   const filteredRows = useMemo(() => {
-    return rows.filter((row) => {
+    const term = nameFilter.trim().toLowerCase();
+    const result = rows.filter((row) => {
       switch (statusFilter) {
         case "uploaded":
           return row.uploadedCount > 0;
@@ -92,8 +133,23 @@ export function DailyReportTracker({
         default:
           return true;
       }
+    }).filter((row) => {
+      if (!term) return true;
+      return (
+        row.fullName.toLowerCase().includes(term) ||
+        (row.email ?? "").toLowerCase().includes(term)
+      );
     });
-  }, [rows, statusFilter]);
+
+    result.sort((a, b) => {
+      const dA = parseISO(a.date).getTime();
+      const dB = parseISO(b.date).getTime();
+      if (dA !== dB) return dA - dB;
+      return a.fullName.localeCompare(b.fullName);
+    });
+
+    return result;
+  }, [rows, statusFilter, nameFilter]);
 
   const statusBadge = (row: DailyReportSummaryRow) => {
     switch (row.status) {
@@ -125,13 +181,25 @@ export function DailyReportTracker({
     <section className="space-y-4 rounded-lg border bg-card p-6 shadow-sm">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
         <div className="flex flex-1 flex-col gap-2">
-          <Label htmlFor="daily-report-summary-date">เลือกวันที่</Label>
+          <Label htmlFor="daily-report-summary-start">วันที่เริ่ม</Label>
           <Input
-            id="daily-report-summary-date"
+            id="daily-report-summary-start"
             type="date"
-            value={selectedDate}
-            onChange={(event) => void handleDateChange(event.target.value)}
+            value={startDate}
+            onChange={(event) => void handleDateChange(event.target.value, "start")}
             className="max-w-xs"
+            max={todayStr}
+          />
+        </div>
+        <div className="flex flex-1 flex-col gap-2">
+          <Label htmlFor="daily-report-summary-end">วันที่สิ้นสุด</Label>
+          <Input
+            id="daily-report-summary-end"
+            type="date"
+            value={endDate}
+            onChange={(event) => void handleDateChange(event.target.value, "end")}
+            className="max-w-xs"
+            max={todayStr}
           />
         </div>
         <div className="flex flex-1 flex-col gap-2">
@@ -153,8 +221,8 @@ export function DailyReportTracker({
           <Button
             type="button"
             variant="outline"
-            onClick={() => selectedDate && void fetchSummary(selectedDate)}
-            disabled={loading || !selectedDate}
+            onClick={() => startDate && endDate && void fetchSummary({ start: startDate, end: endDate })}
+            disabled={loading || !startDate || !endDate}
           >
             {loading ? (
               <>
@@ -166,6 +234,18 @@ export function DailyReportTracker({
             )}
           </Button>
         </div>
+        {isAdmin && (
+          <div className="flex flex-1 flex-col gap-2">
+            <Label htmlFor="daily-report-name-filter">กรองชื่อ/อีเมล</Label>
+            <Input
+              id="daily-report-name-filter"
+              placeholder="ค้นหาชื่อหรืออีเมล"
+              value={nameFilter}
+              onChange={(e) => setNameFilter(e.target.value)}
+              className="max-w-xs"
+            />
+          </div>
+        )}
       </div>
 
       <div className="overflow-x-auto rounded-md border">
@@ -209,8 +289,8 @@ export function DailyReportTracker({
                   </TableRow>
                 ))
               : filteredRows.length > 0
-              ? filteredRows.map((row) => (
-                  <TableRow key={row.appId}>
+              ? filteredRows.map((row, idx) => (
+                  <TableRow key={`${row.appId}-${row.date}-${idx}`}>
                     <TableCell>
                       {format(parseISO(row.date), "dd MMM yyyy")}
                     </TableCell>

@@ -8,14 +8,22 @@ import type { DailyReportSummaryRow } from "@/lib/daily-report";
 
 interface DashboardTabsProps {
   initialApplications: AppRow[];
-  initialDailyReportDate: string;
+  initialDailyReportDate: string; // deprecated, kept for compatibility
+  initialStartDate?: string;
+  initialEndDate?: string;
   initialDailyReportSummary: DailyReportSummaryRow[];
+  userEmail?: string;
+  userRole?: string;
 }
 
 export function DashboardTabs({
   initialApplications,
   initialDailyReportDate,
+  initialStartDate,
+  initialEndDate,
   initialDailyReportSummary,
+  userEmail,
+  userRole,
 }: DashboardTabsProps) {
   return (
     <Tabs defaultValue="applications" className="space-y-6">
@@ -25,7 +33,11 @@ export function DashboardTabs({
       </TabsList>
 
       <TabsContent value="applications" className="space-y-6">
-        <ApplicationsClient initialApplications={initialApplications} />
+        <ApplicationsClient
+          initialApplications={initialApplications}
+          userRole={userRole}
+          userEmail={userEmail}
+        />
       </TabsContent>
 
       <TabsContent value="daily-report">
@@ -40,7 +52,11 @@ export function DashboardTabs({
           </div>
           <DailyReportTracker
             initialDate={initialDailyReportDate}
+            initialStartDate={initialStartDate}
+            initialEndDate={initialEndDate}
             initialRows={initialDailyReportSummary}
+            userEmail={userEmail}
+            userRole={userRole}
           />
         </div>
       </TabsContent>

@@ -75,7 +75,7 @@ async function compressImage(file: File): Promise<File> {
     if (!blob) return file;
 
     const compressedName =
-      workingFile.name.replace(/\.[^.]+$/, "") + ".webp";
+      file.name.replace(/\.[^.]+$/, "") + ".webp";
     return new File([blob], compressedName, { type: "image/webp" });
   } catch (error) {
     console.warn("compressImage failed, fallback to original", error);
@@ -150,30 +150,28 @@ export function DailyReportView() {
 
 
 
+  // ตั้งค่า email ตั้งต้นเป็นของผู้ใช้ที่ล็อกอินถ้ายังไม่เลือก
   useEffect(() => {
-    if (selectedEmail && !selectedEmail) {
-      setSelectedEmail(user.email ?? null);
+    if (!selectedEmail && user?.email) {
+      setSelectedEmail(user.email);
     }
-  }, [selectedEmail, selectedEmail]);
+  }, [selectedEmail, user?.email]);
 
   useEffect(() => {
-    if (isAdmin) {
-      const loadUsers = async () => {
-        try {
-          const res = await fetch("/api/users", { cache: "no-store" });
-          if (!res.ok) return;
-          const list = (await res.json()) as { email: string; name: string }[];
-          setUserOptions(list);
-          if (!selectedEmail && list.length > 0) {
-            setSelectedEmail(list[0].email);
-          }
-        } catch (error) {
-          console.error("Failed to load users", error);
-        }
-      };
-      void loadUsers();
-    }
-  }, [isAdmin, selectedEmail]);
+    if (!isAdmin) return;
+    const loadUsers = async () => {
+      try {
+        const res = await fetch("/api/users", { cache: "no-store" });
+        if (!res.ok) return;
+        const list = (await res.json()) as { email: string; name: string }[];
+        setUserOptions(list);
+        setSelectedEmail((prev) => prev ?? user?.email ?? list[0]?.email ?? null);
+      } catch (error) {
+        console.error("Failed to load users", error);
+      }
+    };
+    void loadUsers();
+  }, [isAdmin, user?.email]);
 
   useEffect(() => {
 

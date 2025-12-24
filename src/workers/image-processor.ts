@@ -9,13 +9,7 @@ self.onmessage = async (e: MessageEvent) => {
     const { id, file } = e.data;
 
     try {
-        // 1. Calculate MD5 (CPU intensive)
-        const arrayBuffer = await file.arrayBuffer();
-        const hash = SparkMD5.ArrayBuffer.hash(arrayBuffer);
-        const md5Raw = hash.match(/.{2}/g)?.map((pair) => String.fromCharCode(parseInt(pair, 16))).join("");
-        const md5 = btoa(md5Raw || "");
-
-        // 2. Compress Image (if it's an image)
+        // 1. Compress Image (if it's an image)
         let processedFile = file;
         let width = 0;
         let height = 0;
@@ -52,6 +46,12 @@ self.onmessage = async (e: MessageEvent) => {
                 console.warn("Image compression failed in worker, using original", imgError);
             }
         }
+
+        // 2. Calculate MD5 (on processed file)
+        const arrayBuffer = await processedFile.arrayBuffer();
+        const hash = SparkMD5.ArrayBuffer.hash(arrayBuffer);
+        const md5Raw = hash.match(/.{2}/g)?.map((pair) => String.fromCharCode(parseInt(pair, 16))).join("");
+        const md5 = btoa(md5Raw || "");
 
         self.postMessage({
             type: "complete",

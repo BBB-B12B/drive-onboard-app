@@ -103,6 +103,9 @@
             2. **Optimize Image Comporession**: ย้าย `compressImage` และ `md5` ไปทำใน `src/workers/image-processor.ts` (Web Worker)
         - **Data**: เปลี่ยนการเรียก D1 ให้มี Caching Strategy ที่เหมาะสม (SWR)
     - **Confirmed Behavior (พฤติกรรมที่ต้องทดสอบ)**: หน้าเว็บไม่กระตุกเมื่ออัปโหลดไฟล์ใหญ่, Memory usage ไม่พุ่งสูง
+    > [!CAUTION]
+    > **Interface Mismatch Warning**: เมื่อมีการปรับแก้ Component ให้ตรวจสอบชื่อ Props ให้ตรงกันเสมอ (เช่น `onUpload` vs `onSelectFile`) เพื่อป้องกัน Runtime Error ที่ตรวจสอบยาก
+    > **Logic Order Warning**: ในการอัปโหลดไฟล์ที่ต้องมีการ Process (เช่น ย่อรูป) ต้องคำนวณ MD5 *หลังจาก* Process เสร็จสิ้นแล้วเสมอ ห้ามคำนวณจากไฟล์ต้นฉบับ
     - **Sub-tasks (งานย่อย)**:
         - [x] Implement Web Worker for Image Processing
         - [x] Refactor State Cache to use proper cache manager

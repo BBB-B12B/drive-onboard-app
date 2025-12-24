@@ -11,5 +11,5 @@
 | **[F-005]** | Verification Workflow (ระบบตรวจสอบ) | [T-022] | `src/app/admin/verify/page.tsx` | Planned (วางแผน) |
 | **[F-006]** | Status Management (จัดการสถานะ) | [T-022] | `src/lib/status.ts` | Planned (วางแผน) |
 | **[F-007]** | AI Analysis Tool (AI วิเคราะห์) | [T-030] | `src/ai/dev.ts` | Planned (วางแผน) |
-| **[F-008]** | Performance Tuning (ปรับจูนระบบ) | [T-042] | `src/components/daily-report/*` | Done (เสร็จแล้ว) |
+| **[F-008]** | Performance Tuning (ปรับจูนระบบ) | [T-042] | `src/components/daily-report/*` | Done (เสร็จแล้ว) <br> *Note: ระวังเรื่อง Prop mismatch และ MD5 calculation order* |
 | **[F-009]** | Security Cleanup (ความปลอดภัย) | [T-043] | `src/auth.ts` | Done (เสร็จแล้ว) |

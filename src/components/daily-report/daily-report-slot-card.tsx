@@ -12,7 +12,7 @@ interface DailyReportSlotCardProps {
   slot: DailyReportResponseSlot;
   uploading: boolean;
   deleting: boolean;
-  onSelectFile: (file: File) => void;
+  onUpload: (file: File) => void;
   onDelete: () => void;
   disabled?: boolean;
   disabledReason?: string;
@@ -22,7 +22,7 @@ export function DailyReportSlotCard({
   slot,
   uploading,
   deleting,
-  onSelectFile,
+  onUpload,
   onDelete,
   disabled,
   disabledReason,
@@ -32,7 +32,7 @@ export function DailyReportSlotCard({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      onSelectFile(file);
+      onUpload(file);
     }
   };
 

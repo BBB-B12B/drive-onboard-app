@@ -41,6 +41,10 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Fallback to sample/legacy mock
+        if (process.env.NODE_ENV === "production") {
+          return null;
+        }
+
         const sampleUser = sampleAccounts.find(
           (u) => u.email.toLowerCase() === email
         );

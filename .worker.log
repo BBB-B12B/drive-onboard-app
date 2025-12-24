@@ -1,0 +1,23 @@
+
+ ⛅️ wrangler 4.52.1 (update available 4.54.0)
+─────────────────────────────────────────────
+Using vars defined in .env
+Using vars defined in .env.local
+Your Worker has access to the following bindings:
+Binding                                    Resource                  Mode
+env.GEMINI_API_KEY ("(hidden)")            Environment Variable      local
+env.R2_ACCOUNT_ID ("(hidden)")             Environment Variable      local
+env.R2_ACCESS_KEY_ID ("(hidden)")          Environment Variable      local
+env.R2_SECRET_ACCESS_KEY ("(hidden)")      Environment Variable      local
+env.R2_BUCKET_NAME ("(hidden)")            Environment Variable      local
+env.R2_PUBLIC_URL ("(hidden)")             Environment Variable      local
+env.R2_ENDPOINT ("(hidden)")               Environment Variable      local
+env.R2_PRESIGN_PUT_TTL ("(hidden)")        Environment Variable      local
+env.R2_PRESIGN_GET_TTL ("(hidden)")        Environment Variable      local
+env.R2_BUCKET ("(hidden)")                 Environment Variable      local
+env.D1_API_BASE ("(hidden)")               Environment Variable      local
+env.D1_API_TOKEN ("(hidden)")              Environment Variable      local
+env.NEXTAUTH_URL ("(hidden)")              Environment Variable      local
+
+⎔ Starting local server...
+[wrangler:info] Ready on http://localhost:8787

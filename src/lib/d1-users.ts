@@ -116,7 +116,7 @@ export async function updateUserById(
     body: {
       email: input.email,
       name: input.name,
-      role: input.role === "user" ? "employee" : input.role,
+      role: input.role,
       password_hash,
       avatar_url: input.avatarUrl,
       phone: input.phone,

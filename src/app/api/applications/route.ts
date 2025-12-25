@@ -1,56 +1,37 @@
 // src/app/api/applications/route.ts
-import { r2 } from '@/app/api/r2/_client';
-import { GetObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { NextRequest, NextResponse } from 'next/server';
-
-// Helper to get a JSON object from R2 using a cached fetch
-async function getJsonCached(bucket: string, key: string): Promise<any | null> {
-  try {
-    // 1. Get a signed URL for the object. This is a lightweight operation.
-    const signedUrl = await getSignedUrl(
-      r2,
-      new GetObjectCommand({ Bucket: bucket, Key: key }),
-      { expiresIn: 60 } // URL is short-lived, just for this fetch
-    );
-
-    // 2. Use fetch() to get the object. Next.js automatically caches fetch requests.
-    // We'll revalidate this data every hour, or when the tag is revalidated.
-    const response = await fetch(signedUrl, { next: { revalidate: 3600, tags: ['r2-index'] } });
-
-    if (response.status === 404) {
-      return null;
-    }
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to fetch from R2 with status ${response.status}: ${errorText}`);
-    }
-
-    return await response.json();
-  } catch (error: any) {
-    // The AWS SDK throws a 'NoSuchKey' error name if the object doesn't exist.
-    // Fetch doesn't do this, so we rely on the 404 check above.
-    // We log other errors for debugging.
-    console.error(`[R2 GetJsonCached Error] for key ${key}:`, error);
-    // If it's a network or parsing error, we can't recover here.
-    throw error;
-  }
-}
+import { getDb } from '@/lib/db';
+import { applications } from '@/db/schema';
+import { desc } from 'drizzle-orm';
+import type { AppRow, VerificationStatus } from '@/lib/types';
 
 export async function GET(_req: NextRequest) {
-  const bucket = process.env.R2_BUCKET;
-  if (!bucket) {
-    console.error('R2_BUCKET environment variable is not set.');
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-  }
-
   try {
-    const indexKey = 'applications/index.json';
-    const applicationIndex = await getJsonCached(bucket, indexKey);
+    const db = await getDb();
 
-    // If index.json doesn't exist, return an empty array, which is a valid state.
-    return NextResponse.json(applicationIndex || []);
+    // Select relevant columns for the list view
+    const result = await db.select({
+      appId: applications.appId,
+      fullName: applications.fullName,
+      createdAt: applications.createdAt,
+      phone: applications.phone,
+      status: applications.verificationStatus,
+    })
+      .from(applications)
+      .orderBy(desc(applications.createdAt))
+      .all();
+
+    // Map to AppRow type if necessary (though Drizzle result should match mostly)
+    // Note: phone and fullName might be null in DB, ensure type safety
+    const mapped: AppRow[] = result.map((row: any) => ({
+      appId: row.appId,
+      fullName: row.fullName || 'Unknown',
+      createdAt: row.createdAt || new Date().toISOString(),
+      phone: row.phone || undefined,
+      status: (row.status || 'pending') as VerificationStatus,
+    }));
+
+    return NextResponse.json(mapped);
   } catch (error) {
     console.error('[Applications GET Error]', error);
     return NextResponse.json({ error: 'Failed to retrieve application list.' }, { status: 500 });

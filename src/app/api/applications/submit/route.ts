@@ -1,11 +1,11 @@
 // src/app/api/applications/submit/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { r2 } from '@/app/api/r2/_client';
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import type { Manifest, AppRow } from '@/lib/types';
+import type { Manifest } from '@/lib/types';
 import { revalidateTag } from 'next/cache';
-import { isEqual } from 'lodash';
+import { getDb } from '@/lib/db';
+import { applications } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 // We don't use the ManifestSchema directly because it has derived/read-only fields
 const SubmitBodySchema = z.object({
@@ -13,99 +13,60 @@ const SubmitBodySchema = z.object({
   manifest: z.any(), // In a real app, you would validate the manifest with a more specific Zod schema
 });
 
-
-// Helper to get a JSON object from R2
-async function getJson(bucket: string, key: string): Promise<any | null> {
-  try {
-    const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-    const response = await r2.send(command);
-    const str = await response.Body?.transformToString();
-    if (!str) return null;
-    return JSON.parse(str);
-  } catch (error: any) {
-    if (error.name === 'NoSuchKey') {
-      return null;
-    }
-    throw error;
-  }
-}
-
-// Helper to put a JSON object to R2
-async function putJson(bucket: string, key: string, data: any) {
-  const command = new PutObjectCommand({
-    Bucket: bucket,
-    Key: key,
-    Body: JSON.stringify(data),
-    ContentType: 'application/json',
-  });
-  await r2.send(command);
-}
-
-
 export async function POST(req: NextRequest) {
-  const bucket = process.env.R2_BUCKET;
-  if (!bucket) {
-    console.error('R2_BUCKET environment variable is not set.');
-    return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-  }
-
   try {
     const body = await req.json();
     const { appId, manifest } = SubmitBodySchema.parse(body) as { appId: string; manifest: Manifest };
-    
+
     // Ensure fullName is correctly assembled before saving
     manifest.applicant.fullName = `${manifest.applicant.firstName} ${manifest.applicant.lastName}`.trim();
-    if(manifest.guarantor) {
+    if (manifest.guarantor) {
       manifest.guarantor.fullName = `${manifest.guarantor.firstName || ''} ${manifest.guarantor.lastName || ''}`.trim() || undefined;
     }
 
+    const normalizedStatus = manifest.status ?? { completeness: 'incomplete', verification: 'pending' };
+    normalizedStatus.completeness = normalizedStatus.completeness ?? 'incomplete';
+    normalizedStatus.verification = normalizedStatus.verification ?? 'pending';
+    manifest.status = normalizedStatus;
 
-    // Step 1: Write the full manifest.json for the application
-    const manifestKey = `applications/${appId}/manifest.json`;
-    await putJson(bucket, manifestKey, manifest);
+    const db = await getDb();
 
-    // Step 2: Conditionally upsert the index.json
-    const indexKey = 'applications/index.json';
-    const currentIndex: AppRow[] = (await getJson(bucket, indexKey)) || [];
+    // Check if exists using Drizzle
+    const existingApp = await db.select().from(applications).where(eq(applications.appId, appId)).get();
 
-    const newAppRow: AppRow = {
-      appId: manifest.appId,
-      fullName: manifest.applicant.fullName,
-      createdAt: manifest.createdAt,
-      phone: manifest.applicant.mobilePhone,
-      status: manifest.status.verification,
-    };
-
-    const existingIndex = currentIndex.findIndex(row => row.appId === appId);
-    let indexHasChanged = false;
-
-    if (existingIndex !== -1) {
-      // Entry exists, check if it has changed before replacing
-      const existingRow = currentIndex[existingIndex];
-      // Use lodash's isEqual for a deep, reliable comparison
-      if (!isEqual(existingRow, newAppRow)) {
-        currentIndex[existingIndex] = newAppRow;
-        indexHasChanged = true;
-      }
+    // FIX: .get() might return {} if not found with this proxy setup, which is truthy.
+    if (existingApp && existingApp.appId) {
+      // Update existing using Drizzle
+      await db.update(applications)
+        .set({
+          fullName: manifest.applicant.fullName,
+          verificationStatus: manifest.status.verification,
+          completenessStatus: manifest.status.completeness,
+          phone: manifest.applicant.mobilePhone || manifest.applicant.homePhone || "",
+          rawData: JSON.stringify(manifest),
+          updatedAt: new Date().toISOString()
+        })
+        .where(eq(applications.appId, appId));
     } else {
-      // New entry, always a change
-      currentIndex.unshift(newAppRow); // Add to the top
-      indexHasChanged = true;
-    }
-    
-    // Only sort and write if there was a change
-    if (indexHasChanged) {
-        // Sort by creation date, newest first
-        currentIndex.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        await putJson(bucket, indexKey, currentIndex);
+      // Insert new using Drizzle
+      const safeCreatedAt = manifest.createdAt ?? new Date().toISOString();
+      const phone = manifest.applicant.mobilePhone || manifest.applicant.homePhone || "";
+
+      await db.insert(applications).values({
+        appId: appId,
+        fullName: manifest.applicant.fullName,
+        nationalId: manifest.applicant.nationalId,
+        verificationStatus: manifest.status.verification,
+        completenessStatus: manifest.status.completeness,
+        createdAt: safeCreatedAt,
+        updatedAt: safeCreatedAt,
+        phone: phone,
+        rawData: JSON.stringify(manifest)
+      });
     }
 
-
-    // Step 3: Revalidate caches
-    // Revalidate the index only if it was actually changed.
-    if (indexHasChanged) {
-        revalidateTag('r2-index');
-    }
+    // --- Step 3: Revalidate caches ---
+    revalidateTag('r2-index');
     revalidateTag(`r2-app-${appId}`);
 
     return NextResponse.json({ ok: true, appId });

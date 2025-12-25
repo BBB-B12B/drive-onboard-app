@@ -4,6 +4,7 @@ import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import { z } from "zod";
 import { r2 } from "../_client";
 import { assertAdmin } from "../_auth";
+import { requireR2Bucket } from "@/lib/r2/env";
 
 const Body = z.object({
   r2Keys: z.array(z.string().min(1)).min(1, "r2Keys array cannot be empty"),
@@ -13,10 +14,7 @@ export async function POST(req: NextRequest) {
   try {
     await assertAdmin(req); // Ensure only admins can delete
 
-    const bucket = process.env.R2_BUCKET;
-    if (!bucket) {
-      throw new Error("R2_BUCKET environment variable is not set");
-    }
+    const bucket = requireR2Bucket();
 
     const { r2Keys } = Body.parse(await req.json());
 

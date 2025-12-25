@@ -4,6 +4,7 @@ import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"; 
 import { z } from "zod"; 
 import { r2 } from "../_client";
+import { requireR2Bucket } from "@/lib/r2/env";
 
 const Body = z.object({ r2Key: z.string().min(1) });
 
@@ -14,9 +15,11 @@ export async function POST(req: NextRequest) {
     // TODO: ตรวจสิทธิ์: admin เห็นได้ทั้งหมด; applicant เห็นเฉพาะ path ของตน
     // For now, we allow all for simplicity during development.
     
+    const bucket = requireR2Bucket();
+
     const url = await getSignedUrl(
         r2, 
-        new GetObjectCommand({ Bucket: process.env.R2_BUCKET!, Key: r2Key }), 
+        new GetObjectCommand({ Bucket: bucket, Key: r2Key }), 
         { expiresIn: Number(process.env.R2_PRESIGN_GET_TTL||300) }
     );
     

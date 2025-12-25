@@ -5,6 +5,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { z } from "zod"; 
 import { r2 } from "../_client"; 
 import { assertApplicantOwner } from "../_auth";
+import { requireR2Bucket } from "@/lib/r2/env";
 
 const Body = z.object({ 
     applicationId: z.string(), 
@@ -21,9 +22,7 @@ const MAX_PDF_SIZE = 10 * 1024 * 1024; // 10MB
 
 export async function POST(req: NextRequest) {
   try {
-    if (!process.env.R2_BUCKET) {
-      throw new Error("R2_BUCKET environment variable is not set");
-    }
+    const bucket = requireR2Bucket();
 
     const { applicationId, docType, fileName, mime, size, md5 } = Body.parse(await req.json());
     await assertApplicantOwner(applicationId, req); // ตรวจว่าเป็นเจ้าของจริง
@@ -45,7 +44,7 @@ export async function POST(req: NextRequest) {
     const key = `applications/${applicationId}/${docType}/${Date.now()}-${fileName}`;
     
     const cmd = new PutObjectCommand({ 
-        Bucket: process.env.R2_BUCKET, 
+        Bucket: bucket, 
         Key: key, 
         ContentType: mime,
         ...(md5 ? { ContentMD5: md5 } : {}) 

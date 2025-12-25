@@ -1,463 +1,808 @@
 /**
  * src/app/api/download-form/templates.tsx
- * * This file contains React components used as HTML templates for PDF generation.
- * These components are rendered to a static string by 'react-dom/server'
- * and then sent to the PDF generation service (e.g., Google Apps Script).
+ * Use React components to generate HTML for PDF conversion via Google Apps Script.
  */
 
-// Import React and Manifest types
 import React from 'react';
-// We need to define or import the 'Manifest' type here for props.
-// Let's define a minimal one based on usage.
-type Manifest = {
-  applicant?: {
-    prefix?: string;
-    firstName?: string;
-    lastName?: string;
-    nickname?: string;
-    currentAddress?: {
-      houseNo?: string;
-      moo?: string;
-      street?: string;
-      subDistrict?: string;
-      district?: string;
-      province?: string;
-      postalCode?: string;
-    };
-    homePhone?: string;
-    mobilePhone?: string;
-    email?: string;
-    permanentAddress?: {
-      houseNo?: string;
-      moo?: string;
-      street?: string;
-      subDistrict?: string;
-      district?: string;
-      province?: string;
-      postalCode?: string;
-    };
-    residenceType?: string;
-    dateOfBirth?: string | Date;
-    age?: number;
-    race?: string;
-    nationality?: string;
-    religion?: string;
-    nationalId?: string;
-    nationalIdIssueDate?: string | Date;
-    nationalIdExpiryDate?: string | Date;
-    height?: number;
-    weight?: number;
-    militaryStatus?: string;
-    maritalStatus?: string;
-    gender?: string;
-  };
-  applicationDetails?: {
-    applicationDate?: string | Date;
-    position?: string;
-    criminalRecord?: string;
-    emergencyContact?: {
-      firstName?: string;
-      lastName?: string;
-      occupation?: string;
-      relation?: string;
-      mobilePhone?: string;
-    };
-  };
-  guarantor?: {
-    firstName?: string;
-    lastName?: string;
-    contractDate?: string | Date;
-    address?: {
-        houseNo?: string;
-        moo?: string;
-        street?: string;
-        subDistrict?: string;
-        district?: string;
-        province?: string;
-        postalCode?: string;
-    };
-    nationalId?: string;
-  };
-  contractDetails?: {
-      contractDate?: string | Date;
-  };
-  vehicle?: {
-      plateNo?: string;
-  };
-};
+import { format, parseISO } from 'date-fns';
+import { th } from 'date-fns/locale';
+import type { Manifest } from '@/lib/types';
 
-// --- Helper Components ---
+// Helper for optional values
+const val = (text: string | number | undefined | null) => (text || '');
+const num = (n: number | undefined | null) => (n !== undefined && n !== null ? n : '-');
 
-/**
- * Helper to safely format dates.
- * Note: date-fns/th locale is not available here, so we format simply.
- */
 function formatDate(date: string | Date | undefined): string {
     if (!date) return '..............................';
     try {
-        const dateObj = typeof date === 'string' ? new Date(date) : date;
-        const yyyy = dateObj.getFullYear();
-        const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-        const dd = String(dateObj.getDate()).padStart(2, '0');
-        return `${dd} / ${mm} / ${yyyy}`;
+        const d = typeof date === 'string' ? parseISO(date) : date;
+        const day = format(d, 'd');
+        const month = format(d, 'MMMM', { locale: th }); // Full Thai month name
+        const year = parseInt(format(d, 'yyyy')) + 543;
+        return `${day} / ${month} / ${year}`;
     } catch {
         return '..............................';
     }
 }
 
-/**
- * Helper for optional string/number values
- */
-const val = (text: string | number | undefined | null) => (text || '');
-
-// *** FIX 1: Define props for Checkbox ***
-type CheckboxProps = {
-  checked?: boolean;
-  style?: React.CSSProperties; // Allow style prop
+// Extend Manifest type for internal use within templates
+type ManifestWithSignatures = Manifest & {
+    signatures?: {
+        applicant?: string | null;
+        guarantor?: string | null;
+    }
 };
 
-/**
- * Helper for checkbox
- */
-const Checkbox = ({ checked = false, style = {} }: CheckboxProps) => ( // Apply props
-  <span style={{
-    display: 'inline-block',
-    width: '12px',
-    height: '12px',
-    border: '1px solid #000',
-    marginRight: '5px',
-    verticalAlign: 'middle',
+// Styling Constants
+const pageStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '0',
+    margin: '0 auto',
+    boxSizing: 'border-box',
+    fontFamily: '"Sarabun", "Arial", sans-serif',
+    fontSize: '9pt',
+    color: '#000',
+    lineHeight: 1.5,
+};
+
+// Font loader style to be injected
+const FontLoader = () => (
+    <style dangerouslySetInnerHTML={{
+        __html: `
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif !important; }
+        `
+    }} />
+);
+
+const h1Style: React.CSSProperties = {
+    fontSize: '16pt',
+    fontWeight: 'bold',
     textAlign: 'center',
-    lineHeight: '12px',
-    fontFamily: 'Helvetica, sans-serif', // Use a font that has 'X'
-    ...style // Merge passed-in style (e.g., marginLeft)
-  }}>
-    {checked ? 'X' : '\u00A0'}
-  </span>
-);
-
-// *** FIX 2: Define props for Field ***
-type FieldProps = {
-  label: string;
-  value: string | number | undefined | null;
-  labelWidth?: string;
-  fieldWidth?: string;
-  fullWidth?: boolean;
-  style?: React.CSSProperties;
+    margin: '0 0 5px 0',
 };
 
-/**
- * Helper for a labeled field with an underline
- */
-const Field = ({ 
-  label, 
-  value, 
-  labelWidth = 'auto', 
-  fieldWidth = '100px', 
-  fullWidth = false, 
-  style = {} 
-}: FieldProps) => ( // Apply props
-  <div style={{ 
-    display: fullWidth ? 'block' : 'inline-block', 
-    marginRight: '15px', 
-    marginBottom: '10px',
-    ...style 
-  }}>
-    <span>{label}</span>
-    <span style={{
-      display: 'inline-block',
-      width: fieldWidth,
-      borderBottom: '1px solid #999',
-      paddingLeft: '5px',
-      marginLeft: labelWidth === 'auto' ? '5px' : labelWidth,
-      fontFamily: 'Helvetica, sans-serif', // Ensure value font is set
-      color: '#000',
-    }}>
-      {val(value) || '\u00A0'}
+const fieldStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginBottom: '2px',
+};
+
+const labelStyle: React.CSSProperties = {
+    flexShrink: 0,
+    marginRight: '5px',
+    paddingBottom: '2px',
+};
+
+const valueStyle: React.CSSProperties = {
+    flexGrow: 1,
+    borderBottom: '1px dotted #555',
+    minHeight: '18px',
+    paddingLeft: '5px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    lineHeight: '1.2',
+};
+
+const checkRootStyle: React.CSSProperties = {
+    marginRight: '10px',
+    whiteSpace: 'nowrap',
+    display: 'inline-block',
+};
+
+const checkStyle: React.CSSProperties = {
+    display: 'inline-block',
+    width: '10px',
+    height: '10px',
+    border: '1px solid #000',
+    marginRight: '3px',
+    verticalAlign: 'middle',
+    position: 'relative',
+    top: '-1px',
+    backgroundColor: '#fff',
+};
+
+const checkStyleChecked: React.CSSProperties = {
+    ...checkStyle,
+    textAlign: 'center',
+    lineHeight: '10px',
+    fontWeight: 'bold',
+    fontSize: '10px',
+};
+
+const Checkbox = ({ label, checked }: { label: string, checked: boolean }) => (
+    <span style={checkRootStyle}>
+        <span style={checked ? checkStyleChecked : checkStyle}>
+            {checked ? 'X' : '\u00A0'}
+        </span>
+        <label>{label}</label>
     </span>
-  </div>
 );
 
-// --- Main PDF Templates ---
+// --- 1. TEMPLATE: ใบสมัครงาน ---
 
-/**
- * 1. Application Form Template
- */
-export const ApplicationFormTemplate = ({ data }: { data: Manifest }) => {
-  const app = data.applicant || {};
-  const appDetails = data.applicationDetails || {};
-  const currentAddr = app.currentAddress || {};
-  const permAddr = app.permanentAddress || {};
-  const emCon = appDetails.emergencyContact || {};
+export const ApplicationFormTemplate = ({ data }: { data: ManifestWithSignatures }) => {
+    // Cast to any because structure might be partial/loose in runtime usage
+    const app = data.applicant || {} as any;
+    const addr = app.currentAddress || {} as any;
+    const permAddr = app.permanentAddress ?? ({} as any);
+    const emCon = data.applicationDetails?.emergencyContact || {} as any;
+    const appDetails = data.applicationDetails || {} as any;
+    const vehicle = data.vehicle || {} as any;
+    const guarantor = data.guarantor || {} as any;
+    const guarantorAddr = guarantor.address || {} as any;
 
-  // Date formatting
-  const dob = app.dateOfBirth ? new Date(app.dateOfBirth) : null;
-  const dobDay = dob ? dob.getDate() : '';
-  const dobMonth = dob ? dob.getMonth() + 1 : ''; // Using number as locale is complex here
-  const dobYear = dob ? dob.getFullYear() : ''; // Using A.D. for simplicity
+    const vehicleBrand = vehicle.brand === 'other' ? vehicle.brandOther : vehicle.brand;
+    const vehicleModel = vehicle.brand === 'other' ? vehicle.modelOther : vehicle.model;
+    const vehicleColor = vehicle.color === 'other' ? vehicle.colorOther : vehicle.color;
 
-  return (
-    <html lang="th">
-      <head>
-        <meta charSet="UTF-8" />
-        <title>ใบสมัครงาน</title>
-        {/* We must inline all styles. CSS <link> won't work. */}
-        <style>{`
-          body {
-            font-family: 'Sarabun', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 10pt;
-            color: #000;
-            margin: 0;
-            padding: 0;
-          }
-          .page {
-            width: 210mm; /* A4 width */
-            min-height: 297mm; /* A4 height */
-            padding: 20mm;
-            box-sizing: border-box;
-            background: #fff;
-          }
-          .header {
-            margin-bottom: 10px;
-          }
-          .header h1 {
-            font-size: 14pt;
-            margin: 0;
-          }
-          .header p {
-            font-size: 10pt;
-            margin: 2px 0;
-          }
-          .title {
-            text-align: center;
-            font-size: 16pt;
-            font-weight: bold;
-            margin: 20px 0;
-          }
-          .section {
-            margin-bottom: 15px;
-          }
-          .checkbox-group {
-            margin-bottom: 15px;
-          }
-          .field-group {
-            width: 100%;
-            display: block;
-          }
-          .declaration {
-            font-size: 8pt;
-            margin: 20px 0;
-          }
-          .signature-area {
-            margin-top: 40px;
-            text-align: right;
-          }
-          .signature-field {
-            width: 250px; 
-            display: inline-block; 
-            text-align: center;
-          }
-        `}</style>
-      </head>
-      <body>
-        <div className="page">
-          <div className="header">
-            <h1>บริษัทเบิกฟ้ากรุ๊ปจำกัด</h1>
-            <p>เลขที่ 202/357 ซอยเคหะร่มเกล้า 27 ถนนเคหะร่มเกล้า แขวงคลองสองต้นนุ่น</p>
-            <p>เขตลาดกระบัง กรุงเทพมหานคร 10520 โทรศัพท์-แฟ็กซ์ 02-047-7979</p>
-          </div>
+    // Date Breakdown
+    let dobDay = '', dobMonth = '', dobYear = '';
+    if (app.dateOfBirth) {
+        try {
+            const dob = typeof app.dateOfBirth === 'string' ? parseISO(app.dateOfBirth) : app.dateOfBirth;
+            dobDay = format(dob, 'd');
+            dobMonth = format(dob, 'MMMM', { locale: th });
+            dobYear = (parseInt(format(dob, 'yyyy')) + 543).toString();
+        } catch { }
+    }
 
-          <div className="title">ใบสมัครงาน</div>
+    return (
+        <div style={pageStyle}>
+            <FontLoader />
+            {/* Header */}
+            <div style={{ marginBottom: '5px', textAlign: 'center' }}>
+                <div style={{ fontSize: '12pt', fontWeight: 'bold' }}>บริษัทเบิกฟ้ากรุ๊ปจำกัด</div>
+                <div style={{ fontSize: '9pt' }}>202/357 ซ.เคหะร่มเกล้า 27 ถ.เคหะร่มเกล้า แขวงคลองสองต้นนุ่น เขตลาดกระบัง กทม. 10520 โทร 02-047-7979</div>
+            </div>
 
-          <div className="section checkbox-group">
-            <Checkbox checked={app.prefix === 'นาย'} /> นาย
-            <Checkbox checked={app.prefix === 'นาง'} style={{ marginLeft: '15px' }} /> นาง
-            <Checkbox checked={app.prefix === 'นางสาว'} style={{ marginLeft: '15px' }} /> นางสาว
-            <Field label="ชื่อ" value={app.firstName} labelWidth="80px" fieldWidth="150px" style={{ marginLeft: '20px' }} />
-            <Field label="นามสกุล" value={app.lastName} labelWidth="50px" fieldWidth="150px" />
-            <Field label="ชื่อเล่น" value={app.nickname} labelWidth="auto" fieldWidth="150px" style={{ float: 'right' }} />
-          </div>
+            <div style={{ ...h1Style, fontSize: '14pt' }}>ใบสมัครงาน</div>
 
-          <div className="section">
-            <div className="field-group">
-              <Field label="ที่อยู่ปัจจุบันบ้านเลขที่" value={currentAddr.houseNo} labelWidth="120px" fieldWidth="100px" />
-              <Field label="หมู่ที่" value={currentAddr.moo} labelWidth="30px" fieldWidth="80px" />
-              <Field label="ถนน" value={currentAddr.street} labelWidth="30px" fieldWidth="150px" />
+            {/* Personal Info - Name Row */}
+            <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: '2px' }}>
+                <div style={{ marginRight: '10px' }}>
+                    <Checkbox label="นาย" checked={app.prefix === 'นาย'} />
+                    <Checkbox label="นาง" checked={app.prefix === 'นาง'} />
+                    <Checkbox label="น.ส." checked={app.prefix === 'นางสาว'} />
+                </div>
+                <div style={{ ...fieldStyle, flex: 2 }}>
+                    <span style={labelStyle}>ชื่อ</span>
+                    <span style={valueStyle}>{val(app.firstName)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 2, marginLeft: '5px' }}>
+                    <span style={labelStyle}>นามสกุล</span>
+                    <span style={valueStyle}>{val(app.lastName)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1, marginLeft: '5px' }}>
+                    <span style={labelStyle}>ชื่อเล่น</span>
+                    <span style={valueStyle}>{val(app.nickname)}</span>
+                </div>
             </div>
-            <div className="field-group">
-              <Field label="ตำบล/แขวง" value={currentAddr.subDistrict} labelWidth="60px" fieldWidth="160px" />
-              <Field label="อำเภอ/เขต" value={currentAddr.district} labelWidth="60px" fieldWidth="160px" />
-            </div>
-            <div className="field-group">
-              <Field label="จังหวัด" value={currentAddr.province} labelWidth="60px" fieldWidth="160px" />
-              <Field label="รหัสไปรษณีย์" value={currentAddr.postalCode} labelWidth="70px" fieldWidth="150px" />
-            </div>
-            <div className="field-group">
-              <Field label="โทรศัพท์" value={app.homePhone} labelWidth="60px" fieldWidth="160px" />
-              <Field label="มือถือ" value={app.mobilePhone} labelWidth="40px" fieldWidth="180px" />
-            </div>
-            <Field label="อีเมล์" value={app.email} labelWidth="60px" fieldWidth="400px" fullWidth={true} />
-          </div>
 
-          <div className="section">
-            <div className="field-group">
-              <Field label="ที่อยู่ตามทะเบียนบ้านเลขที่" value={permAddr.houseNo} labelWidth="140px" fieldWidth="80px" />
-              <Field label="หมู่ที่" value={permAddr.moo} labelWidth="30px" fieldWidth="80px" />
-              <Field label="ถนน" value={permAddr.street} labelWidth="30px" fieldWidth="150px" />
+            {/* Address Row 1: House - Street (Combined) */}
+            <div style={{ display: 'flex', gap: '5px', marginBottom: '2px' }}>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>ที่อยู่ปัจจุบัน</span>
+                    <span style={valueStyle}>{val(addr.houseNo)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 0.6 }}>
+                    <span style={labelStyle}>หมู่</span>
+                    <span style={valueStyle}>{val(addr.moo)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1.5 }}>
+                    <span style={labelStyle}>ถนน</span>
+                    <span style={valueStyle}>{val(addr.street)}</span>
+                </div>
             </div>
-            <div className="field-group">
-              <Field label="ตำบล/แขวง" value={permAddr.subDistrict} labelWidth="60px" fieldWidth="160px" />
-              <Field label="อำเภอ/เขต" value={permAddr.district} labelWidth="60px" fieldWidth="160px" />
-            </div>
-            <div className="field-group">
-              <Field label="จังหวัด" value={permAddr.province} labelWidth="60px" fieldWidth="160px" />
-              <Field label="รหัสไปรษณีย์" value={permAddr.postalCode} labelWidth="70px" fieldWidth="150px" />
-            </div>
-          </div>
-          
-          <div className="section checkbox-group">
-            อาศัยอยู่กับ
-            <Checkbox checked={app.residenceType === 'own'} style={{ marginLeft: '15px' }} /> บ้านตัวเอง
-            <Checkbox checked={app.residenceType === 'rent'} style={{ marginLeft: '15px' }} /> บ้านเช่า
-            <Checkbox checked={app.residenceType === 'dorm'} style={{ marginLeft: '15px' }} /> หอพัก
-          </div>
 
-          <div className="section">
-            <div className="field-group">
-              <Field label="เกิดวันที่" value={dobDay} labelWidth="50px" fieldWidth="50px" />
-              <Field label="เดือน" value={dobMonth} labelWidth="30px" fieldWidth="100px" />
-              <Field label="พ.ศ." value={dobYear} labelWidth="30px" fieldWidth="60px" />
-              <Field label="อายุ" value={app.age} labelWidth="30px" fieldWidth="40px" /> ปี
+            {/* Address Row 2: SubDistrict - Postal Code (Combined) */}
+            <div style={{ display: 'flex', gap: '5px', marginBottom: '2px' }}>
+                <div style={{ ...fieldStyle, flex: 1.2 }}>
+                    <span style={labelStyle}>ตําบล/แขวง</span>
+                    <span style={valueStyle}>{val(addr.subDistrict)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1.2 }}>
+                    <span style={labelStyle}>อําเภอ/เขต</span>
+                    <span style={valueStyle}>{val(addr.district)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1.2 }}>
+                    <span style={labelStyle}>จังหวัด</span>
+                    <span style={valueStyle}>{val(addr.province)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>รหัสไปรษณีย์</span>
+                    <span style={valueStyle}>{val(addr.postalCode)}</span>
+                </div>
             </div>
-            <div className="field-group">
-              <Field label="เชื้อชาติ" value={app.race} labelWidth="50px" fieldWidth="100px" />
-              <Field label="สัญชาติ" value={app.nationality} labelWidth="50px" fieldWidth="100px" />
-              <Field label="ศาสนา" value={app.religion} labelWidth="50px" fieldWidth="100px" />
-            </div>
-            <Field label="บัตรประชาชนเลขที่" value={app.nationalId} labelWidth="100px" fieldWidth="200px" fullWidth={true} />
-            <div className="field-group">
-              <Field label="วันที่ออกบัตร" value={formatDate(app.nationalIdIssueDate)} labelWidth="80px" fieldWidth="150px" />
-              <Field label="วันที่บัตรหมดอายุ" value={formatDate(app.nationalIdExpiryDate)} labelWidth="100px" fieldWidth="150px" />
-            </div>
-            <div className="field-group">
-              <Field label="ส่วนสูง" value={app.height} labelWidth="50px" fieldWidth="50px" /> ซม.
-              <Field label="น้ำหนัก" value={app.weight} labelWidth="50px" fieldWidth="50px" style={{ marginLeft: '15px' }} /> กก.
-            </div>
-          </div>
 
-          <div className="section">
-            <div className="checkbox-group">
-              ภาวะทางทหาร
-              <Checkbox checked={app.militaryStatus === 'exempt'} style={{ marginLeft: '10px' }} /> ยกเว้น
-              <Checkbox checked={app.militaryStatus === 'discharged'} style={{ marginLeft: '10px' }} /> ปลดเป็นทหารกองหนุน
-              <Checkbox checked={app.militaryStatus === 'not-drafted'} style={{ marginLeft: '10px' }} /> ยังไม่ได้รับการเกณฑ์
+            {/* Contact Row: Phone - Email (Combined) */}
+            <div style={{ display: 'flex', gap: '5px', marginBottom: '2px' }}>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>โทรศัพท์บ้าน</span>
+                    <span style={valueStyle}>{val(app.homePhone)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>มือถือ</span>
+                    <span style={valueStyle}>{val(app.mobilePhone)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1.5 }}>
+                    <span style={labelStyle}>อีเมล์</span>
+                    <span style={valueStyle}>{val(app.email)}</span>
+                </div>
             </div>
-            <div className="checkbox-group">
-              สถานภาพ
-              <Checkbox checked={app.maritalStatus === 'single'} style={{ marginLeft: '10px' }} /> โสด
-              <Checkbox checked={app.maritalStatus === 'married'} style={{ marginLeft: '10px' }} /> แต่งงาน
-              <Checkbox checked={app.maritalStatus === 'widowed'} style={{ marginLeft: '10px' }} /> หม้าย
-              <Checkbox checked={app.maritalStatus === 'divorced'} style={{ marginLeft: '10px' }} /> หย่าร้าง
-              <span style={{ marginLeft: '30px' }}>เพศ</span>
-              <Checkbox checked={app.gender === 'female'} style={{ marginLeft: '10px' }} /> หญิง
-              <Checkbox checked={app.gender === 'male'} style={{ marginLeft: '10px' }} /> ชาย
-            </div>
-          </div>
-          
-          <div className="section">
-            บุคคลที่ติดต่อได้กรณีฉุกเฉิน
-            <div className="field-group" style={{ marginTop: '10px' }}>
-              <Field label="ชื่อ" value={emCon.firstName} labelWidth="30px" fieldWidth="150px" />
-              <Field label="นามสกุล" value={emCon.lastName} labelWidth="50px" fieldWidth="150px" />
-              <Field label="อาชีพ" value={emCon.occupation} labelWidth="40px" fieldWidth="120px" />
-            </div>
-            <div className="field-group">
-              <Field label="เกี่ยวข้องเป็น" value={emCon.relation} labelWidth="70px" fieldWidth="110px" />
-              <Field label="มือถือ" value={emCon.mobilePhone} labelWidth="40px" fieldWidth="150px" />
-            </div>
-          </div>
 
-          <div className="section">
-            <Field label="ตำแหน่งที่ต้องการสมัคร" value={appDetails.position} labelWidth="130px" fieldWidth="250px" fullWidth={true} />
-            <div className="checkbox-group" style={{ marginTop: '10px' }}>
-              เคยต้องโทษทางคดีอาญาหรือไม่
-              <Checkbox checked={appDetails.criminalRecord === 'yes'} style={{ marginLeft: '10px' }} /> เคย
-              <Checkbox checked={appDetails.criminalRecord === 'no'} style={{ marginLeft: '10px' }} /> ไม่เคย
+            {/* ID Card Row: Number - Expiry (Combined) */}
+            <div style={{ display: 'flex', gap: '5px', marginBottom: '2px' }}>
+                <div style={{ ...fieldStyle, flex: 1.5 }}>
+                    <span style={labelStyle}>บัตรประชาชนเลขที่</span>
+                    <span style={valueStyle}>{val(app.nationalId)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>วันที่ออกบัตร</span>
+                    <span style={valueStyle}>{formatDate(app.nationalIdIssueDate)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>วันที่บัตรหมดอายุ</span>
+                    <span style={valueStyle}>{formatDate(app.nationalIdExpiryDate)}</span>
+                </div>
             </div>
-          </div>
 
-          <div className="declaration">
-            <p>ข้าพเจ้าขอสัญญาว่าถ้าได้รับการพิจารณาได้เป็นพนักงานของบริษัทฯจะตั้งใจปฏิบัติหน้าที่อย่างเต็มที่จะซื่อตรง พร้อมทั้งจะรักษาผลประโยชน์ของบริษัททุกกรณี และหวังเป็นอย่างยิ่งว่าจะได้รับการพิจารณารับเข้าทำงาน จึงขอขอบพระคุณมา ณ โอกาสนี้</p>
-          </div>
-
-          <div className="signature-area">
-            <div className="signature-field">
-              <Field label="ลงชื่อ" value="" labelWidth="40px" fieldWidth="150px" /> ผู้สมัคร
-              <p style={{ marginTop: '5px' }}>( {`${val(app.firstName)} ${val(app.lastName)}`} )</p>
+            {/* Personal Details Row */}
+            <div style={{ display: 'flex', gap: '5px', marginBottom: '2px' }}>
+                <div style={{ ...fieldStyle, flex: 1.5 }}>
+                    <span style={labelStyle}>เกิดวันที่</span>
+                    <span style={valueStyle}>{dobDay} {dobMonth} {dobYear}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 0.8 }}>
+                    <span style={labelStyle}>อายุ</span>
+                    <span style={valueStyle}>{num(app.age)}</span>
+                    <span style={{ marginLeft: '2px' }}>ปี</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>เชื้อชาติ</span>
+                    <span style={valueStyle}>{val(app.race)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>สัญชาติ</span>
+                    <span style={valueStyle}>{val(app.nationality)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>ศาสนา</span>
+                    <span style={valueStyle}>{val(app.religion)}</span>
+                </div>
             </div>
-            <div className="signature-field" style={{ marginTop: '10px' }}>
-              <Field label="ลงวันที่สมัครงาน" value={formatDate(appDetails.applicationDate)} labelWidth="80px" fieldWidth="150px" />
-            </div>
-          </div>
 
+            <div style={{ display: 'flex', gap: '5px', marginBottom: '2px' }}>
+                <div style={{ ...fieldStyle, flex: 0.8 }}>
+                    <span style={labelStyle}>สูง</span>
+                    <span style={valueStyle}>{num(app.height)}</span>
+                    <span style={{ marginLeft: '2px' }}>ซม.</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 0.8 }}>
+                    <span style={labelStyle}>หนัก</span>
+                    <span style={valueStyle}>{num(app.weight)}</span>
+                    <span style={{ marginLeft: '2px' }}>กก.</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 2 }}>
+                    <span style={labelStyle}>สถานภาพ:</span>
+                    <Checkbox label="โสด" checked={app.maritalStatus === 'single'} />
+                    <Checkbox label="แต่งงาน" checked={app.maritalStatus === 'married'} />
+                    <Checkbox label="หม้าย" checked={app.maritalStatus === 'widowed'} />
+                    <Checkbox label="หย่า" checked={app.maritalStatus === 'divorced'} />
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>ทหาร:</span>
+                    <Checkbox label="ผ่าน" checked={app.militaryStatus === 'discharged'} />
+                    <Checkbox label="ยังไม่เกณฑ์" checked={app.militaryStatus === 'not-drafted'} />
+                </div>
+            </div>
+
+            {/* Permanent Address */}
+            <div style={{ display: 'flex', gap: '5px', marginBottom: '2px', marginTop: '4px' }}>
+                <div style={{ ...fieldStyle, flex: 2 }}>
+                    <span style={labelStyle}>ที่อยู่ตามทะเบียนบ้าน</span>
+                    <span style={valueStyle}>{val(permAddr.houseNo)} หมู่ {val(permAddr.moo)} ถ.{val(permAddr.street)}</span>
+                </div>
+            </div>
+            <div style={{ display: 'flex', gap: '5px', marginBottom: '5px' }}>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>ตําบล/แขวง</span>
+                    <span style={valueStyle}>{val(permAddr.subDistrict)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>อําเภอ/เขต</span>
+                    <span style={valueStyle}>{val(permAddr.district)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>จังหวัด</span>
+                    <span style={valueStyle}>{val(permAddr.province)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 0.8 }}>
+                    <span style={labelStyle}>รหัสปณ.</span>
+                    <span style={valueStyle}>{val(permAddr.postalCode)}</span>
+                </div>
+                <div style={{ flex: 1.5, display: 'flex', alignItems: 'flex-end' }}>
+                    <span style={labelStyle}>อาศัยกับ:</span>
+                    <Checkbox label="ตนเอง" checked={app.residenceType === 'own'} />
+                    <Checkbox label="เช่า" checked={app.residenceType === 'rent'} />
+                </div>
+            </div>
+
+            {/* Emergency Contact & Criminal & Position */}
+            <div style={{ borderTop: '1px dashed #ccc', paddingTop: '5px', marginTop: '5px' }}>
+                <div style={{ display: 'flex', gap: '5px', marginBottom: '2px' }}>
+                    <div style={{ ...fieldStyle, flex: 2 }}>
+                        <span style={{ ...labelStyle, fontWeight: 'bold' }}>บุคคลติดต่อฉุกเฉิน ชื่อ</span>
+                        <span style={valueStyle}>{val(emCon.firstName)} {val(emCon.lastName)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>เกี่ยวข้อง</span>
+                        <span style={valueStyle}>{val(emCon.relation)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1.5 }}>
+                        <span style={labelStyle}>โทร</span>
+                        <span style={valueStyle}>{val(emCon.mobilePhone)}</span>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: '5px', marginBottom: '5px' }}>
+                    <div style={{ ...fieldStyle, flex: 2 }}>
+                        <span style={labelStyle}>ตำแหน่งที่สมัคร</span>
+                        <span style={valueStyle}>{val(appDetails.position)}</span>
+                    </div>
+                    <div style={{ flex: 2, display: 'flex', alignItems: 'flex-end' }}>
+                        <span style={labelStyle}>เคยต้องโทษคดีอาญา:</span>
+                        <Checkbox label="เคย" checked={appDetails.criminalRecord === 'yes'} />
+                        <Checkbox label="ไม่เคย" checked={appDetails.criminalRecord === 'no'} />
+                    </div>
+                </div>
+            </div>
+
+            {/* Vehicle Information - Single Row */}
+            <div style={{ borderTop: '1px dashed #ccc', paddingTop: '5px', marginTop: '2px' }}>
+                <span style={{ ...labelStyle, fontWeight: 'bold' }}>ข้อมูลยานพาหนะ</span>
+                <div style={{ display: 'flex', gap: '5px', margin: '2px 0' }}>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>ยี่ห้อ</span>
+                        <span style={valueStyle}>{val(vehicleBrand)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>รุ่น</span>
+                        <span style={valueStyle}>{val(vehicleModel)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 0.8 }}>
+                        <span style={labelStyle}>สี</span>
+                        <span style={valueStyle}>{val(vehicleColor)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 0.8 }}>
+                        <span style={labelStyle}>ปี(ค.ศ.)</span>
+                        <span style={valueStyle}>{num(vehicle.year)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>ป้ายทะเบียน</span>
+                        <span style={valueStyle}>{val(vehicle.plateNo)}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Guarantor Information */}
+            <div style={{ borderTop: '1px dashed #ccc', paddingTop: '5px', marginTop: '2px' }}>
+                <span style={{ ...labelStyle, fontWeight: 'bold' }}>บุคคลค้ำประกัน</span>
+                <div style={{ display: 'flex', gap: '5px', margin: '2px 0' }}>
+                    <div style={{ ...fieldStyle, flex: 2 }}>
+                        <span style={labelStyle}>ชื่อ-สกุล</span>
+                        <span style={valueStyle}>{`${val(guarantor.firstName)} ${val(guarantor.lastName)}`.trim()}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1.5 }}>
+                        <span style={labelStyle}>เลขบัตร ปชช.</span>
+                        <span style={valueStyle}>{val(guarantor.nationalId)}</span>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: '5px', marginBottom: '2px' }}>
+                    <div style={{ ...fieldStyle, flex: 3 }}>
+                        <span style={labelStyle}>ที่อยู่</span>
+                        <span style={valueStyle}>{val(guarantorAddr.houseNo)} หมู่ {val(guarantorAddr.moo)} ถ.{val(guarantorAddr.street)} แขวง/ตำบล {val(guarantorAddr.subDistrict)}</span>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: '5px', marginBottom: '2px' }}>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>เขต/อำเภอ</span>
+                        <span style={valueStyle}>{val(guarantorAddr.district)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>จังหวัด</span>
+                        <span style={valueStyle}>{val(guarantorAddr.province)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 0.8 }}>
+                        <span style={labelStyle}>รหัสปณ.</span>
+                        <span style={valueStyle}>{val(guarantorAddr.postalCode)}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Declaration & Signature */}
+            <div style={{ marginTop: '10px', fontSize: '8pt', borderTop: '2px solid black', paddingTop: '5px' }}>
+                <p style={{ margin: '2px 0' }}>ข้าพเจ้าขอสัญญาว่าถ้าได้รับการพิจารณาได้เป็นพนักงานของบริษัทฯจะตั้งใจปฏิบัติหน้าที่อย่างเต็มที่จะซื่อตรง พร้อมทั้งจะรักษาผลประโยชน์ของบริษัททุกกรณี และหวังเป็นอย่างยิ่งว่าจะได้รับการพิจารณารับเข้าทำงาน จึงขอขอบพระคุณมา ณ โอกาสนี้</p>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '5px' }}>
+                <div style={{ width: '250px', textAlign: 'center' }}>
+                    <div style={{ ...fieldStyle, position: 'relative', marginBottom: '2px', justifyContent: 'center', alignItems: 'flex-end' }}>
+                        <span style={{ ...labelStyle, position: 'absolute', left: 0, bottom: 0 }}>ลงชื่อ</span>
+                        <div style={{ borderBottom: '1px dotted #555', width: '100%', height: '40px', position: 'relative' }}>
+                            {/* Signature Image Injection - Centered */}
+                            {data.signatures?.applicant && (
+                                <img
+                                    src={data.signatures.applicant}
+                                    style={{
+                                        position: 'absolute',
+                                        bottom: '0px',
+                                        left: '50%',
+                                        transform: 'translateX(-50%)',
+                                        height: '40px',
+                                        zIndex: 10
+                                    }}
+                                    alt="Applicant Signature"
+                                />
+                            )}
+                        </div>
+                        <span style={{ ...labelStyle, marginLeft: '5px' }}>ผู้สมัคร</span>
+                    </div>
+                    <div style={{ textAlign: 'center', fontSize: '9pt' }}>
+                        ( {val(app.prefix)}{val(app.firstName)} {val(app.lastName)} )
+                    </div>
+                    <div style={{ ...fieldStyle, marginTop: '5px', justifyContent: 'center' }}>
+                        <span style={labelStyle}>วันที่</span>
+                        <span style={{ ...valueStyle, flexGrow: 0, minWidth: '100px', textAlign: 'center' }}>{formatDate(appDetails.applicationDate)}</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </body>
-    </html>
-  );
+    );
 };
 
-/**
- * 2. Transport Contract Template
- */
-export const TransportContractTemplate = ({ data }: { data: Manifest }) => (
-  <html lang="th">
-    <head>
-      <meta charSet="UTF-8" />
-      <title>สัญญาจ้างขนส่ง</title>
-      <style>{`
-        body { font-family: 'Sarabun', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12pt; margin: 25mm; }
-        h1 { text-align: center; font-size: 16pt; }
-        p { line-height: 1.6; }
-      `}</style>
-    </head>
-    <body>
-      <h1>สัญญาจ้างขนส่ง</h1>
-      <p>วันที่ทำสัญญา: {formatDate(data.contractDetails?.contractDate || new Date())}</p>
-      <br />
-      <p>ผู้ว่าจ้าง: บริษัท ไดร์ฟออนบอร์ด จำกัด</p>
-      <p>ผู้รับจ้าง (พนักงานขับรถ): {`${val(data.applicant?.prefix)}${val(data.applicant?.firstName)} ${val(data.applicant?.lastName)}`}</p>
-      <p>ที่อยู่: {`${val(data.applicant?.currentAddress?.houseNo)} ${val(data.applicant?.currentAddress?.moo)} ${val(data.applicant?.currentAddress?.subDistrict)} ${val(data.applicant?.currentAddress?.district)} ${val(data.applicant?.currentAddress?.province)}`}</p>
-      <p>เลขบัตรประชาชน: {val(data.applicant?.nationalId)}</p>
-      <p>รถยนต์ที่ใช้: {val(data.vehicle?.plateNo)}</p>
-    </body>
-  </html>
-);
+// --- 2. TEMPLATE: สัญญาจ้างขนส่ง ---
 
-/**
- * 3. Guarantee Contract Template
- */
-export const GuaranteeContractTemplate = ({ data }: { data: Manifest }) => (
-  <html lang="th">
-    <head>
-      <meta charSet="UTF-8" />
-      <title>สัญญาค้ำประกันการทำงาน</title>
-      <style>{`
-        body { font-family: 'Sarabun', 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 12pt; margin: 25mm; }
-        h1 { text-align: center; font-size: 16pt; }
-        p { line-height: 1.6; }
-      `}</style>
-    </head>
-    <body>
-      <h1>สัญญาค้ำประกันการทำงาน</h1>
-      <p>วันที่ทำสัญญา: {formatDate(data.guarantor?.contractDate || new Date())}</p>
-      <br />
-      <p>ผู้ค้ำประกัน: {`${val(data.guarantor?.firstName)} ${val(data.guarantor?.lastName)}`}</p>
-      <p>ที่อยู่ผู้ค้ำประกัน: {`${val(data.guarantor?.address?.houseNo)} ${val(data.guarantor?.address?.moo)} ${val(data.guarantor?.address?.subDistrict)} ${val(data.guarantor?.address?.district)} ${val(data.guarantor?.address?.province)}`}</p>
-      <p>เลขบัตรประชาชนผู้ค้ำประกัน: {val(data.guarantor?.nationalId)}</p>
-      <br />
-      <p>ตกลงค้ำประกัน: {`${val(data.applicant?.prefix)}${val(data.applicant?.firstName)} ${val(data.applicant?.lastName)}`}</p>
-      <p>ซึ่งเป็นพนักงานของ บริษัท ไดร์ฟออนบอร์ด จำกัด</p>
-    </body>
-  </html>
-);
+export const TransportContractTemplate = ({ data }: { data: ManifestWithSignatures }) => {
+    const app = data.applicant || {} as any;
+    const contract = data.contractDetails || {} as any;
+    const contractAddr = contract.contactAddress || {} as any;
+    const vehicle = data.vehicle || {} as any;
 
+    const vehicleBrand = vehicle.brand === 'other' ? vehicle.brandOther : vehicle.brand;
+    const vehicleModel = vehicle.brand === 'other' ? vehicle.modelOther : vehicle.model;
+    const vehicleColor = vehicle.color === 'other' ? vehicle.colorOther : vehicle.color;
+
+    return (
+        <div style={pageStyle}>
+            <FontLoader />
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                {/* Logo Placeholder - Text based for now, essentially standard header */}
+                <h2 style={{ fontSize: '18pt', fontWeight: 'bold', margin: 0, color: '#cc0000' }}>บริษัท เบิกฟ้ากรุ๊ป จำกัด</h2>
+                <h3 style={{ fontSize: '14pt', fontWeight: 'bold', margin: 0 }}>BOEKFAH GROUP CO.,LTD.</h3>
+                <p style={{ fontSize: '10pt', margin: 0 }}>เลขที่ 202/357 ซอยเคหะร่มเกล้า 27 ถนนเคหะร่มเกล้า แขวงคลองสองต้นนุ่น</p>
+                <p style={{ fontSize: '10pt', margin: 0 }}>เขตลาดกระบัง กรุงเทพมหานคร 10520 โทรศัพท์-แฟ็กซ์ 02-047-7979</p>
+                <div style={{ borderBottom: '2px solid black', marginTop: '10px' }}></div>
+            </div>
+
+            <h1 style={{ ...h1Style, marginTop: '20px' }}>สัญญาจ้างขนส่ง</h1>
+            <div style={{ marginBottom: '15px' }}>
+                <div style={{ ...fieldStyle }}>
+                    <span style={labelStyle}>วันที่ทำสัญญา</span>
+                    <span style={valueStyle}>{formatDate(contract.contractDate || data.applicationDetails?.applicationDate)}</span>
+                </div>
+                <div style={{ ...fieldStyle }}>
+                    <span style={labelStyle}>ผู้ว่าจ้าง</span>
+                    <span style={valueStyle}>บริษัท เบิกฟ้ากรุ๊ป จำกัด</span>
+                </div>
+                <div style={{ ...fieldStyle }}>
+                    <span style={labelStyle}>ผู้รับจ้าง</span>
+                    <span style={valueStyle}>{`${val(app.prefix)}${val(app.firstName)} ${val(app.lastName)}`.trim()}</span>
+                </div>
+            </div>
+
+            <div style={{ marginBottom: '15px' }}>
+                <span style={{ ...labelStyle, fontWeight: 'bold', fontSize: '12pt' }}>ข้อมูลติดต่อ</span>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>โทรศัพท์</span>
+                        <span style={valueStyle}>{val(contract.phone || app.mobilePhone)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>แฟกซ์</span>
+                        <span style={valueStyle}>{val(contract.fax)}</span>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>ที่อยู่ติดต่อ</span>
+                        <span style={valueStyle}>{val(contractAddr.houseNo)} หมู่ {val(contractAddr.moo)} ถ.{val(contractAddr.street)}</span>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>ตำบล/แขวง</span>
+                        <span style={valueStyle}>{val(contractAddr.subDistrict)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>อำเภอ/เขต</span>
+                        <span style={valueStyle}>{val(contractAddr.district)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>จังหวัด</span>
+                        <span style={valueStyle}>{val(contractAddr.province)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>รหัสปณ.</span>
+                        <span style={valueStyle}>{val(contractAddr.postalCode)}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style={{ marginBottom: '15px' }}>
+                <span style={{ ...labelStyle, fontWeight: 'bold', fontSize: '12pt' }}>รายละเอียดรถที่ใช้ในการขนส่ง</span>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>ยี่ห้อ</span>
+                        <span style={valueStyle}>{val(vehicleBrand)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>รุ่น</span>
+                        <span style={valueStyle}>{val(vehicleModel)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>สี</span>
+                        <span style={valueStyle}>{val(vehicleColor)}</span>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>ปี (ค.ศ.)</span>
+                        <span style={valueStyle}>{num(vehicle.year)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>ป้ายทะเบียน</span>
+                        <span style={valueStyle}>{val(contract.vehiclePlateNo || vehicle.plateNo)}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* TERMS & CONDITIONS */}
+            <div style={{ marginTop: '20px', fontSize: '10pt', lineHeight: '1.5', textAlign: 'justify' }}>
+                <p style={{ textIndent: '40px', marginBottom: '10px' }}>
+                    สัญญาฉบับนี้ทำขึ้นระหว่าง บริษัท เบิกฟ้ากรุ๊ป จำกัด โดย นายวัชระ บุปผา ตำแหน่ง กรรมการผู้จัดการ ผู้มีอำนาจลงนาม สำนักงานตั้งอยู่เลขที่ 202/357 ซอยเคหะร่มเกล้า 27 ถนนเคหะร่มเกล้า แขวงคลองสองต้นนุ่น เขตลาดกระบัง กรุงเทพมหานคร 10520 โทรศัพท์ 02-047-7979 โทรสาร 02-047-7979 มือถือ 084-208-6992 ซึ่งต่อไปนี้ในสัญญานี้เรียกว่า "ผู้ว่าจ้าง" ฝ่ายหนึ่ง กับ
+                </p>
+                <div style={{ textIndent: '40px', marginBottom: '10px' }}>
+                    {`${val(app.prefix)}${val(app.firstName)} ${val(app.lastName)}`.trim()} เลขที่บัตรประจำตัวประชาชน {val(app.nationalId)}
+                    <br />
+                    ที่อยู่เลขที่ {val(contractAddr.houseNo)} หมู่ที่ {val(contractAddr.moo)} ถนน {val(contractAddr.street)} ตำบล {val(contractAddr.subDistrict)} อำเภอ {val(contractAddr.district)} จังหวัด {val(contractAddr.province)} รหัสไปรษณีย์ {val(contractAddr.postalCode)} โทรศัพท์ {val(contract.phone || app.mobilePhone)}
+                    <br />
+                    ในสัญญานี้เรียกว่า "ผู้รับจ้าง"
+                </div>
+
+                <p style={{ marginTop: '10px', marginBottom: '10px' }}>คู่สัญญาได้ตกลงทำสัญญาไว้ต่อกันมีข้อความและเงื่อนไขดังต่อไปนี้</p>
+
+                <div style={{ paddingLeft: '20px', margin: '5px 0' }}>
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 1.</strong> "ผู้ว่าจ้าง" ตกลงจ้าง และ "ผู้รับจ้าง" ตกลงรับจ้างทำการขนส่งสินค้าตามรายละเอียดของสินค้าปรากฏตามใบสั่งของที่ให้ผู้รับจ้างทำการขนส่งในแต่ละครั้ง และให้ถือเอาใบส่งของแต่ละครั้งเป็นส่วนหนึ่งของสัญญาฉบับนี้ด้วย</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 2.</strong> ผู้รับจ้างจะทำการขนส่งสินค้าตามข้อ 1. ด้วยรถยนต์หมายเลขทะเบียน ({val(contract.vehiclePlateNo || vehicle.plateNo)}) ซึ่งเป็นรถยนต์ของผู้รับจ้างเองที่มีกรรมสิทธิ์ และอยู่ในความครอบครองของตนเอง เพื่อนำส่งสินค้าตามที่ผู้ว่าจ้างกำหนดให้ส่งแก่ผู้รับสินค้าในกรุงเทพมหานคร และ/หรือ ต่างจังหวัดทั่วราชอาณาจักร โดยผู้รับจ้างจะต้องส่งให้ถึงผู้รับสินค้าตามวันเวลาและสถานที่ที่ผู้ว่าจ้างกำหนด</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 3.</strong> รถยนต์ที่ใช้บรรทุกสินค้าตามสัญญา ข้อ 2. ผู้รับจ้างจะต้องจัดให้มีคนขับรถ 1 คน ซึ่งจะต้องมีความชำนาญในการขับขี่รถยนต์ตามประเภทของรถยนต์ และรู้เส้นทางเป็นอย่างดี คนขับรถจะต้องไม่ติดยาเสพติด รวมทั้งจะต้องไม่ดื่มเครื่องดื่มที่มีแอลกอฮอล์ผสมอยู่ในขณะขับรถยนต์ และจะต้องมีพนักงานติดรถยนต์อีก 1 คน อยู่ประจำตลอดเวลาที่ทำการขนส่งสินค้าให้แก่ผู้ว่าจ้าง โดยค่าใช้จ่ายต่างๆ ที่เกี่ยวกับการขนส่งสินค้า รวมทั้งค่าจ้างพนักงานติดรถยนต์ ถือเป็นความรับผิดชอบของผู้รับจ้างทั้งหมดทั้งสิ้น</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 4.</strong> ผู้รับจ้างรวมถึงผู้อยู่ในความรับผิดชอบของผู้รับจ้าง ซึ่งเกี่ยวข้องกับรถบรรทุกตามสัญญานี้ มีหน้าที่ต้องปฏิบัติตามกฎระเบียบข้อบังคับและคำสั่งของผู้ว่าจ้างทุกประการ หากฝ่าฝืนและเกิดความเสียหายขึ้น ผู้รับจ้างจะต้องเป็นผู้รับผิดชอบทั้งสิ้น</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 5.</strong> เมื่อสินค้าที่จะทำการขนส่งในแต่ละครั้งได้บรรทุกขึ้นรถยนต์บรรทุกสินค้าของผู้รับจ้างแล้ว ให้สินค้าเหล่านั้นอยู่ในความรับผิดชอบดูแลของผู้รับจ้างทันทีตลอดเวลา จนกว่าผู้รับสินค้าปลายทางจะได้รับสินค้าโดยถูกต้องตามรายการใบส่งของ หากเกิดความเสียหายใดๆ แก่สินค้าที่ขนส่ง หรือชำรุด บุบสลาย หรือสูญหาย ไม่ว่าด้วยเหตุใดก็ตาม หรือไม่ว่าจะเกิดอุบัติเหตุหรือการกระทำโดยประมาทของคนขับรถ และ/หรือ พนักงานติดรถ หรือบุคคลภายนอก หรือเกิดจากการละเมิด หรือก่อให้เกิดความเสียหายแก่ผู้อื่นหรือผู้รับสินค้าปลายทางก็ตาม ผู้รับจ้างจะต้องรับผิดชอบชดใช้เต็มจำนวนราคาสินค้าตามราคาที่ผู้ว่าจ้างได้จัดส่งให้แก่ผู้รับสินค้าปลายทางทั้งสิ้น</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 6.</strong> ในการขนส่งสินค้าตามสัญญานี้ ผู้รับจ้างจะต้องทำการขนส่งด้วยความระมัดระวังตามประเภทของสินค้าที่ขนส่ง เพื่อไม่ก่อให้เกิดความเสียหายแก่สินค้า และจะต้องขนส่งโดยเร็วให้ทันตามกำหนด วัน เวลา และสถานที่ที่ผู้ว่าจ้างกำหนดไว้ในบิลส่งสินค้าเท่านั้น</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 7.</strong> หากเกิดความเสียหายอย่างใดอย่างหนึ่งแก่สินค้าที่ขนส่ง หรือชำรุด หรือสูญหาย ไม่ว่าด้วยเหตุใดก็ตาม ผู้รับจ้างจะต้องแจ้งให้ผู้ว่าจ้างทราบทันทีทุกกรณี</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 8.</strong> ในระหว่างทางที่ทำการขนส่งสินค้าตามสัญญานี้ ผู้รับจ้างห้ามนำสินค้าโยกย้ายหรือสับเปลี่ยนสินค้าออกจากรถยนต์คันที่บรรทุกสินค้าอยู่โดยเด็ดขาด</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 9.</strong> ในกรณีที่ผู้รับจ้างได้เก็บเงินจากลูกค้า ผู้รับจ้างจะต้องรีบนำเงินมาส่งให้ผู้ว่าจ้างโดยทันที มิฉะนั้นถือว่ามีเจตนายักยอกทรัพย์นายจ้าง และจะถูกดำเนินการทางกฎหมายต่อไป</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 10.</strong> ในกรณีที่ผู้รับจ้างต้องการบอกเลิกสัญญา ผู้รับจ้างจะต้องแจ้งให้ผู้ว่าจ้างทราบเป็นลายลักษณ์อักษรล่วงหน้าอย่างน้อย 30 วัน และผู้รับจ้างจะต้องมาปฏิบัติงานทุกวันจนถึงวันเลิกสัญญา หากในระหว่างนี้ผู้รับจ้างขาดงาน ทางผู้ว่าจ้างปรับเป็นเงินวันละ 1,500 บาท / ต่อวัน จนครบ 30 วัน</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 11.</strong> ในกรณีที่ผู้รับจ้างบอกเลิกสัญญากะทันหันโดยไม่ได้แจ้งให้ผู้ว่าจ้างทราบล่วงหน้าอย่างน้อย 30 วัน ผู้ว่าจ้างจะทำการปรับเงิน 1,500 บาท / ต่อวัน จนครบ 30 วัน</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 12.</strong> ผู้ว่าจ้างจะจ่ายค่าขนส่งตามหนังสือประกาศอัตราจ่ายแต่ละประเภทของการบรรทุกสินค้า โดยตัดบัญชีเดือนต่อเดือนทุกสิ้นเดือน และจะจ่ายให้แล้วเสร็จภายในวันที่ 10 หรือวันที่ 25 ของวันถัดไปตามตกลง</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 13.</strong> เมื่อผู้ว่าจ้างได้ส่งหนังสือถึงผู้รับจ้างเพื่อแจ้งให้ผู้รับจ้างทราบ หรือให้กระทำการใดๆ ตามสัญญานี้ หรือบอกเลิกสัญญา ให้ผู้ว่าจ้างส่งหนังสือถึงผู้รับจ้างทางไปรษณีย์ตอบรับส่งถึงผู้รับจ้างตามที่ระบุไว้ในสัญญานี้ แล้วให้ถือว่าผู้ว่าจ้างได้ส่งให้แก่ผู้รับจ้างโดยชอบแล้ว</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 14.</strong> ในกรณีที่ผู้รับจ้างลาออก ทางผู้ว่าจ้างยังไม่จ่ายค่าบรรทุกสินค้าในเดือนที่ลาออกนั้น จนกว่าผู้รับจ้างจะชดใช้ค่าเสียหายและค่าใช้จ่ายอื่นๆ ที่เกิดขึ้นที่มีต่อผู้ว่าจ้างจนครบจบสิ้น</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อ 15.</strong> ถ้าในกรณีผู้รับจ้างได้ทำสินค้าเสียหายชำรุด หรือสูญหาย แล้วขาดการติดต่อจากผู้รับจ้าง ไม่ว่าในกรณีใดๆ ทั้งสิ้น ทางผู้ว่าจ้างจะถือว่าทางผู้รับจ้างตั้งใจทุจริตหรือก่อการลักทรัพย์โดยเจตนา ผู้ว่าจ้างจึงจำเป็นต้องดำเนินคดีตามกฎหมายให้ถึงที่สุด</p>
+                </div>
+
+                <p style={{ marginTop: '20px', textAlign: 'center' }}><strong>ใจความในสัญญาแล้วเห็นว่าถูกต้องตรงตามเจตนาของคู่สัญญาทั้งสองฝ่าย จึงลงลายมือชื่อไว้ตรงต่อหน้าพยาน</strong></p>
+            </div>
+
+            {/* Signatures */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '40px', padding: '0 20px' }}>
+                <div style={{ width: '250px', textAlign: 'center' }}>
+                    <div style={{ borderBottom: '1px dotted #555', height: '30px', marginBottom: '5px' }}></div>
+                    <span>ลงชื่อ...................................................ผู้ว่าจ้าง</span><br />
+                    <span>( บริษัท เบิกฟ้ากรุ๊ป จำกัด )</span>
+                </div>
+                <div style={{ width: '250px', textAlign: 'center' }}>
+                    <div style={{ position: 'relative', height: '40px', borderBottom: '1px dotted #555', marginBottom: '5px' }}>
+                        {data.signatures?.applicant && (
+                            <img
+                                src={data.signatures.applicant}
+                                style={{
+                                    position: 'absolute',
+                                    bottom: '0px',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    height: '40px',
+                                    zIndex: 10
+                                }}
+                                alt="Signature"
+                            />
+                        )}
+                    </div>
+                    <span>ลงชื่อ...................................................ผู้รับจ้าง</span><br />
+                    <span>( {val(app.firstName)} {val(app.lastName)} )</span>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// --- 3. TEMPLATE: สัญญาค้ำประกัน ---
+
+export const GuaranteeContractTemplate = ({ data }: { data: ManifestWithSignatures }) => {
+    const guarantor = data.guarantor || {} as any;
+    const guarantorAddr = guarantor.address || {} as any;
+    const applicant = data.applicant || {} as any;
+
+    return (
+        <div style={pageStyle}>
+            <FontLoader />
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                <h2 style={{ fontSize: '18pt', fontWeight: 'bold', margin: 0, color: '#cc0000' }}>บริษัท เบิกฟ้ากรุ๊ป จำกัด</h2>
+                <h3 style={{ fontSize: '14pt', fontWeight: 'bold', margin: 0 }}>BOEKFAH GROUP CO.,LTD.</h3>
+                <p style={{ fontSize: '10pt', margin: 0 }}>เลขที่ 202/357 ซอยเคหะร่มเกล้า 27 ถนนเคหะร่มเกล้า แขวงคลองสองต้นนุ่น</p>
+                <p style={{ fontSize: '10pt', margin: 0 }}>เขตลาดกระบัง กรุงเทพมหานคร 10520 โทรศัพท์-แฟ็กซ์ 02-047-7979</p>
+                <div style={{ borderBottom: '2px solid black', marginTop: '10px' }}></div>
+            </div>
+
+            <h1 style={{ ...h1Style, marginTop: '20px' }}>สัญญาค้ำประกันบุคคลเข้าทำงาน</h1>
+            <div style={{ ...fieldStyle }}>
+                <span style={labelStyle}>วันที่ทำสัญญา</span>
+                <span style={valueStyle}>{formatDate(guarantor.contractDate || data.applicationDetails?.applicationDate)}</span>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+                <div style={{ ...fieldStyle, flex: 1.5 }}>
+                    <span style={labelStyle}>ข้าพเจ้า (ผู้ค้ำประกัน)</span>
+                    <span style={valueStyle}>{`${val(guarantor.firstName)} ${val(guarantor.lastName)}`.trim()}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>เลขบัตรประชาชน</span>
+                    <span style={valueStyle}>{val(guarantor.nationalId)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 0.5 }}>
+                    <span style={labelStyle}>อายุ</span>
+                    <span style={valueStyle}>{num(guarantor.age)}</span>
+                </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>เชื้อชาติ</span>
+                    <span style={valueStyle}>{val(guarantor.race)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>สัญชาติ</span>
+                    <span style={valueStyle}>{val(guarantor.nationality)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 2 }}>
+                    <span style={labelStyle}>อาชีพ</span>
+                    <span style={valueStyle}>{val(guarantor.occupation)}</span>
+                </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+                <div style={{ ...fieldStyle, flex: 1 }}>
+                    <span style={labelStyle}>เบอร์โทรศัพท์</span>
+                    <span style={valueStyle}>{val(guarantor.phone)}</span>
+                </div>
+                <div style={{ ...fieldStyle, flex: 2 }}>
+                    <span style={labelStyle}>สถานที่ทำงาน</span>
+                    <span style={valueStyle}>{'-'}</span>
+                </div>
+            </div>
+            <div style={{ marginBottom: '12px' }}>
+                <span style={{ ...labelStyle, fontWeight: 'bold', fontSize: '12pt' }}>ที่อยู่ผู้ค้ำประกัน</span>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>บ้านเลขที่</span>
+                        <span style={valueStyle}>{val(guarantorAddr.houseNo)} หมู่ {val(guarantorAddr.moo)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>ถนน</span>
+                        <span style={valueStyle}>{val(guarantorAddr.street)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>ตำบล/แขวง</span>
+                        <span style={valueStyle}>{val(guarantorAddr.subDistrict)}</span>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>อำเภอ/เขต</span>
+                        <span style={valueStyle}>{val(guarantorAddr.district)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>จังหวัด</span>
+                        <span style={valueStyle}>{val(guarantorAddr.province)}</span>
+                    </div>
+                    <div style={{ ...fieldStyle, flex: 1 }}>
+                        <span style={labelStyle}>รหัสไปรษณีย์</span>
+                        <span style={valueStyle}>{val(guarantorAddr.postalCode)}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style={{ marginTop: '15px' }}>
+                <div style={{ ...fieldStyle }}>
+                    <span style={labelStyle}>ตกลงทำสัญญาค้ำประกันให้แก่ (ผู้สมัคร)</span>
+                    <span style={valueStyle}>{`${val(applicant.prefix)}${val(applicant.firstName)} ${val(applicant.lastName)}`.trim()}</span>
+                </div>
+                <div style={{ ...fieldStyle }}>
+                    <span style={labelStyle}>ตำแหน่ง</span>
+                    <span style={valueStyle}>{val(data.applicationDetails?.position)}</span>
+                </div>
+            </div>
+
+            {/* TERMS & CONDITIONS */}
+            <div style={{ marginTop: '20px', fontSize: '10pt', lineHeight: '1.5', textAlign: 'justify' }}>
+                <p style={{ textIndent: '40px', marginBottom: '10px' }}>
+                    ข้าพเจ้า {val(guarantor.firstName)} {val(guarantor.lastName)} อายุ {num(guarantor.age)} ปี เชื้อชาติ {val(guarantor.race)} สัญชาติ {val(guarantor.nationality)} อยู่บ้านเลขที่ {val(guarantorAddr.houseNo)} หมู่ที่ {val(guarantorAddr.moo)} ถนน {val(guarantorAddr.street)} ตำบล/แขวง {val(guarantorAddr.subDistrict)} อำเภอ/เขต {val(guarantorAddr.district)} จังหวัด {val(guarantorAddr.province)} รหัสไปรษณีย์ {val(guarantorAddr.postalCode)} ถือบัตรประจำตัวประชาชนเลขที่ {val(guarantor.nationalId)} ซึ่งต่อไปในสัญญานี้เรียกว่า "ผู้ค้ำประกัน" ขอทำหนังสือสัญญาค้ำประกันฉบับนี้ไว้กับ บริษัท เบิกฟ้ากรุ๊ป จำกัด ซึ่งต่อไปในสัญญาจะเรียกว่า "บริษัท" มีข้อความดังนี้
+                </p>
+
+                <div style={{ paddingLeft: '20px', margin: '5px 0' }}>
+                    <p style={{ margin: '5px 0' }}><strong>ข้อที่ 1.</strong> ตามที่บริษัทได้ตกลงรับผู้รับจ้างชื่อ {`${val(applicant.prefix)}${val(applicant.firstName)} ${val(applicant.lastName)}`.trim()} อายุ {num(applicant.age)} ปี เชื้อชาติ {val(applicant.race)} สัญชาติ {val(applicant.nationality)} อยู่บ้านเลขที่ {val(applicant.currentAddress?.houseNo)} เข้าทำงานในบริษัทตั้งแต่วันที่ {formatDate(guarantor.applicantStartDate || data.applicationDetails?.applicationDate)} ถ้าหากได้ก่อให้เกิดหนี้สินขึ้นแก่บริษัทหรือกระทำการใดๆ อันก่อให้เกิดความเสียหายขึ้นแก่บริษัท ข้าพเจ้าในฐานะผู้ค้ำประกันยอมรับผิดชอบหนี้สินและค่าเสียหายทั้งหมดเต็มจำนวนที่เกิดความเสียหายของสินค้านั้นให้แก่ บริษัท เบิกฟ้ากรุ๊ป จำกัด ทันทีโดยไม่อ้างเหตุใดๆ มาปัดความรับผิดชอบเป็นอันขาด</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อที่ 2.</strong> ในกรณีที่บริษัทเรียกร้องให้ข้าพเจ้าในฐานะผู้ค้ำประกันรับผิดชอบชดใช้หนี้สินหรือค่าเสียหายดังกล่าวแล้ว ข้าพเจ้าผู้ค้ำประกันยอมสละสิทธิในอันที่จะขอให้บริษัทเรียกร้องเอาจากผู้รับจ้างก่อน โดยผู้ค้ำประกันจะได้รู้เห็นยินยอมหรือไม่ก็ตาม ผู้ค้ำประกันจะไม่อ้างเอาการผ่อนเวลาเช่นว่านั้นเป็นเหตุปลดเปลื้องความรับผิดชอบตามสัญญาค้ำประกัน</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อที่ 3.</strong> สัญญาค้ำประกันฉบับนี้ผู้ค้ำประกันตกลงยินยอมค้ำประกันให้ผู้รับจ้างตลอดระหว่างที่ทำงานอยู่กับบริษัท</p>
+
+                    <p style={{ margin: '5px 0' }}><strong>ข้อที่ 4.</strong> ในกรณีผู้ค้ำประกันประสงค์ที่จะบอกเลิกสัญญาค้ำประกันหรือถอนการค้ำประกันนี้ ผู้ค้ำประกันจะต้องแจ้งให้ทางบริษัททราบล่วงหน้าเป็นลายลักษณ์อักษรอย่างน้อย 30 วัน</p>
+                </div>
+
+                <p style={{ marginTop: '20px', textAlign: 'center' }}><strong>ข้าพเจ้าผู้ค้ำประกันได้อ่านและเข้าใจข้อความในสัญญาค้ำประกันฉบับนี้โดยตลอดแล้วเห็นว่าถูกต้อง จึงได้ลงลายมือชื่อไว้กับบริษัทและพยานไว้เป็นสำคัญ</strong></p>
+            </div>
+
+            {/* Guarantor Signature Section - CENTERED */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px', paddingRight: '20px' }}>
+                <div style={{ width: '280px', textAlign: 'center' }}>
+                    <div style={{ position: 'relative', height: '40px', borderBottom: '1px dotted #555', marginBottom: '5px' }}>
+                        {data.signatures?.guarantor && (
+                            <img
+                                src={data.signatures.guarantor}
+                                style={{
+                                    position: 'absolute',
+                                    bottom: '0px',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    height: '40px',
+                                    zIndex: 10
+                                }}
+                                alt="Guarantor Signature"
+                            />
+                        )}
+                    </div>
+                    <span>ลงชื่อ...................................................ผู้ค้ำประกัน</span><br />
+                    <span>( {val(guarantor.firstName)} {val(guarantor.lastName)} )</span>
+                </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '20px', paddingLeft: '20px' }}>
+                <div style={{ width: '250px', textAlign: 'center' }}>
+                    <div style={{ borderBottom: '1px dotted #555', height: '30px', marginBottom: '5px' }}></div>
+                    <span>ลงชื่อ...................................................พยาน</span><br />
+                    <span>( ................................................... )</span>
+                </div>
+            </div>
+        </div>
+    );
+};

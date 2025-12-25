@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useRef } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRef } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash2, UploadCloud } from "lucide-react";
 import type { DailyReportResponseSlot } from "@/lib/daily-report";
@@ -56,24 +56,30 @@ export function DailyReportSlotCard({
                 alt={slot.label}
                 className="aspect-video w-full rounded-md object-cover"
               />
-              <Button
-                variant="destructive"
-                size="icon"
-                className="absolute top-2 right-2 h-8 w-8"
-                onClick={onDelete}
-                disabled={isBusy || disabled}
-                aria-label="Delete image"
-              >
-                {deleting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Trash2 className="h-4 w-4" />
-                )}
-              </Button>
+              {!disabled && (
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-2 right-2 h-8 w-8"
+                  onClick={onDelete}
+                  disabled={isBusy}
+                  aria-label="Delete image"
+                >
+                  {deleting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-4 w-4" />
+                  )}
+                </Button>
+              )}
             </>
           ) : (
             <div className="flex aspect-video w-full items-center justify-center rounded-md border-2 border-dashed border-muted-foreground/40">
-              <p className="text-sm text-muted-foreground">No image uploaded</p>
+              {disabled ? (
+                <p className="text-sm text-muted-foreground">ไม่มีข้อมูล</p>
+              ) : (
+                <p className="text-sm text-muted-foreground">No image uploaded</p>
+              )}
             </div>
           )}
         </div>
@@ -89,19 +95,21 @@ export function DailyReportSlotCard({
           onChange={handleFileChange}
           disabled={isBusy || disabled}
         />
-        <Button
-          className="w-full"
-          onClick={handleUploadClick}
-          disabled={isBusy || disabled}
-        >
-          {uploading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <UploadCloud className="mr-2 h-4 w-4" />
-          )}
-          {slot.url ? "Replace Image" : "Upload Image"}
-        </Button>
-        {disabled && disabledReason && (
+        {!disabled && (
+          <Button
+            className="w-full"
+            onClick={handleUploadClick}
+            disabled={isBusy}
+          >
+            {uploading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <UploadCloud className="mr-2 h-4 w-4" />
+            )}
+            {slot.url ? "Replace Image" : "Upload Image"}
+          </Button>
+        )}
+        {disabled && disabledReason && !slot.url && (
           <p className="text-xs text-center text-destructive">{disabledReason}</p>
         )}
       </CardContent>

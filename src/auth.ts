@@ -11,7 +11,10 @@ export const authOptions: NextAuthOptions = {
   // Use a stable secret to avoid "decryption operation failed" JWT errors.
   // In production, set NEXTAUTH_SECRET in the environment.
   secret: process.env.NEXTAUTH_SECRET || "dev-nextauth-secret",
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   providers: [
     CredentialsProvider({
       name: "Credentials",

@@ -3,6 +3,7 @@ import './globals.css';
 import { AuthProvider } from '@/components/auth-provider';
 import { NextAuthProvider } from '@/components/session-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { IdleLockScreen } from '@/components/ui/idle-lock-screen';
 import { cn } from '@/lib/utils';
 import { Poppins, PT_Sans } from 'next/font/google';
 
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body className={cn('antialiased min-h-screen bg-background', fontHeading.variable, fontBody.variable, 'font-body')}>
         <NextAuthProvider>
           <AuthProvider>
+            <IdleLockScreen />
             {children}
             <Toaster />
           </AuthProvider>

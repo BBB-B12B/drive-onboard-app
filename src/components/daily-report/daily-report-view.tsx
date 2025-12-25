@@ -30,16 +30,39 @@ const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic"];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const MAX_CACHE_SIZE = 20; // Keep only 20 latest reports
 
-export function DailyReportView() {
+export interface DailyReportViewProps {
+  overrideDate?: Date;
+  overrideEmail?: string;
+  className?: string; // For styling flexibility
+  onUpdate?: () => void;
+}
+
+export function DailyReportView({ overrideDate, overrideEmail, className, onUpdate }: DailyReportViewProps = {}) {
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
   const { toast } = useToast();
 
-  const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
-  const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
+  const isPopupMode = !!(overrideDate || overrideEmail);
+
+  const [selectedDate, setSelectedDate] = useState<Date>(() => overrideDate ?? new Date());
+  const [selectedEmail, setSelectedEmail] = useState<string | null>(overrideEmail ?? null);
   const [userOptions, setUserOptions] = useState<{ email: string; name: string }[]>([]);
-  const [calendarMonth, setCalendarMonth] = useState(() => new Date());
+  const [calendarMonth, setCalendarMonth] = useState(() => overrideDate ?? new Date());
   const [completedDates, setCompletedDates] = useState<Date[]>([]);
+
+  // Sync props if they change (e.g. reused in dialog)
+  useEffect(() => {
+    if (overrideDate) {
+      setSelectedDate(overrideDate);
+      setCalendarMonth(overrideDate);
+    }
+  }, [overrideDate]);
+
+  useEffect(() => {
+    if (overrideEmail) {
+      setSelectedEmail(overrideEmail);
+    }
+  }, [overrideEmail]);
 
   // Cache state
   const [reportCache, setReportCache] = useState<Record<string, DailyReportResponse>>({});
@@ -68,7 +91,12 @@ export function DailyReportView() {
 
   const isReadOnly = useMemo(() => {
     if (isAdmin) return false;
-    return differenceInDays(startOfDay(new Date()), startOfDay(selectedDate)) > 2;
+    // Strict restriction: Non-admin can only edit TODAY's report
+    // Using startOfDay to compare dates ignoring time
+    const today = startOfDay(new Date());
+    const target = startOfDay(selectedDate);
+    // Allow if it's the same day. Any past or future date is read-only.
+    return differenceInDays(today, target) !== 0;
   }, [selectedDate, isAdmin]);
 
   const cacheKey = `${selectedEmail ?? ""}:${selectedDateStr}`;
@@ -302,6 +330,7 @@ export function DailyReportView() {
         }
 
         toast({ title: "บันทึกเรียบร้อย", description: `${slots.find((slot) => slot.id === slotId)?.label || "รายการ"} ถูกอัปเดตแล้ว` });
+        onUpdate?.();
 
       } catch (error) {
         console.error("[DailyReport] upload error", error);
@@ -310,7 +339,7 @@ export function DailyReportView() {
         setSlotUploading((prev) => ({ ...prev, [slotId]: false }));
       }
     },
-    [isSampleData, selectedEmail, selectedDate, selectedDateStr, slots, toast, cacheKey, updateCache]
+    [isSampleData, selectedEmail, selectedDate, selectedDateStr, slots, toast, cacheKey, updateCache, onUpdate]
   );
 
   const handleFileDelete = useCallback(
@@ -340,6 +369,7 @@ export function DailyReportView() {
         }
 
         toast({ title: "ลบรูปภาพเรียบร้อย", description: `${slots.find((slot) => slot.id === slotId)?.label || "รายการ"} ถูกลบแล้ว` });
+        onUpdate?.();
       } catch (error) {
         console.error("[DailyReport] delete error", error);
         toast({ variant: "destructive", title: "เกิดข้อผิดพลาด", description: error instanceof Error ? error.message : "ไม่สามารถลบได้" });
@@ -347,7 +377,7 @@ export function DailyReportView() {
         setSlotDeleting((prev) => ({ ...prev, [slotId]: false }));
       }
     },
-    [isSampleData, selectedEmail, selectedDateStr, slots, toast, cacheKey, updateCache]
+    [isSampleData, selectedEmail, selectedDateStr, slots, toast, cacheKey, updateCache, onUpdate]
   );
 
   if (!selectedEmail) {
@@ -361,121 +391,129 @@ export function DailyReportView() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">Daily Report</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          บันทึกข้อมูลพร้อมรูปภาพประกอบของการปฏิบัติงานแต่ละขั้นตอน สามารถอัปโหลดเพิ่มได้ตลอดวัน
-        </p>
-      </div>
-
-      <div className="grid gap-4 rounded-lg border bg-card p-4 shadow-sm md:grid-cols-[1fr_auto] md:items-end">
-        <div className="space-y-2">
-          <Label htmlFor="daily-report-date">เลือกวันที่</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn("w-full justify-start text-left font-normal", !selectedDate && "text-muted-foreground")}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(d) => d && setSelectedDate(d)}
-                initialFocus
-                modifiers={{ completed: completedDates }}
-                modifiersStyles={{ completed: { color: "var(--primary)", fontWeight: "bold", textDecoration: "underline" } }}
-                onMonthChange={setCalendarMonth}
-              />
-            </PopoverContent>
-          </Popover>
+      {!isPopupMode && (
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">Daily Report</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            บันทึกข้อมูลพร้อมรูปภาพประกอบของการปฏิบัติงานแต่ละขั้นตอน สามารถอัปโหลดเพิ่มได้ตลอดวัน
+          </p>
         </div>
+      )}
 
-        {isAdmin && (
-          <div className="space-y-2 md:w-[300px]">
-            <Label htmlFor="employee-select">เลือกพนักงาน (Admin)</Label>
-            <Select value={selectedEmail} onValueChange={setSelectedEmail}>
-              <SelectTrigger>
-                <SelectValue placeholder="เลือกพนักงาน" />
-              </SelectTrigger>
-              <SelectContent>
-                {userOptions.map(u => (
-                  <SelectItem key={u.email} value={u.email}>{u.name} ({u.email})</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      {!isPopupMode && (
+        <div className="grid gap-4 rounded-lg border bg-card p-4 shadow-sm md:grid-cols-[1fr_auto] md:items-end">
+          <div className="space-y-2">
+            <Label htmlFor="daily-report-date">เลือกวันที่</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn("w-full justify-start text-left font-normal", !selectedDate && "text-muted-foreground")}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(d) => d && setSelectedDate(d)}
+                  initialFocus
+                  modifiers={{ completed: completedDates }}
+                  modifiersStyles={{ completed: { color: "var(--primary)", fontWeight: "bold", textDecoration: "underline" } }}
+                  onMonthChange={setCalendarMonth}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
-        )}
 
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={loadReport}
-          disabled={loading}
-          className="mb-0.5"
-          title="รีโหลดข้อมูล"
-        >
-          <RefreshCcw className={cn("h-4 w-4", loading && "animate-spin")} />
-        </Button>
+          {isAdmin && (
+            <div className="space-y-2 md:w-[300px]">
+              <Label htmlFor="employee-select">เลือกพนักงาน (Admin)</Label>
+              <Select value={selectedEmail} onValueChange={setSelectedEmail}>
+                <SelectTrigger>
+                  <SelectValue placeholder="เลือกพนักงาน" />
+                </SelectTrigger>
+                <SelectContent>
+                  {userOptions.map(u => (
+                    <SelectItem key={u.email} value={u.email}>{u.name} ({u.email})</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
-      </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={loadReport}
+            disabled={loading}
+          >
+            <RefreshCcw className={cn("h-4 w-4", loading && "animate-spin")} />
+          </Button>
+        </div>
+      )}
 
       {fetchError && (
         <Alert variant="destructive">
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{fetchError}</AlertDescription>
         </Alert>
-      )}
+      )
+      }
 
-      {loading && !report && (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      )}
+      {
+        loading && !report && (
+          <div className="flex justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        )
+      }
 
-      {!loading && (
-        <div className="space-y-8">
-          {/* Before Start */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold border-b pb-2">ก่อนเริ่มงาน</h2>
-            <div className="grid gap-6 sm:grid-cols-2">
-              {beforeSlots.map(slot => (
-                <DailyReportSlotCard
-                  key={slot.id}
-                  slot={slot}
-                  uploading={slotUploading[slot.id]}
-                  deleting={slotDeleting[slot.id]}
-                  onUpload={(file) => handleFileUpload(slot.id, file)}
-                  onDelete={() => handleFileDelete(slot.id)}
-                  readOnly={isReadOnly}
-                />
-              ))}
+      {
+        !loading && (
+          <div className="space-y-8">
+            {/* Before Start */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold border-b pb-2">ก่อนเริ่มงาน</h2>
+              <div className="grid gap-6 sm:grid-cols-2">
+                {beforeSlots.map(slot => (
+                  <DailyReportSlotCard
+                    key={slot.id}
+                    slot={slot}
+                    uploading={slotUploading[slot.id]}
+                    deleting={slotDeleting[slot.id]}
+                    onUpload={(file) => handleFileUpload(slot.id, file)}
+                    onDelete={() => handleFileDelete(slot.id)}
+                    disabled={isReadOnly}
+                    disabledReason="ไม่สามารถแก้ไขย้อนหลังได้"
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* After End */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold border-b pb-2">หลังเลิกงาน</h2>
+              <div className="grid gap-6 sm:grid-cols-2">
+                {afterSlots.map(slot => (
+                  <DailyReportSlotCard
+                    key={slot.id}
+                    slot={slot}
+                    uploading={slotUploading[slot.id]}
+                    deleting={slotDeleting[slot.id]}
+                    onUpload={(file) => handleFileUpload(slot.id, file)}
+                    onDelete={() => handleFileDelete(slot.id)}
+                    disabled={isReadOnly}
+                    disabledReason="ไม่สามารถแก้ไขย้อนหลังได้"
+                  />
+                ))}
+              </div>
             </div>
           </div>
-
-          {/* After End */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold border-b pb-2">หลังเลิกงาน</h2>
-            <div className="grid gap-6 sm:grid-cols-2">
-              {afterSlots.map(slot => (
-                <DailyReportSlotCard
-                  key={slot.id}
-                  slot={slot}
-                  uploading={slotUploading[slot.id]}
-                  deleting={slotDeleting[slot.id]}
-                  onUpload={(file) => handleFileUpload(slot.id, file)}
-                  onDelete={() => handleFileDelete(slot.id)}
-                  readOnly={isReadOnly}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 }

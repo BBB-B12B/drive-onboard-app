@@ -13,3 +13,18 @@
 | **[F-007]** | AI Analysis Tool (AI วิเคราะห์) | [T-030] | `src/ai/dev.ts` | Planned (วางแผน) |
 | **[F-008]** | Performance Tuning (ปรับจูนระบบ) | [T-042] | `src/components/daily-report/*` | Done (เสร็จแล้ว) <br> *Note: ระวังเรื่อง Prop mismatch และ MD5 calculation order* |
 | **[F-009]** | Security Cleanup (ความปลอดภัย) | [T-043] | `src/auth.ts` | Done (เสร็จแล้ว) |
+| **[F-010]** | Daily Report Review (ตรวจรายงาน) | [T-023], [T-024], [T-026] | `src/components/daily-report-overview/*` | Phase 2 Done, Bug Fixing |
+| **[F-011]** | Data Export (ส่งออกข้อมูล) | [T-025] | `dashboard/daily-report-tracker.tsx` | Done (เสร็จแล้ว) |
+| **[F-012]** | Idle Timeout Protection (ระบบล็อคเมื่อไม่ใช้งาน) | [T-045] | `components/idle-lock.tsx` | Done (เสร็จแล้ว) |
+| **[F-013]** | Dashboard UX Refinement (ปรับปรุงการใช้งาน Dashboard) | [T-046] | `components/dashboard/daily-report-tracker.tsx` | Done (เสร็จแล้ว) |
+
+## Data/Variable Traceability (โครงข่ายตัวแปรและแหล่งข้อมูล)
+ตารางนี้ใช้ Map ระหว่าง Entity <-> ตัวแปรใน Code เพื่อให้ง่ายต่อการ Debug และพัฒนาต่อ
+
+| ข้อมูลหลัก (Entity) | ชื่อ Interface/Type | ตัวแปร State หลัก (Key State Variables) | ไฟล์ที่เกี่ยวข้อง (Related Files) | หมายเหตุ (Notes) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Application** | `AppRow` | `applications`, `filteredApplications` | `dashboard/applications-client.tsx`, `lib/types.ts` | ใช้ `D1` เป็นหลัก |
+| **User** | `User` | `user` | `hooks/use-auth.ts`, `src/auth.ts` | Role-based (admin/user) |
+| **DailyReport** | `DailyReportResponse` | `report`, `reportCache` | `daily-report/daily-report-view.tsx`, `lib/daily-report.ts` | มี LRU Cache |
+| **DailyReportSlot** | `DailyReportResponseSlot` | `slots` | `daily-report/daily-report-view.tsx` | ใช้ `id` เป็น Key |
+| **DailyReportSummary** | `DailyReportSummaryRow` | `rows`, `filteredRows` | `dashboard/daily-report-tracker.tsx`, `lib/daily-report.ts` | หน้า Overview |

@@ -10,6 +10,12 @@
 | **[F-005]** | **Verification Workflow** | หน้าจอ Admin สำหรับตรวจสอบเอกสาร, ให้คะแนนคุณภาพ, เพิ่มโน้ต, และกดอนุมัติ/ปฏิเสธ |
 | **[F-006]** | **Status Management** | ระบบสถานะใบสมัคร (`incomplete`=ไม่ครบ, `pending`=รอตรวจ, `approved`=ผ่าน, `rejected`=ไม่ผ่าน) พร้อม log การเปลี่ยนแปลง |
 | **[F-007]** | **AI Analysis Tool** | ใช้ AI (Genkit) วิเคราะห์สาเหตุที่ใบสมัครไม่สมบูรณ์ และสร้างคำแนะนำให้ผู้สมัคร |
+| **[F-008]** | **Performance Tuning** | ปรับปรุงประสิทธิภาพระบบ (Web Worker, Caching, Bundle Size) เพื่อลด Latency และ Resource Usage |
+| **[F-009]** | **Security Cleanup** | ลบโค้ดทดสอบและช่องโหว่ความปลอดภัย (Test Accounts, Insecure Fallbacks) ก่อน Deploy |
+| **[F-010]** | **Daily Report Review** | Popup สำหรับ Admin เพื่อดูและแก้ไขรายงานประจำวันจากหน้า Overview โดยไม่ต้องเปลี่ยนหน้า <br> **Constraint**: User ทั่วไปแก้ไขได้เฉพาะ "วันนี้" เท่านั้น, Admin แก้ไขได้ทุกวัน |
+| **[F-011]** | Data Export (ส่งออกข้อมูล) | Admin สามารถ Export รายงานเป็น CSV ได้ |
+| **[F-012]** | Idle Timeout Protection (ระบบล็อคเมื่อไม่ใช้งาน) | จับเวลาการใช้งาน หากนิ่งเกิน 3 นาทีให้ขึ้นหน้าจอ Blue Screen บังข้อมูลไว้ |
+| **[F-013]** | Dashboard UX Refinement (ปรับปรุงการใช้งาน Dashboard) | Infinite Scroll, Fixed Height Container, Sortable Columns, Order by Date DESC |
 
 ## 2. Data Models (Simplified Data Structure)
 ### Drivers / Applications (คนขับ/ใบสมัคร)

@@ -37,7 +37,7 @@ function formatDate(date: string | Date | undefined): string {
  */
 const pageStyle: React.CSSProperties = {
     width: '100%', // ให้เต็มความกว้าง A4 ที่ตั้งค่าใน puppeteer
-    minHeight: '297mm',
+    // minHeight: '297mm', // REMOVED: Causing extra page if content + margins > A4
     padding: '0', // เราคุมระยะขอบด้วย puppeteer margin
     margin: '0 auto',
     boxSizing: 'border-box',
@@ -61,7 +61,7 @@ const h1Style: React.CSSProperties = {
     fontSize: '16pt',
     fontWeight: 'bold',
     textAlign: 'center',
-    margin: '0 0 10px 0',
+    margin: '0 0 5px 0',
 };
 
 // Style สำหรับช่องกรอกข้อมูล (Label + ขีดเส้นใต้)
@@ -441,7 +441,7 @@ export const ApplicationFormTemplate = ({ data }: { data: ManifestWithSignatures
                 <p style={{ margin: '2px 0' }}>ข้าพเจ้าขอสัญญาว่าถ้าได้รับการพิจารณาได้เป็นพนักงานของบริษัทฯจะตั้งใจปฏิบัติหน้าที่อย่างเต็มที่จะซื่อตรง พร้อมทั้งจะรักษาผลประโยชน์ของบริษัททุกกรณี และหวังเป็นอย่างยิ่งว่าจะได้รับการพิจารณารับเข้าทำงาน จึงขอขอบพระคุณมา ณ โอกาสนี้</p>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '15px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '5px' }}>
                 <div style={{ width: '250px', textAlign: 'center' }}>
                     <div style={{ ...fieldStyle, position: 'relative', marginBottom: '2px', justifyContent: 'center', alignItems: 'flex-end' }}>
                         <span style={{ ...labelStyle, position: 'absolute', left: 0, bottom: 0 }}>ลงชื่อ</span>

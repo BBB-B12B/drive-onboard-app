@@ -8,807 +8,20 @@
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 6.3s
+ ✓ Ready in 3.5s
+ ○ Compiling / ...
+ ✓ Compiled / in 2.9s (897 modules)
+ GET / 200 in 3639ms
+ ✓ Compiled in 821ms (388 modules)
  ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 14.5s (1122 modules)
- GET / 200 in 15719ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+ ✓ Compiled /api/auth/[...nextauth] in 1409ms (1121 modules)
 [Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 [Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 1317ms
- GET /api/auth/session 200 in 17822ms
- GET /api/auth/session 200 in 17002ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 242ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 366ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 360ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 275ms
+ GET /api/auth/session 200 in 2738ms
  ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 8.7s (3254 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- ○ Compiling /api/applications ...
- GET /dashboard 200 in 17914ms
- GET /dashboard 200 in 18246ms
- ✓ Compiled /api/applications in 7.7s (3659 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 1884ms
- GET / 200 in 2024ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 968ms
- GET /api/applications 200 in 11237ms
- GET /api/applications 200 in 11266ms
- ○ Compiling /api/daily-reports/summary ...
- ✓ Compiled /api/daily-reports/summary in 1520ms (3665 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 259ms
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- GET /api/applications 200 in 362ms
- GET /api/daily-reports/summary?email=driver1@example.com&startDate=2025-12-01&endDate=2025-12-24 200 in 3426ms
- GET /api/daily-reports/summary?email=driver1@example.com&startDate=2025-12-01&endDate=2025-12-24 200 in 3473ms
- GET /api/daily-reports/summary?email=driver1@example.com&startDate=2025-12-01&endDate=2025-12-24 200 in 332ms
- GET /dashboard 200 in 831ms
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- GET /api/applications 200 in 236ms
- GET /api/daily-reports/summary?email=driver1@example.com&startDate=2025-12-01&endDate=2025-12-24 200 in 137ms
- GET /dashboard 200 in 425ms
- ○ Compiling /dashboard/daily-report ...
- ✓ Compiled /dashboard/daily-report in 1728ms (3725 modules)
- GET /dashboard/daily-report 200 in 1894ms
- ○ Compiling /api/daily-reports ...
- ✓ Compiled /api/daily-reports in 3.5s (3727 modules)
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 4279ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 5090ms
- ○ Compiling /api/daily-reports/sign-put ...
- ✓ Compiled /api/daily-reports/sign-put in 871ms (3729 modules)
- POST /api/daily-reports/sign-put 200 in 980ms
- POST /api/daily-reports 200 in 1393ms
- GET /dashboard/daily-report 200 in 255ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 237ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 402ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 406ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 313ms
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- GET /api/applications 200 in 1021ms
- GET /api/daily-reports/summary?email=driver1@example.com&startDate=2025-12-01&endDate=2025-12-24 200 in 519ms
- GET /dashboard 200 in 1700ms
- GET /api/daily-reports/summary?email=driver1%40example.com&startDate=2025-12-01&endDate=2025-12-24 200 in 284ms
- GET /api/daily-reports/summary?email=driver1%40example.com&startDate=2025-12-01&endDate=2025-12-24 200 in 450ms
- GET /dashboard/daily-report 200 in 126ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 256ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 1700ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 449ms
- ✓ Compiled in 6s (3324 modules)
- ○ Compiling /api/daily-reports ...
- ✓ Compiled /api/daily-reports in 1008ms (1965 modules)
- ✓ Compiled (2357 modules)
- GET /dashboard/daily-report 200 in 3316ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 3703ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 3709ms
- ⨯ ./src/components/daily-report/daily-report-view.tsx
-Error:   [31mx[0m Unexpected token `div`. Expected jsx identifier
-     ,-[[36;1;4m/Volumes/BriteBrain/Projects/DriverDailyReport/src/components/daily-report/daily-report-view.tsx[0m:385:1]
- [2m382[0m |   }
- [2m383[0m | 
- [2m384[0m |   return (
- [2m385[0m |     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-     : [35;1m     ^^^[0m
- [2m386[0m |       {!isPopupMode && (
- [2m387[0m |         <div>
- [2m388[0m |           <h1 className="text-3xl font-semibold tracking-tight text-foreground">Daily Report</h1>
-     `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/components/daily-report/daily-report-view.tsx
-./src/app/dashboard/daily-report/page.tsx
- ⨯ ./src/components/daily-report/daily-report-view.tsx
-Error:   [31mx[0m Unexpected token `div`. Expected jsx identifier
-     ,-[[36;1;4m/Volumes/BriteBrain/Projects/DriverDailyReport/src/components/daily-report/daily-report-view.tsx[0m:385:1]
- [2m382[0m |   }
- [2m383[0m | 
- [2m384[0m |   return (
- [2m385[0m |     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
-     : [35;1m     ^^^[0m
- [2m386[0m |       {!isPopupMode && (
- [2m387[0m |         <div>
- [2m388[0m |           <h1 className="text-3xl font-semibold tracking-tight text-foreground">Daily Report</h1>
-     `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/components/daily-report/daily-report-view.tsx
-./src/app/dashboard/daily-report/page.tsx
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- ✓ Compiled in 3.6s (3324 modules)
- GET /dashboard/daily-report 200 in 2753ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 7.7s (1948 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 10488ms
- ○ Compiling /api/daily-reports/summary ...
- ✓ Compiled /api/daily-reports/summary in 6.8s (2354 modules)
- ✓ Compiled (2359 modules)
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 24251ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 24191ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 1645ms
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 1248ms (2351 modules)
- GET /api/applications 200 in 1647ms
- ✓ Compiled /api/daily-reports/summary in 252ms (2357 modules)
- GET /api/daily-reports/summary?email=driver1@example.com&startDate=2025-12-01&endDate=2025-12-25 200 in 2319ms
- GET /dashboard 200 in 4426ms
- GET /api/daily-reports/summary?email=driver1%40example.com&startDate=2025-12-01&endDate=2025-12-25 200 in 134ms
- GET /api/daily-reports/summary?email=driver1%40example.com&startDate=2025-12-01&endDate=2025-12-25 200 in 330ms
- ○ Compiling /api/daily-reports ...
- ✓ Compiled /api/daily-reports in 506ms (2359 modules)
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 958ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 604ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 1047ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 1510ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-20 200 in 297ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 267ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 790ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-20 200 in 804ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-16 200 in 307ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 355ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 357ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-16 200 in 707ms
- GET /dashboard/daily-report 200 in 118ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 260ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-25 200 in 738ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 505ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-23 200 in 1493ms
- ✓ Compiled in 4s (3324 modules)
- GET /dashboard/daily-report 200 in 211ms
- ✓ Compiled in 937ms (3324 modules)
- GET /dashboard/daily-report 200 in 80ms
- GET /dashboard/daily-report 200 in 322ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 1712ms (1948 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 2065ms
- ✓ Compiled /api/daily-reports in 462ms (1967 modules)
- ✓ Compiled (2359 modules)
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-25 200 in 2029ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 3108ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-23 200 in 682ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 462ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-22 200 in 712ms
- GET /dashboard/daily-report 200 in 241ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 198ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 373ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-25 200 in 468ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-23 200 in 474ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 586ms
- ⨯ ./src/components/daily-report/daily-report-slot-card.tsx
-Error:   [31mx[0m Unexpected token `Card`. Expected jsx identifier
-    ,-[[36;1;4m/Volumes/BriteBrain/Projects/DriverDailyReport/src/components/daily-report/daily-report-slot-card.tsx[0m:46:1]
- [2m43[0m |   const isBusy = uploading || deleting;
- [2m44[0m | 
- [2m45[0m |   return (
- [2m46[0m |     <Card>
-    : [35;1m     ^^^^[0m
- [2m47[0m |       <CardHeader>
- [2m48[0m |         <CardTitle>{slot.label}</CardTitle>
- [2m49[0m |       </CardHeader>
-    `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/components/daily-report/daily-report-slot-card.tsx
-./src/components/daily-report/daily-report-view.tsx
-./src/app/dashboard/daily-report/page.tsx
- ✓ Compiled in 1898ms (3324 modules)
- GET /dashboard/daily-report 200 in 302ms
- ✓ Compiled in 725ms (3324 modules)
- GET /dashboard/daily-report 200 in 75ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 4.1s (1948 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 5440ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 1052ms
- GET /dashboard/daily-report 200 in 564ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 136ms
- ○ Compiling /api/daily-reports/summary ...
- ✓ Compiled /api/daily-reports/summary in 3.2s (2354 modules)
- ✓ Compiled (2359 modules)
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-25 200 in 4538ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 334ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 336ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 5813ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/csrf 200 in 221ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- POST /api/auth/signout 200 in 119ms
- ○ Compiling /login ...
- ✓ Compiled /login in 1701ms (3740 modules)
- GET /login 200 in 1910ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 187ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/providers 200 in 149ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/csrf 200 in 86ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- POST /api/auth/callback/credentials 200 in 530ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 76ms
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- ✓ Compiled /api/applications in 415ms (2370 modules)
- GET /api/applications 200 in 694ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 486ms
- GET /dashboard 200 in 1245ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 1733ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 1733ms
- ○ Compiling /api/daily-reports ...
- ✓ Compiled /api/daily-reports in 1454ms (3740 modules)
- GET /api/users 200 in 1708ms
- GET /api/users 200 in 1713ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 1808ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 1872ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 2325ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 2329ms
- ✓ Compiled /api/auth/[...nextauth] in 432ms (2370 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 663ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 256ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 282ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 118ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 443ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 443ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 426ms
- GET /api/users 200 in 431ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 400ms
- GET /api/users 200 in 438ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-08 200 in 544ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-08 200 in 548ms
- DELETE /api/daily-reports 200 in 1051ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 164ms
- DELETE /api/daily-reports 200 in 1420ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 106ms
- DELETE /api/daily-reports 200 in 1151ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 108ms
- GET /api/users 200 in 107ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 185ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 97ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 255ms
- GET /api/users 200 in 296ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-08 200 in 379ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-08 200 in 385ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 102ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 206ms
- GET /api/users 200 in 122ms
- GET /api/users 200 in 164ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 191ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 183ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 237ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 242ms
- GET /api/users 200 in 192ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 201ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-07 200 in 358ms
- GET /api/users 200 in 361ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 324ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-07 200 in 364ms
- DELETE /api/daily-reports 200 in 1025ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 95ms
- DELETE /api/daily-reports 200 in 1076ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 101ms
- DELETE /api/daily-reports 200 in 1171ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 169ms
- DELETE /api/daily-reports 200 in 1568ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 109ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 130ms
- DELETE /api/daily-reports 200 in 1396ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 214ms
- DELETE /api/daily-reports 200 in 1000ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 219ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 134ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 140ms
- GET /api/users 200 in 143ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-07 200 in 338ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-07 200 in 342ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 334ms
- GET /api/users 200 in 360ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 104ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 134ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 101ms
- DELETE /api/daily-reports 200 in 1274ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 103ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 193ms
- GET /api/daily-reports/summary?startDate=2025-01-01&endDate=2025-12-25 200 in 530ms
- GET /api/daily-reports/summary?startDate=2025-01-01&endDate=2025-12-25 200 in 590ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 373ms
- ✓ Compiled in 7.5s (3341 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- GET /dashboard 200 in 402ms
- ○ Compiling /api/daily-reports/summary ...
- ✓ Compiled /api/daily-reports/summary in 833ms (1975 modules)
- GET /api/daily-reports/summary?startDate=2025-01-01&endDate=2025-12-25 200 in 2804ms
- ✓ Compiled in 3.5s (3341 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- GET /dashboard 200 in 327ms
- ✓ Compiled /favicon.ico in 462ms (1970 modules)
- ✓ Compiled in 1148ms (3357 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- GET /dashboard 200 in 221ms
- ✓ Compiled in 1256ms (3357 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- GET /dashboard 200 in 299ms
- ✓ Compiled in 2.2s (3357 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- GET /dashboard 200 in 1031ms
- ○ Compiling /api/daily-reports ...
- ✓ Compiled /api/daily-reports in 749ms (1972 modules)
- ✓ Compiled (2371 modules)
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-07 200 in 3371ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-07 200 in 3384ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 4332ms
- GET /api/users 200 in 4516ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 4446ms
- GET /api/users 200 in 4523ms
- ✓ Compiled in 4.2s (3758 modules)
- ✓ Compiled in 1ms (2371 modules)
- ✓ Compiled in 1ms (2371 modules)
- ✓ Compiled in 0ms (2371 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- GET /dashboard 200 in 1733ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 4216ms
- GET /api/daily-reports/summary?startDate=2025-01-01&endDate=2025-12-25 200 in 544ms
- ✓ Compiled in 3.3s (3758 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- GET /dashboard 200 in 154ms
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:96:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-  94 |
-  95 | // Convenience helper used in server components/pages
-> 96 | export const auth = async () => getServerSession(authOptions);
-     |                                                 ^
-  97 |
- ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 958ms (2361 modules)
- GET /api/applications 200 in 1764ms
- ✓ Compiled /api/daily-reports/summary in 297ms (2367 modules)
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 2.1s (2369 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 2441ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 2858ms
- GET /dashboard 200 in 4800ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 532ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 529ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 361ms
- ○ Compiling /api/daily-reports ...
- ✓ Compiled /api/daily-reports in 932ms (1977 modules)
- ✓ Compiled (2369 modules)
- GET /api/users 200 in 1794ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 1787ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-01 200 in 1869ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-01 200 in 1967ms
- GET /api/users 200 in 1970ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 1907ms
- GET /api/users 200 in 233ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-01 200 in 243ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-01 200 in 244ms
- GET /api/users 200 in 273ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 324ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 287ms
- ○ Compiling /api/daily-reports/sign-put ...
- ✓ Compiled /api/daily-reports/sign-put in 583ms (2371 modules)
- POST /api/daily-reports/sign-put 200 in 685ms
- POST /api/daily-reports 200 in 996ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 129ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 250ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 172ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 230ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 128ms
- GET /api/users 200 in 331ms
- GET /api/users 200 in 329ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-01 200 in 403ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-01 200 in 718ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 523ms (2373 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 715ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 177ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 232ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 141ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 386ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-01 200 in 481ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-01 200 in 565ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 1606ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 1516ms
- GET /api/users 200 in 1609ms
- GET /api/users 200 in 1612ms
- DELETE /api/daily-reports 200 in 1710ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 104ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 254ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 126ms
- GET /api/users 200 in 123ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 126ms
- GET /api/users 200 in 132ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 99ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 200ms
- GET /api/daily-reports?email=driver1%40example.com&date=2025-12-24 200 in 349ms
- DELETE /api/daily-reports 200 in 2522ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 107ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 105ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 316ms
- GET /api/daily-reports/summary?email=driver1%40example.com&month=2025-12 200 in 108ms
- ✓ Compiled in 3s (1954 modules)
+ ✓ Compiled /dashboard in 1598ms (3579 modules)
 Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
     at auth (src/auth.ts:99:49)
@@ -826,49 +39,6 @@ Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be await
 >  99 | export const auth = async () => getServerSession(authOptions);
       |                                                 ^
   100 |
- GET /dashboard 200 in 477ms
- ○ Compiling /api/daily-reports/summary ...
- ✓ Compiled /api/daily-reports/summary in 7.5s (3362 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- GET /dashboard 200 in 345ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 2097ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 6014ms
- ✓ Compiled in 1334ms (3362 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- GET /dashboard 200 in 163ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
 Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
     at auth (src/auth.ts:99:49)
@@ -887,266 +57,653 @@ Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be await
       |                                                 ^
   100 |
  ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 2.4s (2367 modules)
- GET /api/applications 200 in 2754ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 273ms
- GET /dashboard 200 in 3275ms
- ✓ Compiled /api/auth/[...nextauth] in 344ms (2369 modules)
+ ✓ Compiled /api/applications in 756ms (3851 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+Using Local SQLite Database (local.db)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications 200 in 956ms
+ GET /api/applications 200 in 957ms
+ ✓ Compiled /api/daily-reports/summary in 384ms (3859 modules)
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 2310ms
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 2354ms
+ GET /dashboard 200 in 5093ms
+ GET /dashboard 200 in 5230ms
+ ○ Compiling /dashboard/applications/[id] ...
+ ✓ Compiled /dashboard/applications/[id] in 1383ms (4003 modules)
+ ○ Compiling /api/applications/[id] ...
+ ✓ Compiled /api/applications/[id] in 952ms (4005 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 1564ms
+ GET /dashboard/applications/app-1766563291048 200 in 3831ms
+ ○ Compiling /api/r2/sign-get ...
+ ✓ Compiled /api/r2/sign-get in 706ms (4008 modules)
+ POST /api/r2/sign-get 200 in 767ms
+ POST /api/r2/sign-get 200 in 768ms
+ POST /api/r2/sign-get 200 in 767ms
+ POST /api/r2/sign-get 200 in 767ms
+ POST /api/r2/sign-get 200 in 766ms
+ POST /api/r2/sign-get 200 in 772ms
+ POST /api/r2/sign-get 200 in 38ms
+ POST /api/r2/sign-get 200 in 69ms
+ POST /api/r2/sign-get 200 in 68ms
+ POST /api/r2/sign-get 200 in 68ms
+ POST /api/r2/sign-get 200 in 68ms
+ POST /api/r2/sign-get 200 in 68ms
+ POST /api/r2/sign-get 200 in 77ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 44ms
+ POST /api/r2/sign-get 200 in 44ms
+ POST /api/r2/sign-get 200 in 71ms
+ POST /api/r2/sign-get 200 in 56ms
+ POST /api/r2/sign-get 200 in 52ms
+ POST /api/r2/sign-get 200 in 52ms
+ POST /api/r2/sign-get 200 in 61ms
+ POST /api/r2/sign-get 200 in 39ms
+ GET / 200 in 224ms
 [Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 [Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 501ms
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- GET /dashboard 200 in 241ms
- ✓ Compiled in 6s (3760 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- GET /dashboard 200 in 116ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 432ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 503ms
- ✓ Compiled /api/daily-reports in 404ms (1979 modules)
- ✓ Compiled (2371 modules)
- GET /api/users 200 in 1718ms
- GET /api/daily-reports/summary?email=driver2%40example.com&month=2025-12 200 in 1669ms
- GET /api/daily-reports/summary?email=driver2%40example.com&month=2025-12 200 in 1723ms
- GET /api/users 200 in 1726ms
- GET /api/daily-reports?email=driver2%40example.com&date=2025-12-01 200 in 1811ms
- GET /api/daily-reports?email=driver2%40example.com&date=2025-12-01 200 in 1919ms
- ✓ Compiled in 1644ms (1389 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- GET /dashboard 200 in 1098ms
- ✓ Compiled in 6.7s (3315 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- ⨯ ReferenceError: cn is not defined
-    at RootLayout (src/app/layout.tsx:14:23)
-  12 |   return (
-  13 |     <html lang="en" suppressHydrationWarning>
-> 14 |       <body className={cn('antialiased min-h-screen bg-background', fontHeading.variable, fontBody.variable, 'font-body')}>
-     |                       ^
-  15 |         <NextAuthProvider>
-  16 |           <AuthProvider>
-  17 |             <IdleLockScreen /> {
-  digest: '2620001523'
-}
- GET /dashboard 200 in 432ms
- ✓ Compiled in 3.9s (3352 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 2.8s (3759 modules)
- GET /api/applications 200 in 2448ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 710ms (2373 modules)
- ✓ Compiled (2375 modules)
+ GET /api/auth/session 200 in 572ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 165ms
+ GET /dashboard/applications/app-1766563291048 200 in 419ms
 [Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 [Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 3291ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 5030ms
- GET /dashboard 200 in 8428ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 477ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 479ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
- ✓ Compiled in 7.4s (3352 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 552ms (2367 modules)
- GET /api/applications 200 in 1096ms
- ○ Compiling /api/daily-reports/summary ...
- ✓ Compiled /api/daily-reports/summary in 729ms (2373 modules)
- ○ Compiling /api/auth/[...nextauth] ...
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 2884ms
- GET /dashboard 200 in 6796ms
- ✓ Compiled /api/auth/[...nextauth] in 2.3s (2375 modules)
+ GET /api/auth/session 200 in 202ms
+ POST /api/r2/sign-get 200 in 29ms
+ POST /api/r2/sign-get 200 in 38ms
+ POST /api/r2/sign-get 200 in 44ms
+ POST /api/r2/sign-get 200 in 44ms
+ POST /api/r2/sign-get 200 in 43ms
+ POST /api/r2/sign-get 200 in 43ms
+ POST /api/r2/sign-get 200 in 39ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 72ms
+ POST /api/r2/sign-get 200 in 72ms
+ POST /api/r2/sign-get 200 in 72ms
+ POST /api/r2/sign-get 200 in 72ms
+ POST /api/r2/sign-get 200 in 92ms
+ POST /api/r2/sign-get 200 in 76ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 25ms
+ POST /api/r2/sign-get 200 in 31ms
+ POST /api/r2/sign-get 200 in 21ms
+ POST /api/r2/sign-get 200 in 21ms
+ POST /api/r2/sign-get 200 in 17ms
+ POST /api/r2/sign-get 200 in 25ms
+ ○ Compiling /api/r2/sign-put-applicant ...
+ ✓ Compiled /api/r2/sign-put-applicant in 2.5s (4394 modules)
+ POST /api/r2/sign-put-applicant 200 in 2844ms
+ ○ Compiling /api/applications/submit ...
+ ✓ Compiled /api/applications/submit in 2s (4405 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ POST /api/applications/submit 200 in 2313ms
+ ○ Compiling /api/r2/delete-objects ...
+ ✓ Compiled /api/r2/delete-objects in 1898ms (4407 modules)
+ POST /api/r2/sign-get 200 in 1084ms
+ POST /api/r2/sign-get 200 in 1097ms
+ POST /api/r2/delete-objects 200 in 2384ms
 [Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 [Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 2624ms
- ✓ Compiled in 3.8s (3763 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+ GET /api/auth/session 200 in 1903ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 2165ms
+ GET /dashboard/applications/app-1766563291048 200 in 4346ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- GET /dashboard 200 in 173ms
- ✓ Compiled in 3.3s (3769 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- GET /dashboard 200 in 181ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 376ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 456ms
- GET /api/daily-reports/summary?startDate=2025-08-01&endDate=2025-12-25 200 in 490ms
- GET /api/daily-reports/summary?startDate=2025-08-01&endDate=2025-12-25 200 in 478ms
+ GET /api/auth/session 200 in 340ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 61ms
+ POST /api/r2/sign-get 200 in 60ms
+ POST /api/r2/sign-get 200 in 34ms
 [Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 [Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
  GET /api/auth/session 200 in 240ms
- ⨯ ./src/components/dashboard/daily-report-tracker.tsx
-Error:   [31mx[0m Unexpected token `section`. Expected jsx identifier
-     ,-[[36;1;4m/Volumes/BriteBrain/Projects/DriverDailyReport/src/components/dashboard/daily-report-tracker.tsx[0m:262:1]
- [2m259[0m |   };
- [2m260[0m | 
- [2m261[0m |   return (
- [2m262[0m |     <section className="space-y-4 rounded-lg border bg-card p-6 shadow-sm">
-     : [35;1m     ^^^^^^^[0m
- [2m263[0m |       <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
- [2m264[0m |         <div className="flex flex-1 flex-col gap-2">
- [2m265[0m |           <Label htmlFor="daily-report-summary-start">วันที่เริ่ม</Label>
-     `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/components/dashboard/daily-report-tracker.tsx
-./src/components/dashboard/dashboard-tabs.tsx
- ○ Compiling /_error ...
- ⨯ ./src/components/dashboard/daily-report-tracker.tsx
-Error:   [31mx[0m Unexpected token `section`. Expected jsx identifier
-     ,-[[36;1;4m/Volumes/BriteBrain/Projects/DriverDailyReport/src/components/dashboard/daily-report-tracker.tsx[0m:262:1]
- [2m259[0m |   };
- [2m260[0m | 
- [2m261[0m |   return (
- [2m262[0m |     <section className="space-y-4 rounded-lg border bg-card p-6 shadow-sm">
-     : [35;1m     ^^^^^^^[0m
- [2m263[0m |       <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
- [2m264[0m |         <div className="flex flex-1 flex-col gap-2">
- [2m265[0m |           <Label htmlFor="daily-report-summary-start">วันที่เริ่ม</Label>
-     `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/components/dashboard/daily-report-tracker.tsx
-./src/components/dashboard/dashboard-tabs.tsx
- GET /dashboard 500 in 7065ms
- ✓ Compiled /_not-found in 44.2s (3676 modules)
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 142ms
+ ✓ Compiled in 1106ms (2270 modules)
+ ○ Compiling /api/applications/[id] ...
+ ⨯ Failed to generate static paths for /dashboard/applications/[id]:
+[TypeError: Cannot read properties of undefined (reading 'definition')] {
+  type: 'TypeError'
+}
+ ✓ Compiled /api/applications/[id] in 945ms (2544 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 1164ms
+ GET /dashboard/applications/app-1766563291048 200 in 1595ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 683ms (2546 modules)
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 1010ms
+ ○ Compiling /api/r2/sign-get ...
+ ✓ Compiled /api/r2/sign-get in 744ms (2549 modules)
+ POST /api/r2/sign-get 200 in 967ms
+ POST /api/r2/sign-get 200 in 968ms
+ POST /api/r2/sign-get 200 in 967ms
+ POST /api/r2/sign-get 200 in 966ms
+ POST /api/r2/sign-get 200 in 967ms
+ POST /api/r2/sign-get 200 in 974ms
+ POST /api/r2/sign-get 200 in 19ms
+ POST /api/r2/sign-get 200 in 38ms
+ POST /api/r2/sign-get 200 in 38ms
+ POST /api/r2/sign-get 200 in 38ms
+ POST /api/r2/sign-get 200 in 38ms
+ POST /api/r2/sign-get 200 in 38ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 45ms
+ POST /api/r2/sign-get 200 in 47ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 158ms
+ POST /api/r2/sign-get 200 in 43ms
+ GET /dashboard/applications/app-1766563291048 200 in 968ms
+ POST /api/r2/sign-get 200 in 36ms
+ POST /api/r2/sign-get 200 in 15ms
+ ○ Compiling /api/r2/sign-put-applicant ...
+ ✓ Compiled /api/r2/sign-put-applicant in 1874ms (2945 modules)
+ POST /api/r2/sign-put-applicant 200 in 1972ms
+ ○ Compiling /api/applications/submit ...
+ ✓ Compiled /api/applications/submit in 558ms (2956 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ POST /api/applications/submit 200 in 721ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 37ms
+ GET /dashboard/applications/app-1766563291048 200 in 193ms
+ POST /api/r2/sign-get 200 in 59ms
+ POST /api/r2/sign-get 200 in 19ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 376ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 283ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 76ms
+ GET /dashboard/applications/app-1766563291048 200 in 364ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 159ms
+ POST /api/r2/sign-get 200 in 33ms
+ POST /api/r2/sign-get 200 in 49ms
+ POST /api/r2/sign-get 200 in 49ms
+ POST /api/r2/sign-get 200 in 43ms
+ POST /api/r2/sign-get 200 in 43ms
+ POST /api/r2/sign-get 200 in 43ms
+ POST /api/r2/sign-get 200 in 45ms
+ POST /api/r2/sign-get 200 in 40ms
+ POST /api/r2/sign-get 200 in 41ms
+ POST /api/r2/sign-get 200 in 41ms
+ POST /api/r2/sign-get 200 in 41ms
+ POST /api/r2/sign-get 200 in 39ms
+ POST /api/r2/sign-get 200 in 33ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 33ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 38ms
+ POST /api/r2/sign-get 200 in 43ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 16ms
+ POST /api/r2/sign-get 200 in 25ms
+ ✓ Compiled in 1879ms (3733 modules)
+ GET /dashboard/applications/app-1766563291048 200 in 435ms
+ ✓ Compiled /api/r2/sign-get in 291ms (2287 modules)
+ POST /api/r2/sign-get 200 in 444ms
+ POST /api/r2/sign-get 200 in 13ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 712ms (2274 modules)
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 1150ms
+ ○ Compiling /api/applications/[id] ...
+ ✓ Compiled /api/applications/[id] in 1109ms (2546 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 1747ms
+ GET /dashboard/applications/app-1766563291048 200 in 2055ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 251ms
+ ✓ Compiled /api/r2/sign-get in 435ms (2549 modules)
+ POST /api/r2/sign-get 200 in 509ms
+ POST /api/r2/sign-get 200 in 509ms
+ POST /api/r2/sign-get 200 in 509ms
+ POST /api/r2/sign-get 200 in 509ms
+ POST /api/r2/sign-get 200 in 509ms
+ POST /api/r2/sign-get 200 in 511ms
+ POST /api/r2/sign-get 200 in 21ms
+ POST /api/r2/sign-get 200 in 31ms
+ POST /api/r2/sign-get 200 in 31ms
+ POST /api/r2/sign-get 200 in 31ms
+ POST /api/r2/sign-get 200 in 31ms
+ POST /api/r2/sign-get 200 in 31ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 37ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 30ms
+ POST /api/r2/sign-get 200 in 29ms
+ POST /api/r2/sign-get 200 in 29ms
+ POST /api/r2/sign-get 200 in 28ms
+ POST /api/r2/sign-get 200 in 28ms
+ POST /api/r2/sign-get 200 in 15ms
+ ○ Compiling /api/r2/sign-put-applicant ...
+ ✓ Compiled /api/r2/sign-put-applicant in 2.3s (2945 modules)
+ POST /api/r2/sign-put-applicant 200 in 2425ms
+ GET /dashboard/applications/app-1766563291048 200 in 245ms
+ POST /api/r2/sign-get 200 in 29ms
+ POST /api/r2/sign-get 200 in 22ms
+ ○ Compiling /api/applications/submit ...
+ ✓ Compiled /api/applications/submit in 699ms (2956 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ POST /api/applications/submit 200 in 898ms
+ ✓ Compiled /api/r2/delete-objects in 311ms (2958 modules)
+ POST /api/r2/sign-get 200 in 562ms
+ POST /api/r2/sign-get 200 in 612ms
+ POST /api/r2/delete-objects 200 in 1245ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 255ms
+ GET /dashboard/applications/app-1766563291048 200 in 800ms
+ POST /api/r2/sign-get 200 in 102ms
+ POST /api/r2/sign-get 200 in 135ms
+ POST /api/r2/sign-get 200 in 135ms
+ POST /api/r2/sign-get 200 in 15ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 445ms
+ ✓ Compiled in 1273ms (3719 modules)
+ GET /dashboard/applications/app-1766563291048 200 in 215ms
+ ✓ Compiled /api/r2/sign-get in 289ms (2287 modules)
+ POST /api/r2/sign-get 200 in 429ms
+ POST /api/r2/sign-get 200 in 12ms
+ ✓ Compiled /api/auth/[...nextauth] in 298ms (2289 modules)
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 578ms
+ ○ Compiling /api/applications/[id] ...
+ ✓ Compiled /api/applications/[id] in 1245ms (2549 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 1558ms
+ GET /dashboard/applications/app-1766563291048 200 in 1825ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 253ms
+ POST /api/r2/sign-get 200 in 92ms
+ POST /api/r2/sign-get 200 in 124ms
+ POST /api/r2/sign-get 200 in 124ms
+ POST /api/r2/sign-get 200 in 123ms
+ POST /api/r2/sign-get 200 in 123ms
+ POST /api/r2/sign-get 200 in 122ms
+ POST /api/r2/sign-get 200 in 136ms
+ POST /api/r2/sign-get 200 in 99ms
+ POST /api/r2/sign-get 200 in 146ms
+ POST /api/r2/sign-get 200 in 95ms
+ POST /api/r2/sign-get 200 in 94ms
+ POST /api/r2/sign-get 200 in 94ms
+ POST /api/r2/sign-get 200 in 78ms
+ POST /api/r2/sign-get 200 in 87ms
+ POST /api/r2/sign-get 200 in 62ms
+ POST /api/r2/sign-get 200 in 62ms
+ POST /api/r2/sign-get 200 in 62ms
+ POST /api/r2/sign-get 200 in 62ms
+ POST /api/r2/sign-get 200 in 75ms
+ POST /api/r2/sign-get 200 in 135ms
+ POST /api/r2/sign-get 200 in 130ms
+ POST /api/r2/sign-get 200 in 130ms
+ POST /api/r2/sign-get 200 in 29ms
+ POST /api/r2/sign-get 200 in 40ms
+ ○ Compiling /api/r2/sign-put-applicant ...
+ ✓ Compiled /api/r2/sign-put-applicant in 1754ms (2680 modules)
+ POST /api/r2/sign-put-applicant 200 in 1961ms
+ ○ Compiling /api/applications/submit ...
+ ✓ Compiled /api/applications/submit in 772ms (2949 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ POST /api/applications/submit 200 in 1223ms
+ GET /dashboard/applications/app-1766563291048 200 in 710ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 666ms (2951 modules)
+ ✓ Compiled (2953 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 1219ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 1731ms
+ GET /api/auth/session 200 in 1399ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 172ms
+ GET /dashboard/applications/app-1766563291048 200 in 2596ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 326ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 118ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 100ms
+ ○ Compiling /api/r2/sign-get ...
+ ✓ Compiled /api/r2/sign-get in 2.1s (2956 modules)
+ POST /api/r2/sign-get 200 in 2197ms
+ POST /api/r2/sign-get 200 in 2197ms
+ POST /api/r2/sign-get 200 in 2192ms
+ POST /api/r2/sign-get 200 in 2192ms
+ POST /api/r2/sign-get 200 in 2192ms
+ POST /api/r2/sign-get 200 in 2199ms
+ POST /api/r2/sign-get 200 in 28ms
+ POST /api/r2/sign-get 200 in 49ms
+ POST /api/r2/sign-get 200 in 49ms
+ POST /api/r2/sign-get 200 in 49ms
+ POST /api/r2/sign-get 200 in 49ms
+ POST /api/r2/sign-get 200 in 49ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 61ms
+ POST /api/r2/sign-get 200 in 61ms
+ POST /api/r2/sign-get 200 in 61ms
+ POST /api/r2/sign-get 200 in 61ms
+ POST /api/r2/sign-get 200 in 61ms
+ POST /api/r2/sign-get 200 in 90ms
+ POST /api/r2/sign-get 200 in 71ms
+ POST /api/r2/sign-get 200 in 71ms
+ POST /api/r2/sign-get 200 in 70ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 22ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 424ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 194ms
+ ✓ Compiled in 7.6s (3733 modules)
+ GET /dashboard/applications/app-1766563291048 200 in 425ms
+ ○ Compiling /api/r2/sign-get ...
+ ✓ Compiled /api/r2/sign-get in 683ms (2287 modules)
+ POST /api/r2/sign-get 200 in 911ms
+ POST /api/r2/sign-get 200 in 36ms
+ ○ Compiling /api/applications/[id] ...
+ ✓ Compiled /api/applications/[id] in 2.6s (2544 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 2854ms
+ GET /dashboard/applications/app-1766563291048 200 in 3367ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 138ms
+ GET /dashboard/applications/app-1766563291048 200 in 507ms
+ ✓ Compiled /api/auth/[...nextauth] in 394ms (2546 modules)
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 781ms
+ ✓ Compiled /api/r2/sign-get in 472ms (2549 modules)
+ POST /api/r2/sign-get 200 in 576ms
+ POST /api/r2/sign-get 200 in 576ms
+ POST /api/r2/sign-get 200 in 576ms
+ POST /api/r2/sign-get 200 in 576ms
+ POST /api/r2/sign-get 200 in 567ms
+ POST /api/r2/sign-get 200 in 579ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 76ms
+ POST /api/r2/sign-get 200 in 76ms
+ POST /api/r2/sign-get 200 in 76ms
+ POST /api/r2/sign-get 200 in 76ms
+ POST /api/r2/sign-get 200 in 76ms
+ POST /api/r2/sign-get 200 in 75ms
+ POST /api/r2/sign-get 200 in 60ms
+ POST /api/r2/sign-get 200 in 79ms
+ POST /api/r2/sign-get 200 in 79ms
+ POST /api/r2/sign-get 200 in 79ms
+ POST /api/r2/sign-get 200 in 78ms
+ POST /api/r2/sign-get 200 in 82ms
+ POST /api/r2/sign-get 200 in 97ms
+ POST /api/r2/sign-get 200 in 85ms
+ POST /api/r2/sign-get 200 in 85ms
+ POST /api/r2/sign-get 200 in 39ms
+ POST /api/r2/sign-get 200 in 19ms
+ ✓ Compiled in 11.1s (3733 modules)
+ GET /dashboard/applications/app-1766563291048 200 in 558ms
+ ○ Compiling /api/r2/sign-get ...
+ ✓ Compiled /api/r2/sign-get in 1642ms (2287 modules)
+ POST /api/r2/sign-get 200 in 2618ms
+ POST /api/r2/sign-get 200 in 39ms
+ ○ Compiling /api/applications/[id] ...
+ ✓ Compiled /api/applications/[id] in 845ms (2547 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 1086ms
+ GET /dashboard/applications/app-1766563291048 200 in 1461ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 1134ms (2549 modules)
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 1519ms
+ POST /api/r2/sign-get 200 in 152ms
+ POST /api/r2/sign-get 200 in 182ms
+ POST /api/r2/sign-get 200 in 156ms
+ POST /api/r2/sign-get 200 in 145ms
+ POST /api/r2/sign-get 200 in 143ms
+ POST /api/r2/sign-get 200 in 143ms
+ POST /api/r2/sign-get 200 in 60ms
+ POST /api/r2/sign-get 200 in 62ms
+ POST /api/r2/sign-get 200 in 62ms
+ POST /api/r2/sign-get 200 in 61ms
+ POST /api/r2/sign-get 200 in 59ms
+ POST /api/r2/sign-get 200 in 59ms
+ POST /api/r2/sign-get 200 in 65ms
+ POST /api/r2/sign-get 200 in 57ms
+ POST /api/r2/sign-get 200 in 56ms
+ POST /api/r2/sign-get 200 in 56ms
+ POST /api/r2/sign-get 200 in 55ms
+ POST /api/r2/sign-get 200 in 55ms
+ POST /api/r2/sign-get 200 in 66ms
+ POST /api/r2/sign-get 200 in 55ms
+ POST /api/r2/sign-get 200 in 55ms
+ POST /api/r2/sign-get 200 in 54ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 27ms
+ ○ Compiling /api/r2/sign-put-applicant ...
+ ✓ Compiled /api/r2/sign-put-applicant in 1390ms (2945 modules)
+ POST /api/r2/sign-put-applicant 200 in 1485ms
+ ○ Compiling /api/applications/submit ...
+ ✓ Compiled /api/applications/submit in 884ms (2956 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ POST /api/applications/submit 200 in 1227ms
+ ○ Compiling /api/r2/delete-objects ...
+ ✓ Compiled /api/r2/delete-objects in 782ms (2958 modules)
+ POST /api/r2/delete-objects 200 in 1284ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 91ms
+ GET /dashboard/applications/app-1766563291048 200 in 383ms
+ POST /api/r2/sign-get 200 in 96ms
+ POST /api/r2/sign-get 200 in 40ms
+ POST /api/r2/sign-put-applicant 200 in 86ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ POST /api/applications/submit 200 in 72ms
+ POST /api/r2/sign-get 200 in 60ms
+ POST /api/r2/sign-get 200 in 66ms
+ POST /api/r2/delete-objects 200 in 324ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 32ms
+ GET /dashboard/applications/app-1766563291048 200 in 149ms
+ POST /api/r2/sign-get 200 in 32ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 56ms
+ POST /api/r2/sign-put-applicant 200 in 98ms
+ POST /api/r2/sign-put-applicant 200 in 132ms
+ POST /api/r2/sign-put-applicant 200 in 132ms
+ POST /api/r2/sign-put-applicant 200 in 131ms
+ POST /api/r2/sign-put-applicant 200 in 131ms
+ POST /api/r2/sign-put-applicant 200 in 131ms
+ POST /api/r2/sign-put-applicant 200 in 131ms
+ POST /api/r2/sign-put-applicant 200 in 20ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ POST /api/applications/submit 200 in 77ms
+ POST /api/r2/sign-get 200 in 31ms
+ POST /api/r2/sign-get 200 in 41ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 29ms
+ POST /api/r2/sign-get 200 in 28ms
+ POST /api/r2/sign-get 200 in 28ms
+ POST /api/r2/sign-get 200 in 28ms
+ POST /api/r2/sign-get 200 in 28ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/delete-objects 200 in 231ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 31ms
+ GET /dashboard/applications/app-1766563291048 200 in 129ms
+ POST /api/r2/sign-get 200 in 31ms
+ POST /api/r2/sign-get 200 in 47ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 46ms
+ POST /api/r2/sign-get 200 in 40ms
+ POST /api/r2/sign-get 200 in 41ms
+ POST /api/r2/sign-get 200 in 41ms
+ POST /api/r2/sign-get 200 in 41ms
+ POST /api/r2/sign-get 200 in 41ms
+ POST /api/r2/sign-get 200 in 41ms
+ POST /api/r2/sign-get 200 in 54ms
+ POST /api/r2/sign-get 200 in 40ms
+ POST /api/r2/sign-get 200 in 40ms
+ POST /api/r2/sign-get 200 in 47ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ POST /api/applications/submit 200 in 50ms
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 22ms
+ GET /dashboard/applications/app-1766563291048 200 in 101ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 18ms
+ ○ Compiling /api/download-form ...
+ ✓ Compiled /api/download-form in 4.5s (4942 modules)
+ POST /api/download-form 200 in 9136ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 638ms (3495 modules)
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 966ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 127ms
+ POST /api/download-form 200 in 8566ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 172ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 73ms
+ POST /api/download-form 200 in 4032ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 239ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 258ms
 Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
     at auth (src/auth.ts:99:49)
@@ -1165,127 +722,61 @@ Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be await
       |                                                 ^
   100 |
  ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 3.1s (2457 modules)
- GET /api/applications 200 in 4354ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 2.4s (2463 modules)
- ✓ Compiled (2465 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 4262ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 6188ms
- GET /dashboard 200 in 10816ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 445ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 446ms
- GET /api/daily-reports/summary?startDate=2025-08-01&endDate=2025-12-25 200 in 378ms
- GET /api/daily-reports/summary?startDate=2025-08-01&endDate=2025-12-25 200 in 422ms
- ✓ Compiled in 10.2s (3707 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- GET /dashboard 200 in 1572ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 5.4s (2053 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 6069ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 344ms
- ⨯ ./src/components/ui/idle-lock-screen.tsx
-Error:   [31mx[0m Return statement is not allowed here
-    ,-[[36;1;4m/Volumes/BriteBrain/Projects/DriverDailyReport/src/components/ui/idle-lock-screen.tsx[0m:48:1]
- [2m45[0m |     };
- [2m46[0m | }, [timeout, isIdle]); // Re-run effect when isIdle changes
- [2m47[0m | 
- [2m48[0m | return { isIdle, reset: () => setIsIdle(false) };
-    : [35;1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
- [2m49[0m | }
- [2m50[0m | 
- [2m51[0m | export function IdleLockScreen() {
-    `----
-  [31mx[0m Expression expected
-    ,-[[36;1;4m/Volumes/BriteBrain/Projects/DriverDailyReport/src/components/ui/idle-lock-screen.tsx[0m:49:1]
- [2m46[0m | }, [timeout, isIdle]); // Re-run effect when isIdle changes
- [2m47[0m | 
- [2m48[0m | return { isIdle, reset: () => setIsIdle(false) };
- [2m49[0m | }
-    : [35;1m^[0m
- [2m50[0m | 
- [2m51[0m | export function IdleLockScreen() {
- [2m52[0m |     const { isIdle, reset } = useIdle(IDLE_TIMEOUT_MS);
-    `----
-
-Caused by:
-    Syntax Error
-
-Import trace for requested module:
-./src/components/ui/idle-lock-screen.tsx
-./src/app/layout.tsx
- GET /dashboard 500 in 68ms
- GET /dashboard 500 in 41ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 5s (3680 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 5.7s (2459 modules)
- GET /api/applications 200 in 6507ms
+ ✓ Compiled /api/applications in 536ms (3087 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications 200 in 742ms
  ○ Compiling /api/daily-reports/summary ...
- ✓ Compiled /api/daily-reports/summary in 1313ms (2465 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 337ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 3627ms
- GET /dashboard 200 in 11065ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 622ms
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 380ms
- ✓ Compiled in 7.3s (3690 modules)
+ ✓ Compiled /api/daily-reports/summary in 831ms (3092 modules)
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-26 200 in 3364ms
+ GET /dashboard 200 in 4318ms
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-26 200 in 379ms
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-26 200 in 381ms
+ ○ Compiling /api/daily-reports ...
+ ✓ Compiled /api/daily-reports in 2.5s (4934 modules)
+ GET /api/daily-reports/summary?email=driver2%40example.com&month=2025-12 200 in 2546ms
+ GET /api/daily-reports?email=driver2%40example.com&date=2025-12-18 200 in 2803ms
+ GET /api/daily-reports/summary?email=driver2%40example.com&month=2025-12 200 in 2806ms
+ GET /api/users 200 in 2820ms
+ GET /api/users 200 in 2814ms
+ GET /api/daily-reports?email=driver2%40example.com&date=2025-12-18 200 in 2979ms
+ ○ Compiling /api/applications/[id] ...
+ ⨯ Failed to generate static paths for /dashboard/applications/[id]:
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  type: 'SyntaxError'
+}
+ ✓ Compiled /api/applications/[id] in 2.2s (3487 modules)
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications/app-1766563291048 200 in 2797ms
+ GET /dashboard/applications/app-1766563291048 200 in 2974ms
+ ○ Compiling /api/r2/sign-get ...
+ ✓ Compiled /api/r2/sign-get in 1316ms (3490 modules)
+ POST /api/r2/sign-get 200 in 1374ms
+ POST /api/r2/sign-get 200 in 1374ms
+ POST /api/r2/sign-get 200 in 1373ms
+ POST /api/r2/sign-get 200 in 1372ms
+ POST /api/r2/sign-get 200 in 1372ms
+ POST /api/r2/sign-get 200 in 1383ms
+ POST /api/r2/sign-get 200 in 38ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 56ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 41ms
+ POST /api/r2/sign-get 200 in 38ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 42ms
+ POST /api/r2/sign-get 200 in 43ms
+ POST /api/r2/sign-get 200 in 43ms
+ POST /api/r2/sign-get 200 in 39ms
 Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
     at auth (src/auth.ts:99:49)
@@ -1303,96 +794,63 @@ Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be await
 >  99 | export const auth = async () => getServerSession(authOptions);
       |                                                 ^
   100 |
- GET /dashboard 200 in 453ms
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 570ms (2456 modules)
- GET /api/applications 200 in 1262ms
- ✓ Compiled /api/daily-reports/summary in 416ms (2462 modules)
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 2312ms
- GET /dashboard 200 in 3729ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 595ms (2464 modules)
-[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[getDb] Checking connection mode...
+[getDb] USE_REMOTE_D1: 'undefined'
+ GET /api/applications 200 in 40ms
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-26 200 in 300ms
+ GET /dashboard 200 in 563ms
 [Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 [Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
-[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
-Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 947ms
- GET /api/auth/session 200 in 934ms
- ✓ Compiled in 8.6s (3686 modules)
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- GET /dashboard 200 in 587ms
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-Error: Route "/dashboard" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at Function.fromEntries (<anonymous>)
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
-Error: Route "/dashboard" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at auth (src/auth.ts:99:49)
-    at DashboardPage (src/app/dashboard/page.tsx:52:28)
-   97 |
-   98 | // Convenience helper used in server components/pages
->  99 | export const auth = async () => getServerSession(authOptions);
-      |                                                 ^
-  100 |
- ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 561ms (2456 modules)
- GET /api/applications 200 in 1137ms
- ○ Compiling /api/daily-reports/summary ...
- ✓ Compiled /api/daily-reports/summary in 547ms (2462 modules)
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-25 200 in 2414ms
- GET /dashboard 200 in 3648ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 524ms (2464 modules)
+ GET /api/auth/session 200 in 535ms
 [Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 [Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 717ms
+ GET /api/auth/session 200 in 813ms
 [Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 [Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
 Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at Function.fromEntries (<anonymous>)
- GET /api/auth/session 200 in 232ms
+ GET /api/auth/session 200 in 945ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 409ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 237ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 193ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 561ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 794ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 1188ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 215ms
+[Error: Route "/api/auth/[...nextauth]" used `params.nextauth`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+[Error: Route "/api/auth/[...nextauth]" used `cookies().getAll()`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Error: Route "/api/auth/[...nextauth]" used `...headers()` or similar iteration. `headers()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.fromEntries (<anonymous>)
+ GET /api/auth/session 200 in 1026ms

@@ -4,20 +4,48 @@
 Using vars defined in .env
 Using vars defined in .env.local
 Your Worker has access to the following bindings:
-Binding                                    Resource                  Mode
-env.GEMINI_API_KEY ("(hidden)")            Environment Variable      local
-env.R2_ACCOUNT_ID ("(hidden)")             Environment Variable      local
-env.R2_ACCESS_KEY_ID ("(hidden)")          Environment Variable      local
-env.R2_SECRET_ACCESS_KEY ("(hidden)")      Environment Variable      local
-env.R2_BUCKET_NAME ("(hidden)")            Environment Variable      local
-env.R2_PUBLIC_URL ("(hidden)")             Environment Variable      local
-env.R2_ENDPOINT ("(hidden)")               Environment Variable      local
-env.R2_PRESIGN_PUT_TTL ("(hidden)")        Environment Variable      local
-env.R2_PRESIGN_GET_TTL ("(hidden)")        Environment Variable      local
-env.R2_BUCKET ("(hidden)")                 Environment Variable      local
-env.D1_API_BASE ("(hidden)")               Environment Variable      local
-env.D1_API_TOKEN ("(hidden)")              Environment Variable      local
-env.NEXTAUTH_URL ("(hidden)")              Environment Variable      local
+Binding                                            Resource                  Mode
+env.DB (driver_management)                         D1 Database               local
+env.R2 (driveonboard-stg)                          R2 Bucket                 local
+env.Secret ("dev-secret-token")                    Environment Variable      local
+env.GEMINI_API_KEY ("(hidden)")                    Environment Variable      local
+env.R2_ACCOUNT_ID ("(hidden)")                     Environment Variable      local
+env.R2_ACCESS_KEY_ID ("(hidden)")                  Environment Variable      local
+env.R2_SECRET_ACCESS_KEY ("(hidden)")              Environment Variable      local
+env.R2_BUCKET_NAME ("(hidden)")                    Environment Variable      local
+env.R2_PUBLIC_URL ("(hidden)")                     Environment Variable      local
+env.R2_ENDPOINT ("(hidden)")                       Environment Variable      local
+env.R2_PRESIGN_PUT_TTL ("(hidden)")                Environment Variable      local
+env.R2_PRESIGN_GET_TTL ("(hidden)")                Environment Variable      local
+env.R2_BUCKET ("(hidden)")                         Environment Variable      local
+env.D1_API_BASE ("(hidden)")                       Environment Variable      local
+env.D1_API_TOKEN ("(hidden)")                      Environment Variable      local
+env.NEXTAUTH_URL ("(hidden)")                      Environment Variable      local
+env.WORKER_SECRET ("(hidden)")                     Environment Variable      local
+env.WORKER_URL ("(hidden)")                        Environment Variable      local
 
 ⎔ Starting local server...
 [wrangler:info] Ready on http://localhost:8787
+Using vars defined in .env
+Using vars defined in .env.local
+Your Worker has access to the following bindings:
+Binding                                           Resource                  Mode
+env.DB (driver_management)                        D1 Database               local
+env.R2 (driveonboard-stg)                         R2 Bucket                 local
+env.GEMINI_API_KEY ("(hidden)")                   Environment Variable      local
+env.R2_ACCOUNT_ID ("(hidden)")                    Environment Variable      local
+env.R2_ACCESS_KEY_ID ("(hidden)")                 Environment Variable      local
+env.R2_SECRET_ACCESS_KEY ("(hidden)")             Environment Variable      local
+env.R2_BUCKET_NAME ("(hidden)")                   Environment Variable      local
+env.R2_PUBLIC_URL ("(hidden)")                    Environment Variable      local
+env.R2_ENDPOINT ("(hidden)")                      Environment Variable      local
+env.R2_PRESIGN_PUT_TTL ("(hidden)")               Environment Variable      local
+env.R2_PRESIGN_GET_TTL ("(hidden)")               Environment Variable      local
+env.R2_BUCKET ("(hidden)")                        Environment Variable      local
+env.D1_API_BASE ("(hidden)")                      Environment Variable      local
+env.D1_API_TOKEN ("(hidden)")                     Environment Variable      local
+env.NEXTAUTH_URL ("(hidden)")                     Environment Variable      local
+env.WORKER_SECRET ("(hidden)")                    Environment Variable      local
+env.WORKER_URL ("(hidden)")                       Environment Variable      local
+
+⎔ Reloading local server...

@@ -22,7 +22,7 @@ NEXT_PID=$!
 
 # Start Worker (Background)
 echo "Starting Worker..."
-npx wrangler dev docs/worker-d1-summary.js --name daily-report-worker --port 8787 > .worker.log 2>&1 &
+npx wrangler dev > .worker.log 2>&1 &
 WORKER_PID=$!
 
 echo "Services started with PIDs: Next.js=$NEXT_PID, Worker=$WORKER_PID"

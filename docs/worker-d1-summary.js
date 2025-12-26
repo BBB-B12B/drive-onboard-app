@@ -18,6 +18,23 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // File Proxy Route (Public Access with Signature)
+    // Matches /files/:key*
+    if (url.pathname.startsWith("/files/")) {
+      if (request.method === "OPTIONS") {
+        return new Response(null, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+          }
+        });
+      }
+      if (request.method === "GET") return handleGetFile(request, url, env);
+      return new Response("Method Not Allowed", { status: 405 });
+    }
+
+    // API Routes (Protected)
     // Bearer auth
     const auth = request.headers.get("authorization") || "";
     if (!auth.startsWith("Bearer ") || auth.slice(7) !== env.Secret) {
@@ -116,9 +133,62 @@ async function handleDelete(url, env) {
   return new Response(null, { status: 204 });
 }
 
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "content-type": "application/json" },
+
+
+async function handleGetFile(request, url, env) {
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+  };
+
+  const key = url.pathname.slice("/files/".length);
+  // Note: key might be URL encoded by browser. R2.get() expects raw key.
+  const decodedKey = decodeURIComponent(key);
+
+  const signature = url.searchParams.get("signature");
+  if (!signature) return new Response("Missing signature", { status: 401, headers: corsHeaders });
+
+  // Verify Signature
+  // content to sign: r2Key (decoded raw string)
+  const valid = await verifyHmac(decodedKey, signature, env.Secret);
+  if (!valid) {
+    return new Response("Invalid signature", { status: 403, headers: corsHeaders });
+  }
+
+  const object = await env.R2.get(decodedKey);
+
+  if (object === null) {
+    return new Response("Object Not Found", { status: 404, headers: corsHeaders });
+  }
+
+  const headers = new Headers(corsHeaders);
+  object.writeHttpMetadata(headers);
+  headers.set("etag", object.httpEtag);
+  headers.set("Cache-Control", "public, max-age=31536000"); // Cache for 1 year
+
+  return new Response(object.body, {
+    headers,
   });
+}
+
+// Helper: HMAC-SHA256 Verification
+async function verifyHmac(text, signatureHex, secret) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["verify"]
+  );
+
+  // Check if signatureHex is valid hex
+  const signatureBytes = new Uint8Array(signatureHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+
+  return await crypto.subtle.verify(
+    "HMAC",
+    key,
+    signatureBytes,
+    encoder.encode(text)
+  );
 }

@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircle, Download, File as FileIcon } from 'lucide-react';
-import Image from 'next/image';
+
 
 type DocumentViewerProps = {
   fileRef: FileRef;
@@ -88,20 +88,22 @@ export function DocumentViewer({ fileRef, previewUrl }: DocumentViewerProps) {
   if (!url) {
     return null; // Should not happen if not loading and no error
   }
-  
+
   const isImage = fileRef.mime.startsWith('image/');
 
   if (isImage) {
     return (
-        <div className="relative w-full h-full flex items-center justify-center">
-            <Image
-                src={url}
-                alt={`Preview of ${fileRef.r2Key}`}
-                width={200}
-                height={120}
-                className="object-contain w-auto h-auto max-w-full max-h-full"
-            />
-        </div>
+      <div className="relative w-full h-full flex items-center justify-center">
+        <img
+          src={url}
+          alt={`Preview of ${fileRef.r2Key}`}
+          className="object-contain w-auto h-auto max-w-full max-h-full"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none';
+            e.currentTarget.parentElement?.insertAdjacentHTML('beforeend', '<div class="text-xs text-red-500">Failed to load image</div>');
+          }}
+        />
+      </div>
     );
   }
 
@@ -110,16 +112,16 @@ export function DocumentViewer({ fileRef, previewUrl }: DocumentViewerProps) {
 
   return (
     <div className="flex flex-col items-center justify-center h-full w-full gap-2 p-2">
-        <FileIcon className="h-8 w-8 text-muted-foreground" />
-        <Button asChild size="sm">
-            <a href={url} download={fileName}>
-                <Download className="mr-2 h-4 w-4" />
-                ดาวน์โหลดเอกสาร
-            </a>
-        </Button>
+      <FileIcon className="h-8 w-8 text-muted-foreground" />
+      <Button asChild size="sm">
+        <a href={url} download={fileName}>
+          <Download className="mr-2 h-4 w-4" />
+          ดาวน์โหลดเอกสาร
+        </a>
+      </Button>
     </div>
   );
 }
 
-    
+
 

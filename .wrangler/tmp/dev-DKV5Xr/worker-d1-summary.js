@@ -1,12 +1,51 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
+// .wrangler/tmp/bundle-v2EKx4/checked-fetch.js
+var urls = /* @__PURE__ */ new Set();
+function checkURL(request, init) {
+  const url = request instanceof URL ? request : new URL(
+    (typeof request === "string" ? new Request(request, init) : request).url
+  );
+  if (url.port && url.port !== "443" && url.protocol === "https:") {
+    if (!urls.has(url.toString())) {
+      urls.add(url.toString());
+      console.warn(
+        `WARNING: known issue with \`fetch()\` requests to custom HTTPS ports in published Workers:
+ - ${url.toString()} - the custom port will be ignored when the Worker is published using the \`wrangler deploy\` command.
+`
+      );
+    }
+  }
+}
+__name(checkURL, "checkURL");
+globalThis.fetch = new Proxy(globalThis.fetch, {
+  apply(target, thisArg, argArray) {
+    const [request, init] = argArray;
+    checkURL(request, init);
+    return Reflect.apply(target, thisArg, argArray);
+  }
+});
+
 // docs/worker-d1-summary.js
 var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 var TABLE = "daily_report_summary";
 var worker_d1_summary_default = {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname.startsWith("/files/")) {
+      if (request.method === "OPTIONS") {
+        return new Response(null, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type"
+          }
+        });
+      }
+      if (request.method === "GET") return handleGetFile(request, url, env);
+      return new Response("Method Not Allowed", { status: 405 });
+    }
     const auth = request.headers.get("authorization") || "";
     if (!auth.startsWith("Bearer ") || auth.slice(7) !== env.Secret) {
       return new Response("Unauthorized", { status: 401 });
@@ -89,13 +128,50 @@ async function handleDelete(url, env) {
   return new Response(null, { status: 204 });
 }
 __name(handleDelete, "handleDelete");
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "content-type": "application/json" }
+async function handleGetFile(request, url, env) {
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS"
+  };
+  const key = url.pathname.slice("/files/".length);
+  const decodedKey = decodeURIComponent(key);
+  const signature = url.searchParams.get("signature");
+  if (!signature) return new Response("Missing signature", { status: 401, headers: corsHeaders });
+  const valid = await verifyHmac(decodedKey, signature, env.Secret);
+  if (!valid) {
+    return new Response("Invalid signature", { status: 403, headers: corsHeaders });
+  }
+  const object = await env.R2.get(decodedKey);
+  if (object === null) {
+    return new Response("Object Not Found", { status: 404, headers: corsHeaders });
+  }
+  const headers = new Headers(corsHeaders);
+  object.writeHttpMetadata(headers);
+  headers.set("etag", object.httpEtag);
+  headers.set("Cache-Control", "public, max-age=31536000");
+  return new Response(object.body, {
+    headers
   });
 }
-__name(json, "json");
+__name(handleGetFile, "handleGetFile");
+async function verifyHmac(text, signatureHex, secret) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["verify"]
+  );
+  const signatureBytes = new Uint8Array(signatureHex.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
+  return await crypto.subtle.verify(
+    "HMAC",
+    key,
+    signatureBytes,
+    encoder.encode(text)
+  );
+}
+__name(verifyHmac, "verifyHmac");
 
 // ../../IDE/nvm/versions/node/v20.19.5/lib/node_modules/wrangler/templates/middleware/middleware-ensure-req-body-drained.ts
 var drainBody = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx) => {
@@ -138,7 +214,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-Cyqkrf/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-v2EKx4/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -170,7 +246,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-Cyqkrf/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-v2EKx4/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

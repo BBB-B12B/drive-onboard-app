@@ -155,6 +155,37 @@
 
 - [ ] **[T-040] Final UI Polish (เก็บงาน UI/Mobile)**
 - [ ] **[T-041] Production Deployment Setup (ตั้งค่า Deploy จริง)**
+    - **Concept/Goal**: เตรียมระบบให้พร้อมสำหรับ Cloudflare Stack (Pages + Workers + D1 + R2)
+    - **Implementation Details**:
+        - **Env Vars**: ตั้งค่า `NEXTAUTH_URL`, `WORKER_URL`, และ Keys ต่างๆ ใน Cloudflare Dashboard
+        - **Secrets**: ใช้ `wrangler secret put` สำหรับ Worker
+        - **Database**: รัน Migration เข้า Prod D1 (`wrangler d1 execute --remote`)
+    - **Sub-tasks**:
+        - [ ] Create Cloudflare Project (Pages & Workers)
+        - [ ] Configure Environment Variables on Pages
+        - [ ] Upload Secrets to Worker (Secret, R2 Keys)
+        - [ ] Execute Production D1 Migration
+        - [ ] Verify Production Build (`npm run build`) via Cloudflare Adapter
+- [ ] **[T-060] End-to-End System Verification (ตรวจสอบระบบโดยรวม)**
+    - **Concept/Goal**: ตรวจสอบความถูกต้องและเสถียรภาพของระบบในมุมมอง User ทุกระดับ
+    - **Checkpoints**:
+        1.  **Authentication & Security**:
+            - [ ] Login/Logout Flow (Admin & User)
+            - [ ] Idle Timeout Lock (3 mins inactivity)
+            - [ ] Protected Routes (User cannot access /admin)
+        2.  **Daily Report Management (Admin)**:
+            - [ ] Dashboard Loading (Infinite Scroll, Performance)
+            - [ ] Parsing & Display of Images (R2 Worker Proxy)
+            - [ ] Edit/Delete Reports (Data Consistency D1/R2)
+            - [ ] Export CSV
+        3.  **Application Management (Admin)**:
+            - [ ] View Application Details (Signature, Documents)
+            - [ ] Verify Document Links (Legacy & New)
+            - [ ] Status Updates (Approve/Reject)
+        4.  **Resilience & Edge Cases**:
+            - [ ] Network Failure Handling (Offline mode behavior)
+            - [ ] Invalid Input Handling
+            - [ ] Concurrent Uploads
 
 - [x] **[T-042] Performance Optimization (ปรับปรุงประสิทธิภาพ)**
     - **Concept/Goal (แนวคิด)**: ลดการใช้ทรัพยากรและแก้ปัญหาคอขวด (Bottlenecks)
@@ -169,11 +200,15 @@
     > **Interface Mismatch Warning**: เมื่อมีการปรับแก้ Component ให้ตรวจสอบชื่อ Props ให้ตรงกันเสมอ (เช่น `onUpload` vs `onSelectFile`) เพื่อป้องกัน Runtime Error ที่ตรวจสอบยาก
     > **Logic Order Warning**: ในการอัปโหลดไฟล์ที่ต้องมีการ Process (เช่น ย่อรูป) ต้องคำนวณ MD5 *หลังจาก* Process เสร็จสิ้นแล้วเสมอ ห้ามคำนวณจากไฟล์ต้นฉบับ
     - **Sub-tasks (งานย่อย)**:
-        - [x] Implement Web Worker for Image Processing
+        - [x] Implement Web Worker for Image Processing (Daily Reports)
             - **Error Encountered**: MD5 Mismatch on Upload (Cloudflare R2 Reject)
             - **Root Cause**: Web Worker คำนวณ MD5 จากไฟล์ต้นฉบับ *ก่อน* ทำการบีบอัด (Compress) ทำให้ Hash ไม่ตรงกับไฟล์ที่อัปจริง
             - **Solution**: สลับ Order ใน Worker ให้บีบอัดก่อนแล้วค่อยคำนวณ MD5
             - **Prevention**: Logic ที่เกี่ยวกับ File Hash ต้องทำเป็นขั้นตอนสุดท้ายก่อน Upload เสมอ
+        - [x] **Integrate Worker into Application Details (ใบสมัคร)**
+            - **Action**: Implement `processFileInWorker` in `application-details.tsx` to handle Applicant docs.
+            - **Optimization**: Resize images > 2MB to ensure they fit within limits.
+            - **Fix**: Increased Server-side `MAX_IMAGE_SIZE` to 5MB to handle edge cases.
         - [x] Refactor State Cache to use proper cache manager
         - [x] Analyze/Reduce Bundle Size (e.g. optimize lodash imports)
 
@@ -239,4 +274,75 @@
         - [x] Implement Sortable Headers
         - [x] Set Default Sort to Date DESC
         - [x] **Fix Sticky Header**: เปลี่ยนใช้ `<table>` ธรรมดาแทน Component เพื่อแก้บั๊ก Header เลื่อนตาม Scroll
+
+
+- [x] **[T-047] Feature Merge: Enrollment (นำเข้าฟีเจอร์ลงทะเบียน)**
+    - **Concept/Goal**: นำเข้า Code จาก branch `feature/enrollment` โดยเน้นฟีเจอร์ข้อมูลใบสมัครและการสร้างใบสมัคร
+    - **Constraint**:
+        - รักษา Code เดิมของ **Daily Report** ทั้งหมด (ห้ามทับ)
+        - ใช้ Code ใหม่สำหรับ **Enrollment Data** และ **Application Form**
+    - **Implementation Details**:
+        - **Git**: `git merge origin/feature/enrollment` (Resolve conflicts manually if any)
+        - **Validation**: ตรวจสอบว่า `src/app/driver/page.tsx` และ `components/enrollment/*` ถูกเพิ่มเข้ามา
+    - **Sub-tasks**:
+        - [x] Fetch & Merge `feature/enrollment`
+        - [x] Resolve Conflicts (Keep 'HEAD' for Daily Report, Use 'incoming' for Enrollment)
+- [x] **[T-048] Fix Image Preview Issues (แก้ปัญหาแสดงรูปใบสมัคร)**
+    - **Concept/Goal**: แก้ปัญหาที่รูปภาพPreview ของใบสมัครไม่แสดงผลเนื่องจากปัญหา Encoding ของชื่อไฟล์/โฟลเดอร์ภาษาไทยใน R2
+    - **Problem**: R2 Keys ที่มีภาษาไทย (เช่น `สำเนาบัตรประชาชน`) ทำให้เกิดปัญหา Signature Mismatch/CORS เมื่อ Browser ร้องขอไฟล์
+    - **Solution**:
+        - **Frontend**: ส่ง `docId` (ภาษาอังกฤษ) แทน `docType` (ภาษาไทย) ไปยัง API
+        - **Backend**: Sanitized `fileName` ด้วย `normalizeFileName` (remove non-ASCII)
+    - **Implication**: ไฟล์เก่าที่อัปโหลดด้วย Key ภาษาไทยจะยังคงดูไม่ได้ ต้องทำการอัปโหลดใหม่
+    - **Sub-tasks**:
+        - [x] Refactor `ApplicationDetails` to use `docId` for key generation
+        - [x] Switch `DocumentViewer` to use native `<img>` tag to avoid Next.js Proxy issues with R2 Signed URLs
+- [x] **[T-051] Fix Signature Overwrite Logic**:
+    - Details: Enforce "Overwrite" behavior for signatures. Old signature file is deleted when a new one is drawn/uploaded.
+- [x] **[T-049] Restore Legacy File Access (กู้คืนการเข้าถึงไฟล์เก่า)**
+    - **Concept/Goal**: ทำให้ไฟล์เก่าที่มีชื่อภาษาไทย (ที่อัปโหลดก่อน T-048) สามารถแสดงผลได้ โดยไม่ต้องอัปโหลดใหม่
+    - **Problem**: Browser URL encoding (%E0%B8...) ไม่ตรงกับ Signature ที่ S3 Generate จาก Raw String ทำให้เกิด 403 Forbidden
+    - **Solution**:
+        - **Logic**: ใน `api/r2/sign-get`, ตรวจสอบว่า Key มี Non-ASCII หรือไม่
+        - ถ้ามี -> ให้ทำการ encode key ก่อนส่งไป sign หรือปรับแต่ง S3 Client ให้รองรับ (ใช้ SDK handling + cleanKey)
+    - **Verification Steps**:
+        - เปิดใบสมัครเก่า -> รูปต้องขึ้น
+        - เปิดใบสมัครใหม่ -> รูปต้องขึ้น (Regression Test)
+    - **Sub-tasks**:
+        - [x] Create reproduction test case (mental or manual)
+        - [x] Create reproduction test case (mental or manual)
+        - [x] Updates `api/r2/sign-get` logic
+        - [x] Verify fix
+        - **Error Encountered**: Images still fail to load with "Failed to load image" (403/404) even after trimming key.
+        - **Root Cause**: Next.js `next/image` proxy issues + Complex URL encoding mismatch for Thai keys in R2 Signed URLs.
+        - **Solution**: 
+            1. Switched `DocumentViewer` to native `<img>`.
+            2. (Next Step) Investigate `r2Key` vs Browser Path encoding mismatch deeper.
+            3. (Final Fix) Applied `forcePathStyle: true` to S3Client configuration.
+        - **Prevention**: Always sanitize keys to ASCII (T-048) to avoid this entire class of bugs.
+
+- [x] **[T-050] Migrate R2 Access to Worker Proxy (ย้ายระบบดึงรูปไปใช้ Worker)**
+    - **Concept/Goal**: ใช้ Cloudflare Worker เป็น Gateway กลางในการดึงรูปจาก R2 แทนการใช้ Signed URLs
+    - **Problem**: Signed URL มีข้อจำกัดเรื่อง Encoding (ภาษาไทย), CORS, และ Cache Management ที่ซับซ้อน (โดยเฉพาะกับไฟล์เก่า)
+    - **Solution**:
+        - **Worker Side**: สร้าง Endpoint `GET /file/:key` ที่รับหน้าที่ `R2.get()` โดยตรง
+        - **Security**: ใช้ Signed Token (JWT) Short-lived ที่ออกโดย Next.js เพื่อ Verify สิทธิ์ที่ Worker (ป้องกัน Public Access)
+        - **Client Side**: เปลี่ยน `<img> src` หรือ `fetch` ให้ชี้ไปที่ Worker URL
+    - **Benefits**:
+        - แก้ปัญหาชื่อไฟล์ภาษาไทยถาวร (Worker จัดการ Key แบบ Raw String ได้ง่ายกว่า)
+        - ควบคุม Cache Policy ได้ดีกว่า
+    - **Sub-tasks**:
+        - [x] Setup R2 Binding in `wrangler.toml`
+        - [x] Implement `GET /images/:key` route in Worker
+        - [x] Implement Auth Token Verification (Shared Secret)
+            - **Error Encountered**: CORS/401 Errors on Signature Images (GET /files/...)
+            - **Root Cause**: Global Bearer Token check in `fetch` was blocking public image access. OPTIONS requests also failed due to lack of handler.
+            - **Solution**: Restructured `fetch` to allow `/files/` access verification (Signature only) without Bearer Token and added OPTIONS support.
+            - **Prevention**: Should always account for CORS Preflight and Public Access paths when implementing Global Auth Middleware.
+            - **Result**: Confirmed support for legacy Thai folder paths in R2 (e.g. `สำเนาบัตรประชาชน`) via decoded URL processing.
+            - **Deployment Issue**: `Binding name 'Secret' already in use` error when running `wrangler secret put`.
+                - **Cause**: `Secret` was defined in `wrangler.toml` [vars] (plaintext), conflicting with Secret storage.
+                - **Fix**: Commented out `Secret` in `wrangler.toml` to allow CLI management.
+        - [x] Refactor `DocumentViewer` & `DailyReportView` to use Worker URL
+
 

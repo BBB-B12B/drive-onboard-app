@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo, useTransition } from "react";
+import React, { useState, useEffect, useMemo, useTransition, useRef, useCallback } from "react";
 import type { Manifest, FileRef, VerificationStatus } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -89,6 +89,10 @@ import {
 import { carColors, getVehicleBrands, getVehicleModels, vehicleTypes } from "@/lib/vehicle-data";
 
 
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+
+
 type ApplicationDetailsProps = {
     application: Manifest;
 };
@@ -97,6 +101,7 @@ type TempFile = {
     docId: string;
     file: File;
     objectUrl: string; // For client-side preview
+    md5?: string; // Pre-calculated MD5 from worker
 };
 
 type FileChanges = {
@@ -350,6 +355,39 @@ export function ApplicationDetails({ application: initialApplication }: Applicat
     const router = useRouter();
 
     const [fileChanges, setFileChanges] = useState<FileChanges>({ toUpload: [], toDelete: [] });
+
+    // Worker for image compression
+    const workerRef = useRef<Worker | null>(null);
+
+    useEffect(() => {
+        workerRef.current = new Worker(new URL("@/workers/image-processor.ts", import.meta.url));
+        return () => {
+            workerRef.current?.terminate();
+        };
+    }, []);
+
+    const processFileInWorker = (file: File, id: string): Promise<{ file: File; md5: string }> => {
+        return new Promise((resolve, reject) => {
+            if (!workerRef.current) {
+                reject(new Error("Worker not initialized"));
+                return;
+            }
+
+            const msgHandler = (e: MessageEvent) => {
+                if (e.data.id === id) {
+                    workerRef.current?.removeEventListener("message", msgHandler);
+                    if (e.data.type === "complete") {
+                        resolve({ file: e.data.file, md5: e.data.md5 });
+                    } else {
+                        reject(new Error(e.data.error || "Worker processing failed"));
+                    }
+                }
+            };
+
+            workerRef.current.addEventListener("message", msgHandler);
+            workerRef.current.postMessage({ type: "process", id, file });
+        });
+    };
 
     const [isStatusPending, startStatusTransition] = useTransition();
     const verificationStatus = initialApplication.status?.verification ?? "pending" as VerificationStatus;
@@ -922,9 +960,37 @@ export function ApplicationDetails({ application: initialApplication }: Applicat
         toast({ title: 'ยกเลิกการเปลี่ยนแปลง', description: 'ข้อมูลกลับเป็นเหมือนเดิมแล้ว' });
     };
 
-    const handleFileUpload = (docId: string, file: File, replaceKey?: string) => {
-        const objectUrl = URL.createObjectURL(file);
-        const newTempFile: TempFile = { docId, file, objectUrl };
+    const handleFileUpload = async (docId: string, file: File, replaceKey?: string) => {
+        toast({ title: "กำลังประมวลผลไฟล์...", description: "กรุณารอสักครู่..." });
+
+        let fileToUpload = file;
+        let md5 = undefined;
+
+        try {
+            const processed = await processFileInWorker(file, docId);
+            fileToUpload = processed.file;
+            md5 = processed.md5;
+
+            // Validate Size
+            const isImage = fileToUpload.type.startsWith('image/');
+            const limit = isImage ? MAX_IMAGE_SIZE : 10 * 1024 * 1024; // 5MB for images, 10MB for others (PDF)
+
+            if (fileToUpload.size > limit) {
+                toast({ variant: "destructive", title: "ไฟล์มีขนาดใหญ่เกินไป", description: `ขนาดไฟล์ต้องไม่เกิน ${limit / (1024 * 1024)}MB` });
+                return;
+            }
+
+            toast({ title: "ประมวลผลสำเร็จ", description: `ขนาด: ${(fileToUpload.size / 1024).toFixed(0)}KB` });
+
+        } catch (error) {
+            console.error("Image processing/MD5 failed:", error);
+            // Fallback: If worker fails, we continue with original file. 
+            // MD5 will be calculated in onSubmit if missing.
+            toast({ variant: "destructive", title: "การประมวลผลล้มเหลว", description: "จะลองใช้วิธีปกติ" });
+        }
+
+        const objectUrl = URL.createObjectURL(fileToUpload);
+        const newTempFile: TempFile = { docId, file: fileToUpload, objectUrl, md5 };
 
         setFileChanges(prev => {
             let newUploads = [...prev.toUpload];
@@ -1101,6 +1167,7 @@ export function ApplicationDetails({ application: initialApplication }: Applicat
         // Handle Signature Uploads
         // We create a separate list for signatures to upload them alongside normal files
         const signatureFiles: TempFile[] = [];
+        const keysToDelete = [...fileChanges.toDelete];
 
         // Cast values to any because we use a local schema override for base64 strings
         const formValues = values as any;
@@ -1109,17 +1176,31 @@ export function ApplicationDetails({ application: initialApplication }: Applicat
         if (formValues.docs?.signature && typeof formValues.docs.signature === 'string' && formValues.docs.signature.startsWith('data:image')) {
             const file = dataURLtoFile(formValues.docs.signature, `signature_${initialApplication.appId}.png`);
             signatureFiles.push({ docId: 'signature', file, objectUrl: '' });
+
+            // [FIX] If replacing an existing signature, delete the old one
+            if (initialApplication.docs?.signature && hasR2Key(initialApplication.docs.signature)) {
+                if (!keysToDelete.includes(initialApplication.docs.signature.r2Key)) {
+                    keysToDelete.push(initialApplication.docs.signature.r2Key);
+                }
+            }
         }
 
         // Process Guarantor Signature
         if (formValues.docs?.guarantorSignature && typeof formValues.docs.guarantorSignature === 'string' && formValues.docs.guarantorSignature.startsWith('data:image')) {
             const file = dataURLtoFile(formValues.docs.guarantorSignature, `guarantor_signature_${initialApplication.appId}.png`);
             signatureFiles.push({ docId: 'guarantorSignature', file, objectUrl: '' });
+
+            // [FIX] If replacing an existing signature, delete the old one
+            if (initialApplication.docs?.guarantorSignature && hasR2Key(initialApplication.docs.guarantorSignature)) {
+                if (!keysToDelete.includes(initialApplication.docs.guarantorSignature.r2Key)) {
+                    keysToDelete.push(initialApplication.docs.guarantorSignature.r2Key);
+                }
+            }
         }
 
         // Combine regular file uploads with signature uploads
         const filesToUpload = [...fileChanges.toUpload, ...signatureFiles];
-        const keysToDelete = [...fileChanges.toDelete];
+        // keysToDelete initialized above
 
         // Handle Unchanged Signatures (Revert URL string to FileRef)
         // If docs.signature is a string but NOT a data URL, it's the signed URL we fetched.
@@ -1149,26 +1230,26 @@ export function ApplicationDetails({ application: initialApplication }: Applicat
         try {
             // Step 1: Upload new files
             const uploadPromises = filesToUpload.map(async tempFile => {
-                const { docId, file } = tempFile;
+                const { docId, file, md5: preCalculatedMd5 } = tempFile;
                 toast({ title: 'กำลังอัปโหลด...', description: file.name });
                 try {
-                    const md5 = await md5Base64(file);
+                    const md5 = preCalculatedMd5 || await md5Base64(file);
 
-                    // Determine docType
-                    let docType = 'signature';
-                    if (docId === 'signature') docType = 'signature';
-                    else if (docId === 'guarantorSignature') docType = 'guarantor_signature';
+                    // Determine docType (Use ID for R2 Key to avoid Thai characters)
+                    let r2Folder = 'other';
+                    if (docId === 'signature') r2Folder = 'signature';
+                    else if (docId === 'guarantorSignature') r2Folder = 'guarantor_signature';
                     else {
                         const docSchema = requiredDocumentsSchema.find(d => d.id === docId);
-                        if (docSchema) docType = docSchema.type;
-                        else if (docId.startsWith('signature')) docType = 'signature';
-                        else throw new Error(`Schema not found for ${docId}`);
+                        if (docSchema) r2Folder = docSchema.id;
+                        else if (docId.startsWith('signature')) r2Folder = 'signature';
+                        else r2Folder = docId; // Fallback to docId itself which is usually english
                     }
 
                     const signResponse = await safeFetch('/api/r2/sign-put-applicant', {
                         method: 'POST', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            applicationId: initialApplication.appId, docType: docType, fileName: file.name,
+                            applicationId: initialApplication.appId, docType: r2Folder, fileName: file.name,
                             mime: file.type, size: file.size, md5,
                         }),
                     });

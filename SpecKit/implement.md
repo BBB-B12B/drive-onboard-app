@@ -9,6 +9,7 @@
 > 1.  `SpecKit/instruction.md` (Tech Stack & Constraints)
 > 2.  `SpecKit/spec.md` (Scope & Features)
 > 3.  `SpecKit/task.md` (Current Status & Error Logs)
+>     *   **Note**: `WORKER_SECRET` ต้องเป็น Secret เดียวกับใน Worker (`94bb41dcd135eb8672ece1bfbc2271e2ac5cd46365f382fa1a29e164b9d84e0e`) และต้องตรงกันทั้ง Pages และ Worker
 > 4.  `SpecKit/traceability.md` (File Locations & Data Map)
 
 ## 0. Infrastructure Check (ตรวจสอบโครงสร้างระบบ)
@@ -54,4 +55,10 @@
     *   **Prevention**: วิธีป้องกันไม่ให้เกิดซ้ำ
 
 ---
-**Note for AI**: โปรดปฏิบัติตามขั้นตอนนี้อย่างเคร่งครัดในทุก Request เพื่อรักษาคุณภาพ (Quality), ความถูกต้อง (Accuracy), และความยั่งยืน (Maintainability) ของโปรเจกต์
+
+## 6. File Naming Standard (มาตรฐานการตั้งชื่อไฟล์)
+*   **Principle**: ห้ามใช้ชื่อไฟล์จาก User โดยตรงเพื่อป้องกันปัญหา Encoding/Spacing/Special Characters
+*   **Format**: `[Timestamp]_[DocType]_[RandomString].[Ext]`
+    *   Example: `1701234567890_id_card_a1b2c3.jpg`
+*   **Enforcement**: ต้องทำการ Rename ที่ฝั่ง Server (API Route) ก่อนบันทึกลง D1 หรือ Upload R2 เสมอ
+*   **Signature Updates**: กรณีมีการแก้ไขลายเซ็น ให้ถือเป็น **Replacement** เสมอ (ลบไฟล์เก่า หรือ Overwrite ด้วยชื่อใหม่) ห้ามเก็บไฟล์ขยะค้างไว้ใน R2

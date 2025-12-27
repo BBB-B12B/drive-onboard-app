@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { r2 } from "@/app/api/r2/_client";
+import { getR2Client } from "@/app/api/r2/_client";
 import {
   DailyReportDateSchema,
   DailyReportEmailSchema,
@@ -26,7 +26,16 @@ const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function POST(req: NextRequest) {
   try {
-    const bucket = process.env.R2_BUCKET;
+    const bucket = process.env.R2_BUCKET || process.env.R2_BUCKET_NAME;
+
+    // DEBUG: Check R2 Env Vars
+    console.log("[DEBUG DailyReport] R2 Config Check:", {
+      hasBucket: !!bucket,
+      hasEndpoint: !!process.env.R2_ENDPOINT,
+      hasAccessKey: !!process.env.R2_ACCESS_KEY_ID,
+      hasSecret: !!process.env.R2_SECRET_ACCESS_KEY,
+    });
+
     if (!bucket) {
       return NextResponse.json(
         {
@@ -35,6 +44,11 @@ export async function POST(req: NextRequest) {
         },
         { status: 501 }
       );
+    }
+
+    if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
+      console.error("[DailyReport] Missing R2 Access Keys");
+      return NextResponse.json({ error: "Server Configuration Error: Missing R2 Keys" }, { status: 500 });
     }
 
     const { email, date, slotId, fileName, mime, size, md5 } = bodySchema.parse(
@@ -71,6 +85,7 @@ export async function POST(req: NextRequest) {
     });
 
     const expiresIn = Number(process.env.R2_PRESIGN_PUT_TTL || 600);
+    const r2 = getR2Client();
     const url = await getSignedUrl(r2, command, { expiresIn });
 
     return NextResponse.json({ url, key, expiresIn });

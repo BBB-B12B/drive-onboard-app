@@ -3,7 +3,7 @@ import {
   GetObjectCommand,
   ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
-import { r2 } from "@/app/api/r2/_client";
+import { getR2Client } from "@/app/api/r2/_client";
 import {
   DailyReportDateSchema,
   DailyReportEmailSchema,
@@ -11,6 +11,7 @@ import {
   normalizeDailyReportRecord,
   TOTAL_DAILY_REPORT_SLOTS,
   getDailyReportProgressStatus,
+  sanitizeEmailForPath,
 } from "@/lib/daily-report";
 import { sampleAccounts, sampleApplications, getSampleDailyReport } from "@/data/sample-data";
 import { parseISO, eachDayOfInterval, startOfMonth, endOfMonth, format } from "date-fns";
@@ -20,6 +21,7 @@ import { fetchAllUsers, isD1UsersEnabled } from "@/lib/d1-users";
 async function getJson(bucket: string, key: string): Promise<any | null> {
   try {
     const command = new GetObjectCommand({ Bucket: bucket, Key: key });
+    const r2 = getR2Client();
     const response = await r2.send(command);
     const content = await response.Body?.transformToString();
     if (!content) return null;
@@ -174,6 +176,7 @@ export async function GET(req: NextRequest) {
         Prefix: "daily-reports/",
         Delimiter: "/",
       });
+      const r2 = getR2Client();
       const listResponse = await r2.send(listEmails);
       const emailSegments =
         listResponse.CommonPrefixes?.map((p) => p.Prefix?.split("/")[1]).filter(Boolean) ?? [];

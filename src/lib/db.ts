@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/d1';
-import { drizzle as drizzleSqlite } from 'drizzle-orm/better-sqlite3';
+
 import { drizzle as drizzleProxy } from 'drizzle-orm/sqlite-proxy';
-import Database from 'better-sqlite3';
+
 import * as schema from '@/db/schema';
 import { mapKeys, camelCase } from 'lodash';
 
@@ -11,12 +11,29 @@ declare global {
     var _dbPromiseLocal: any;
 }
 
-export const getDb = async () => {
-    console.log('[getDb] Checking connection mode...');
-    console.log(`[getDb] USE_REMOTE_D1: '${process.env.USE_REMOTE_D1}'`);
-    // console.log(`[getDb] Account ID: ${process.env.CLOUDFLARE_ACCOUNT_ID}`); // Don't log secrets if possible, or partial
+// OpenNext Context Helper
+async function getOpenNextBinding() {
+    try {
+        // @ts-ignore
+        const { getCloudflareContext } = await import("@opennextjs/cloudflare");
+        const { env } = await getCloudflareContext();
+        return env.DB;
+    } catch (e) {
+        return null;
+    }
+}
 
-    // 1. Production / Cloudflare Environment (Binding)
+export const getDb = async () => {
+    // console.log('[getDb] Checking connection mode...');
+
+    // 0. Try OpenNext Binding (Requests)
+    const openNextDB = await getOpenNextBinding();
+    if (openNextDB) {
+        // console.log('[getDb] Using OpenNext Cloudflare Binding');
+        return drizzle(openNextDB as any, { schema });
+    }
+
+    // 1. Production / Cloudflare Environment (Standard Worker process.env)
     if (process.env.DB) {
         console.log('[getDb] Using Cloudflare Binding (process.env.DB present)');
         return drizzle(process.env.DB as any, { schema });
@@ -156,11 +173,22 @@ export const getDb = async () => {
         return global._dbPromiseRemote;
     }
 
-    // 3. Local Development (SQLite File)
+    // 3. Local Development (SQLite File) - REMOVED to fix OpenNext Build
     if (!global._dbPromiseLocal) {
-        console.log('Using Local SQLite Database (local.db)');
-        const sqlite = new Database('local.db');
-        global._dbPromiseLocal = drizzleSqlite(sqlite, { schema });
+        console.log('Local SQLite fallback is disabled for Production Build stability.');
+        console.log('Please use `wrangler dev` or `USE_REMOTE_D1=true` for local development.');
+        // Return null or throw? Returning null might break things.
+        // Let's fallback to Remote logic or just throw.
+        // throw new Error("Local SQLite fallback disabled. Use 'npm run dev:all' or 'wrangler dev'.");
+        return undefined as any;
     }
     return global._dbPromiseLocal;
+};
+
+export const verifyBinding = async () => {
+    const openNextDB = await getOpenNextBinding();
+    if (openNextDB) return "OpenNext Binding (Found)";
+    if (process.env.DB) return "Process.env.DB (Found)";
+    if (process.env.USE_REMOTE_D1 === 'true') return "Remote Proxy (Configured)";
+    return "Fallback: Local SQLite (Empty)";
 };

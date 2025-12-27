@@ -154,18 +154,37 @@
 ## Phase 5: Polish & Deploy (Planned)
 
 - [ ] **[T-040] Final UI Polish (เก็บงาน UI/Mobile)**
-- [ ] **[T-041] Production Deployment Setup (ตั้งค่า Deploy จริง)**
+- [x] **[T-041] Production Deployment Setup (ตั้งค่า Deploy จริง)**
     - **Concept/Goal**: เตรียมระบบให้พร้อมสำหรับ Cloudflare Stack (Pages + Workers + D1 + R2)
+    - **Status**: Completed (2025-12-27)
     - **Implementation Details**:
         - **Env Vars**: ตั้งค่า `NEXTAUTH_URL`, `WORKER_URL`, และ Keys ต่างๆ ใน Cloudflare Dashboard
-        - **Secrets**: ใช้ `wrangler secret put` สำหรับ Worker
-        - **Database**: รัน Migration เข้า Prod D1 (`wrangler d1 execute --remote`)
+        - **Secrets**: ใช้ `wrangler secret bulk` สำหรับ Pages และ Worker (Sync from `.env`)
+        - **Database**: Fixed OpenNext Binding issue via `getCloudflareContext`
     - **Sub-tasks**:
-        - [ ] Create Cloudflare Project (Pages & Workers)
-        - [ ] Configure Environment Variables on Pages
-        - [ ] Upload Secrets to Worker (Secret, R2 Keys)
-        - [ ] Execute Production D1 Migration
-        - [ ] Verify Production Build (`npm run build`) via Cloudflare Adapter
+        - [x] Create Cloudflare Project (Pages & Workers)
+        - [x] Configure Environment Variables on Pages
+        - [x] Upload Secrets to Worker (Secret, R2 Keys) - **Executed via `sync-secrets.js`**
+            - **Audit**: Verified exact match between Local (`.env`) and Production Secrets.
+        - [x] Execute Production D1 Migration
+        - [x] **Fix Production Specific Bugs**:
+            - **Incident: Empty Database in Prod**:
+                - **Cause**: OpenNext's `process.env.DB` was undefined. `getDb()` fell back to ephemeral SQLite.
+                - **Fix**: Updated `src/lib/db.ts` to use `@opennextjs/cloudflare` context.
+            - **Incident: Stale Deployment (Missing Fixes)**:
+                - **Cause**: User assumption that `wrangler pages deploy` builds the code. It does NOT. It only uploads existing `.open-next`.
+                - **Result**: Fixes for `db.ts` and `dashboard` were never uploaded.
+                - **Fix**: Implemented `npx @opennextjs/cloudflare build` before deploy.
+            - **Incident: Build Failure (Native Modules)**:
+                - **Cause**: `better-sqlite3` caused `copyTracedFiles` error in OpenNext build.
+                - **Fix**: Externalized `better-sqlite3` in `next.config.mjs` and used dynamic imports.
+            - **Incident: `next-on-pages` "Ma" Error**:
+                - **Cause**: JSON parse failure during trace (possibly corrupted cache or config conflict).
+                - **Fix**: Reverting to OpenNext with fully cleaned environment (`rm -rf .next ...`) and `output: standalone` removed.
+            - **Incident: Persistent Trace Error**:
+                - **Fix**: Added `outputFileTracingExcludes` to `next.config.mjs` (Corrected to top-level for Next.js 15).
+                - **Final Attempt**: Removed `better-sqlite3` from `package.json` entirely to prevent valid trace path.
+
 - [ ] **[T-060] End-to-End System Verification (ตรวจสอบระบบโดยรวม)**
     - **Concept/Goal**: ตรวจสอบความถูกต้องและเสถียรภาพของระบบในมุมมอง User ทุกระดับ
     - **Checkpoints**:
@@ -313,6 +332,21 @@
         - [x] Create reproduction test case (mental or manual)
         - [x] Updates `api/r2/sign-get` logic
         - [x] Verify fix
+        - [x] **Fix R2 Sign PUT Error (Case: fs.readFile)**:
+            - **Status**: Completed (Requires 2 attempts)
+            - **Incident 1**: Fixed `sign-put-applicant` but missed `daily-reports/sign-put`.
+            - **Correction**: Global search applied to all `aws-sdk` usages.
+            - **Solution**: Explicitly validated `R2_ACCESS_KEY_ID` in all routes and updated Pages Secrets.
+        - [x] **Fix R2 Sign PUT Error (Case: fs.readFile)**:
+            - **Status**: Completed (Requires 2 attempts) ...
+            - **Incident 2**: Deployment `ff2e81ba` resulted in **404 Not Found**.
+            - **Cause**: Deployment command likely targeted wrong directory (`.open-next/assets` vs `.open-next/` or `.open-next/server-functions`).
+            - **Correction**: Investigating correct OpenNext output structure for Cloudflare Pages.
+        - [x] **Verify Hybrid Architecture & Secrets**:
+            - **Concern**: User suspects secret mismatch or architecture confusion.
+            - **Audit**: Confirmed `WORKER_SECRET` match. `R2_ACCESS_KEY_ID` was missing in Prod.
+            - **Resolution**: Synced all secrets from `.env` (Local) to Pages via `sync-secrets.js`.
+            - **Status**: Production Environment now matches Local 9002.
         - **Error Encountered**: Images still fail to load with "Failed to load image" (403/404) even after trimming key.
         - **Root Cause**: Next.js `next/image` proxy issues + Complex URL encoding mismatch for Thai keys in R2 Signed URLs.
         - **Solution**: 

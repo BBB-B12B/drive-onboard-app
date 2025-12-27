@@ -62,3 +62,53 @@
     *   Example: `1701234567890_id_card_a1b2c3.jpg`
 *   **Enforcement**: ต้องทำการ Rename ที่ฝั่ง Server (API Route) ก่อนบันทึกลง D1 หรือ Upload R2 เสมอ
 *   **Signature Updates**: กรณีมีการแก้ไขลายเซ็น ให้ถือเป็น **Replacement** เสมอ (ลบไฟล์เก่า หรือ Overwrite ด้วยชื่อใหม่) ห้ามเก็บไฟล์ขยะค้างไว้ใน R2
+
+---
+
+## 7. Incident Log & Case Studies (บันทึกปัญหาและกรณีศึกษา)
+> **Goal**: บันทึก Case ที่น่าสนใจเพื่อป้องกันไม่ให้เกิดซ้ำ
+
+### Case Study: R2 `fs.readFile` Error in Cloudflare Pages
+*   **Date**: 2025-12-27
+*   **Symptom**:
+    *   API `POST /api/r2/sign-put` Return 500
+    *   Log: `Error: [unenv] fs.readFile is not implemented yet!`
+*   **Root Cause**:
+    *   Node.js Runtime ใน Cloudflare Pages พยายามโหลด AWS Credentials จากไฟล์ (`~/.aws/credentials`) เนื่องจากไม่พบ Environment Variables (`R2_ACCESS_KEY_ID`, ฯลฯ) ใน Runtime
+    *   AWS SDK V3 มีพฤติกรรม Fallback ไปอ่านไฟล์เมื่อไม่เจอ Env Vars ซึ่งไฟล์ System ไม่มีจริงบน Edge Worker
+*   **Resolution**:
+    1.  Confirm Env Vars: เพิ่ม `console.log` เช็คว่า `process.env.R2_ACCESS_KEY_ID` เป็น `undefined` หรือไม่
+    2.  Update Secrets: ใช้คำสั่ง `wrangler pages secret put` อัปโหลด R2 Keys ขึ้น Production Pages Project (ไม่ใช่แค่ Worker Protocol)
+    3.  Redeploy: สั่ง Deploy ใหม่เพื่อให้ Secrets มีผล
+*   **Prevention Rule**:
+    *   เมื่อใช้งาน AWS SDK ใน Edge Environment **ต้องเช็ค Env Vars ก่อน init Client เสมอ**
+    *   ใช้ `requireR2Bucket()` หรือ helper function ที่ Throw Error ทันทีถ้า Environment ไม่ครบ (Fail Fast)
+    *   **Audit Scope**: เมื่อแก้ Bug จุดหนึ่งสำเร็จ **ต้องค้นหา (Global Search)** โค้ดที่มี Pattern เดียวกันทั้งโปรเจกต์ด้วย (เช่นแก้ที่ `applicant` แล้วต้องเช็ค `daily-reports` ด้วย) เพื่อไม่ให้เกิดปัญหาส่วนอื่นที่ยังไม่ได้แก้ ("It failed initially" scenario).
+
+*   **Incident 2: Deployment 404 (2025-12-27)**
+    *   **Symptom**: Deployment `ff2e81ba` ใช้งานไม่ได้ เปิดหน้าเว็บแล้วเจอ 404
+    *   **Root Cause**: User Error (Agent) - สั่ง Deploy ผิด Directory (`.open-next/assets`) ทำให้ไม่มีไฟล์ Worker Script ขึ้นไปด้วย
+    *   **Protocol Violation**: ไม่ได้ตรวจสอบ Build Output ก่อน Deploy และพยายามอธิบายทฤษฎี (Deflection) แทนที่จะตรวจสอบผลลัพธ์จริง
+    *   **Resolution**: ตรวจสอบโครงสร้างโฟลเดอร์ `.open-next` และ Deploy โฟลเดอร์ที่ถูกต้อง
+    *   **Prevention**: ต้อง run `ls -R .open-next` ดูโครงสร้างก่อน Deploy เสมอ หากไม่มั่นใจ
+
+*   **Incident 3: Data Discrepancy (2025-12-27)**
+    *   **Symptom**: หน้าเว็บ Production แสดงข้อมูล 0 รายการ (แต่ Local 9002 มี 3 รายการ)
+    *   **Root Cause**: OpenNext Environment ซ่อน Cloudflare Bindings (`env.DB`) ไว้ ไม่เหมือน Worker ปกติ ทำให้ `getDb()` สร้าง SQLite เปล่าๆ ขึ้นมาใช้แทน (Silent Fail)
+    *   **Fix**: ใช้ `@opennextjs/cloudflare` ดึง `getCloudflareContext()` เพื่อเข้าถึง `env.DB`
+    *   **Lesson**: ใน OpenNext/Pages Functions, `process.env` มีแค่ String Variables ส่วน Bindings (DB, R2) ต้องดึงผ่าน Request Context เท่านั้น
+
+*   **Incident 4: Stale Deployment (2025-12-27)**
+    *   **Symptom**: แก้โค้ดแล้ว แต่ Deploy ไปไม่เห็นผล (เช่น Debug Box ไม่ขึ้น)
+    *   **Root Cause**: เข้าใจผิดว่า `wrangler pages deploy` ทำการ Build ให้ แต่จริงๆ มันแค่อัปโหลดโฟลเดอร์ `.open-next` เดิม
+    *   **Fix**: ต้องรัน `npx @opennextjs/cloudflare build` ก่อน Deploy ทุกครั้งที่มีการแก้โค้ด
+
+*   **Incident 5: Build Failure & Native Modules (2025-12-27)**
+    *   **Symptom**: `npx @opennextjs/cloudflare build` พังด้วย error `copyTracedFiles`
+    *   **Root Cause**: `better-sqlite3` (Native Module) ถูก Trace เข้าไปใน Production Build ทั้งที่ไม่ได้ใช้
+    *   **Fix**: ย้าย `better-sqlite3` ไป Dynamic Import และเพิ่ม `serverExternalPackages` ใน `next.config.mjs`
+
+*   **Incident 6: Dependency Hell (2025-12-27)**
+    *   **Symptom**: `npm install` พังเพราะ `eslint-config-next@16` ตีกับ `next@15`
+    *   **Fix**: ใช้ `npm install --legacy-peer-deps` เพื่อแก้ขัด (ควร downgrade eslint ในภายหลัง)
+

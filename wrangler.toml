@@ -1,6 +1,7 @@
-name = "daily-report-worker"
-main = "docs/worker-d1-summary.js"
-compatibility_date = "2024-01-01"
+name = "driver-daily-report"
+pages_build_output_dir = ".open-next/assets"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
 
 [vars]
 # Secret should be set via `wrangler secret put Secret` in production

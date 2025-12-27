@@ -47,3 +47,4 @@ firestore-debug.log
 
 # SpecKit secrets
 SpecKit/deployment_guide.md
+.env.final

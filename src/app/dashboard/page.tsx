@@ -76,8 +76,16 @@ export default async function DashboardPage() {
     }
   }
 
+  const debugBinding = await import("@/lib/db").then(m => m.verifyBinding());
+
   return (
     <div className="space-y-6">
+      {/* Debug Info */}
+      <div className="bg-yellow-50 p-2 text-xs border border-yellow-200 rounded text-yellow-800 font-mono">
+        D1 Connection Mode: {debugBinding} <br />
+        User: {session?.user?.email || "Guest"} ({userRole || "None"})
+      </div>
+
       <div>
         <h1 className="text-3xl font-bold font-headline tracking-tight">แดชบอร์ด</h1>
         <p className="text-muted-foreground">

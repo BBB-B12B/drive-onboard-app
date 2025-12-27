@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { z } from "zod";
-import { r2 } from "../_client";
+import { getR2Client } from "../_client";
 import { assertApplicantOwner } from "../_auth";
 import { requireR2Bucket } from "@/lib/r2/env";
 
@@ -25,6 +25,19 @@ const MAX_PDF_SIZE = 10 * 1024 * 1024; // 10MB
 export async function POST(req: NextRequest) {
   try {
     const bucket = requireR2Bucket();
+
+    // DEBUG: Check R2 Env Vars
+    console.log("[DEBUG] R2 Config Check:", {
+      hasBucket: !!bucket,
+      hasEndpoint: !!process.env.R2_ENDPOINT,
+      hasAccessKey: !!process.env.R2_ACCESS_KEY_ID,
+      hasSecret: !!process.env.R2_SECRET_ACCESS_KEY,
+      endpoint: process.env.R2_ENDPOINT, // Safe to log endpoint
+    });
+
+    if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
+      throw new Error("R2 Access Keys are missing from process.env");
+    }
 
     const { applicationId, docType, fileName, mime, size, md5 } = Body.parse(await req.json());
     await assertApplicantOwner(applicationId, req); // ตรวจว่าเป็นเจ้าของจริง
@@ -60,6 +73,7 @@ export async function POST(req: NextRequest) {
       ...(md5 ? { ContentMD5: md5 } : {})
     });
 
+    const r2 = getR2Client();
     const url = await getSignedUrl(r2, cmd, { expiresIn: Number(process.env.R2_PRESIGN_PUT_TTL || 600) });
 
     return NextResponse.json({ url, key });

@@ -1,51 +1,12 @@
 
- ⛅️ wrangler 4.52.1 (update available 4.54.0)
-─────────────────────────────────────────────
-Using vars defined in .env
-Using vars defined in .env.local
-Your Worker has access to the following bindings:
-Binding                                            Resource                  Mode
-env.DB (driver_management)                         D1 Database               local
-env.R2 (driveonboard-stg)                          R2 Bucket                 local
-env.Secret ("dev-secret-token")                    Environment Variable      local
-env.GEMINI_API_KEY ("(hidden)")                    Environment Variable      local
-env.R2_ACCOUNT_ID ("(hidden)")                     Environment Variable      local
-env.R2_ACCESS_KEY_ID ("(hidden)")                  Environment Variable      local
-env.R2_SECRET_ACCESS_KEY ("(hidden)")              Environment Variable      local
-env.R2_BUCKET_NAME ("(hidden)")                    Environment Variable      local
-env.R2_PUBLIC_URL ("(hidden)")                     Environment Variable      local
-env.R2_ENDPOINT ("(hidden)")                       Environment Variable      local
-env.R2_PRESIGN_PUT_TTL ("(hidden)")                Environment Variable      local
-env.R2_PRESIGN_GET_TTL ("(hidden)")                Environment Variable      local
-env.R2_BUCKET ("(hidden)")                         Environment Variable      local
-env.D1_API_BASE ("(hidden)")                       Environment Variable      local
-env.D1_API_TOKEN ("(hidden)")                      Environment Variable      local
-env.NEXTAUTH_URL ("(hidden)")                      Environment Variable      local
-env.WORKER_SECRET ("(hidden)")                     Environment Variable      local
-env.WORKER_URL ("(hidden)")                        Environment Variable      local
+Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
 
-⎔ Starting local server...
-[wrangler:info] Ready on http://localhost:8787
-Using vars defined in .env
-Using vars defined in .env.local
-Your Worker has access to the following bindings:
-Binding                                           Resource                  Mode
-env.DB (driver_management)                        D1 Database               local
-env.R2 (driveonboard-stg)                         R2 Bucket                 local
-env.GEMINI_API_KEY ("(hidden)")                   Environment Variable      local
-env.R2_ACCOUNT_ID ("(hidden)")                    Environment Variable      local
-env.R2_ACCESS_KEY_ID ("(hidden)")                 Environment Variable      local
-env.R2_SECRET_ACCESS_KEY ("(hidden)")             Environment Variable      local
-env.R2_BUCKET_NAME ("(hidden)")                   Environment Variable      local
-env.R2_PUBLIC_URL ("(hidden)")                    Environment Variable      local
-env.R2_ENDPOINT ("(hidden)")                      Environment Variable      local
-env.R2_PRESIGN_PUT_TTL ("(hidden)")               Environment Variable      local
-env.R2_PRESIGN_GET_TTL ("(hidden)")               Environment Variable      local
-env.R2_BUCKET ("(hidden)")                        Environment Variable      local
-env.D1_API_BASE ("(hidden)")                      Environment Variable      local
-env.D1_API_TOKEN ("(hidden)")                     Environment Variable      local
-env.NEXTAUTH_URL ("(hidden)")                     Environment Variable      local
-env.WORKER_SECRET ("(hidden)")                    Environment Variable      local
-env.WORKER_URL ("(hidden)")                       Environment Variable      local
+ ⛅️ wrangler 4.54.0
+───────────────────
 
-⎔ Reloading local server...
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mIt looks like you've run a Workers-specific command in a Pages project.[0m
+
+  For Pages, please run `wrangler pages dev` instead.
+
+
+🪵  Logs were written to "/Users/dude/Library/Preferences/.wrangler/logs/wrangler-2025-12-26_17-34-28_136.log"

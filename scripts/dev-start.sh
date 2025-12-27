@@ -20,10 +20,15 @@ echo "Starting Next.js..."
 npm run dev > .next-server.log 2>&1 &
 NEXT_PID=$!
 
-# Start Worker (Background)
-echo "Starting Worker..."
-npx wrangler dev > .worker.log 2>&1 &
-WORKER_PID=$!
+# Start Cloudflare Worker (Backend) with specific config
+# Use --remote to connect to Real D1/R2
+if [ "$USE_REMOTE" = true ]; then
+  npx wrangler dev -c wrangler.worker.toml --remote --port 8787 > /dev/null 2>&1 &
+  WORKER_PID=$!
+else
+   npx wrangler dev -c wrangler.worker.toml --port 8787 > /dev/null 2>&1 &
+   WORKER_PID=$!
+fi
 
 echo "Services started with PIDs: Next.js=$NEXT_PID, Worker=$WORKER_PID"
 

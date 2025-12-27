@@ -9,10 +9,16 @@
  *   GET    /api/daily_report_summary?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD&email=optional
  *   POST   /api/daily_report_summary   (upsert)
  *   DELETE /api/daily_report_summary?email=...&date=YYYY-MM-DD
+ *   GET    /api/users
+ *   POST   /api/users      (create)
+ *   GET    /api/users/:id  (fetch by id)
+ *   PUT    /api/users/:id  (update)
+ *   DELETE /api/users/:id  (delete)
  */
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const TABLE = "daily_report_summary";
+const USERS_TABLE = "users";
 
 export default {
   async fetch(request, env) {
@@ -43,16 +49,33 @@ export default {
 
     // Route handling
     if (url.pathname === "/api/daily_report_summary") {
-      if (request.method === "GET") return handleGet(url, env);
-      if (request.method === "POST") return handlePost(request, env);
-      if (request.method === "DELETE") return handleDelete(url, env);
+      if (request.method === "GET") return handleGetSummary(url, env);
+      if (request.method === "POST") return handlePostSummary(request, env);
+      if (request.method === "DELETE") return handleDeleteSummary(url, env);
+    }
+
+    // User Management Routes
+    if (url.pathname.startsWith("/api/users")) {
+      if (request.method === "GET") return handleGetUsers(url, env);
+      if (request.method === "POST") return handlePostUsers(request, env);
+
+      // ID-based routes
+      const idMatch = url.pathname.match(/^\/api\/users\/([^\/]+)$/);
+      if (idMatch) {
+        const id = idMatch[1];
+        if (request.method === "GET") return handleGetUserById(id, env);
+        if (request.method === "PUT") return handleUpdateUser(id, request, env);
+        if (request.method === "DELETE") return handleDeleteUser(id, env);
+      }
     }
 
     return new Response("Not Found", { status: 404 });
   },
 };
 
-async function handleGet(url, env) {
+// --- Daily Report Summary Handlers ---
+
+async function handleGetSummary(url, env) {
   const startDate = url.searchParams.get("startDate");
   const endDate = url.searchParams.get("endDate");
   const email = url.searchParams.get("email");
@@ -77,7 +100,7 @@ async function handleGet(url, env) {
   return json(results ?? []);
 }
 
-async function handlePost(request, env) {
+async function handlePostSummary(request, env) {
   const body = await request.json().catch(() => null);
   if (!body) return json({ error: "Invalid JSON" }, 400);
 
@@ -116,7 +139,7 @@ async function handlePost(request, env) {
   return json({ ok: true });
 }
 
-async function handleDelete(url, env) {
+async function handleDeleteSummary(url, env) {
   const email = url.searchParams.get("email");
   const date = url.searchParams.get("date");
   if (!email || !date || !DATE_RE.test(date)) {
@@ -133,7 +156,75 @@ async function handleDelete(url, env) {
   return new Response(null, { status: 204 });
 }
 
+// --- User Handlers ---
 
+async function handleGetUsers(url, env) {
+  const email = url.searchParams.get("email");
+  if (email) {
+    const { results } = await env.DB.prepare(`SELECT * FROM ${USERS_TABLE} WHERE lower(email) = lower(?)`).bind(email).all();
+    return json(results ?? []);
+  }
+  const { results } = await env.DB.prepare(`SELECT * FROM ${USERS_TABLE}`).all();
+  return json(results ?? []);
+}
+
+async function handleGetUserById(id, env) {
+  const user = await env.DB.prepare(`SELECT * FROM ${USERS_TABLE} WHERE id = ?`).bind(id).first();
+  if (!user) return json({ error: "User not found" }, 404);
+  return json(user);
+}
+
+async function handlePostUsers(request, env) {
+  const body = await request.json().catch(() => null);
+  // Basic validation
+  if (!body || !body.email || !body.name) return json({ error: "Missing fields" }, 400); // Allow missing id if we want to generate it? but d1-users generates it.
+
+  const id = body.id || crypto.randomUUID();
+
+  try {
+    await env.DB.prepare(
+      `INSERT INTO ${USERS_TABLE} (id, email, name, role, password_hash, avatar_url, phone) VALUES (?, ?, ?, ?, ?, ?, ?)`
+    ).bind(id, body.email, body.name, body.role, body.password_hash, body.avatar_url, body.phone).run();
+    return json({ ok: true, id });
+  } catch (e) {
+    return json({ error: e.message }, 500);
+  }
+}
+
+async function handleUpdateUser(id, request, env) {
+  const body = await request.json().catch(() => null);
+  if (!body) return json({ error: "Invalid JSON" }, 400);
+
+  // Build dynamic update
+  const fields = [];
+  const values = [];
+  if (body.email !== undefined) { fields.push("email = ?"); values.push(body.email); }
+  if (body.name !== undefined) { fields.push("name = ?"); values.push(body.name); }
+  if (body.role !== undefined) { fields.push("role = ?"); values.push(body.role); }
+  if (body.password_hash !== undefined) { fields.push("password_hash = ?"); values.push(body.password_hash); }
+  if (body.avatar_url !== undefined) { fields.push("avatar_url = ?"); values.push(body.avatar_url); }
+  if (body.phone !== undefined) { fields.push("phone = ?"); values.push(body.phone); }
+
+  if (fields.length === 0) return json({ ok: true });
+
+  values.push(id);
+  const sql = `UPDATE ${USERS_TABLE} SET ${fields.join(", ")} WHERE id = ?`;
+
+  try {
+    await env.DB.prepare(sql).bind(...values).run();
+    const user = await env.DB.prepare(`SELECT * FROM ${USERS_TABLE} WHERE id = ?`).bind(id).first();
+    return json(user);
+  } catch (e) {
+    return json({ error: e.message }, 500);
+  }
+}
+
+async function handleDeleteUser(id, env) {
+  await env.DB.prepare(`DELETE FROM ${USERS_TABLE} WHERE id = ?`).bind(id).run();
+  return json({ ok: true });
+}
+
+// --- R2 Handlers ---
 
 async function handleGetFile(request, url, env) {
   const corsHeaders = {
@@ -183,12 +274,22 @@ async function verifyHmac(text, signatureHex, secret) {
   );
 
   // Check if signatureHex is valid hex
-  const signatureBytes = new Uint8Array(signatureHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+  try {
+    const signatureBytes = new Uint8Array(signatureHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+    return await crypto.subtle.verify(
+      "HMAC",
+      key,
+      signatureBytes,
+      encoder.encode(text)
+    );
+  } catch (e) {
+    return false;
+  }
+}
 
-  return await crypto.subtle.verify(
-    "HMAC",
-    key,
-    signatureBytes,
-    encoder.encode(text)
-  );
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
 }

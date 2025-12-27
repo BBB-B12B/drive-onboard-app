@@ -4,7 +4,7 @@ export const runtime = 'nodejs'; // Use Node.js runtime
 import { NextRequest, NextResponse } from 'next/server';
 import type { Manifest } from '@/lib/types';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
-import { r2 } from '@/app/api/r2/_client';
+import { getR2Client } from '@/app/api/r2/_client';
 import { requireR2Bucket } from '@/lib/r2/env';
 
 // Import aot templates 
@@ -24,6 +24,7 @@ async function fetchImageBase64(r2Key: string): Promise<string | null> {
       Bucket: bucket,
       Key: r2Key,
     });
+    const r2 = await getR2Client();
     const response = await r2.send(command);
     if (!response.Body) return null;
 

@@ -7,7 +7,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { differenceInDays, startOfDay } from "date-fns";
-import { r2 } from "@/app/api/r2/_client";
+import { getR2Client } from "@/app/api/r2/_client";
 import {
   DailyReportDateSchema,
   DailyReportEmailSchema,
@@ -39,6 +39,7 @@ const deleteSchema = z.object({
 
 async function getJson(bucket: string, key: string): Promise<any | null> {
   try {
+    const r2 = getR2Client();
     const command = new GetObjectCommand({ Bucket: bucket, Key: key });
     const response = await r2.send(command);
     const content = await response.Body?.transformToString();
@@ -59,6 +60,7 @@ async function putJson(bucket: string, key: string, data: unknown) {
     Body: JSON.stringify(data),
     ContentType: "application/json",
   });
+  const r2 = getR2Client();
   await r2.send(command);
 }
 
@@ -77,6 +79,7 @@ async function toResponse(
       let url: string | undefined;
       if (slotData.r2Key) {
         try {
+          const r2 = getR2Client();
           const signed = await getSignedUrl(
             r2,
             new GetObjectCommand({ Bucket: bucket, Key: slotData.r2Key }),
@@ -252,6 +255,7 @@ export async function DELETE(req: NextRequest) {
         Bucket: bucket,
         Key: slotToDelete.r2Key,
       });
+      const r2 = getR2Client();
       await r2.send(deleteCmd);
     }
 

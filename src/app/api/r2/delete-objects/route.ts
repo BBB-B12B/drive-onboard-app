@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import { z } from "zod";
-import { r2 } from "../_client";
+import { getR2Client } from "../_client";
 import { assertAdmin } from "../_auth";
 import { requireR2Bucket } from "@/lib/r2/env";
 
@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    const r2 = getR2Client();
     const result = await r2.send(command);
 
     if (result.Errors && result.Errors.length > 0) {
@@ -41,10 +42,10 @@ export async function POST(req: NextRequest) {
         { status: 207 } // 207 Multi-Status
       );
     }
-    
+
     return NextResponse.json({
-        message: "All specified objects deleted successfully.",
-        deleted: result.Deleted?.map(d => d.Key)
+      message: "All specified objects deleted successfully.",
+      deleted: result.Deleted?.map(d => d.Key)
     });
 
   } catch (error: any) {
@@ -63,4 +64,4 @@ export async function POST(req: NextRequest) {
   }
 }
 
-    
+

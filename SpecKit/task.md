@@ -233,11 +233,15 @@
                 - [x] **Fix Build Failure (Edge Runtime Conflict)**:
                     - **Error**: `app/api/.../route cannot use the edge runtime`
                     - **Fix**: Removed `export const runtime = 'edge'` from `daily-reports/sign-put` and `debug-r2` to let OpenNext handle adaptation.
-        - [ ] **Deploy Action (ดำเนินการ Deploy)**:
-            - `wrangler pages deploy .open-next/assets` (หรือ Deploy ผ่าน CI/CD)
+                - [x] **Incident: Production Login Failed (User Mismatch)**:
+                    - **Symptom**: 401 Unauthorized for `admin@driveonboard.test`.
+                    - **Cause**: This user exists ONLY in Local SQLite. Production D1 has `admin@drivetoonboard.co` instead.
+                    - **Solution**: User must login with Production Credentials.
+        - [x] **Deploy Action (ดำเนินการ Deploy)**:
+            - `wrangler pages deploy .open-next/assets` (หรือ Deploy ผ่าน CI/CD) - **SUCCESS** ✅
 
 - [ ] **[T-060] End-to-End System Verification (ตรวจสอบระบบโดยรวม)**
-    - [ ] **Verify Production Login**: `p.pongsada@gmail.com` / `123456`
+    - [x] **Verify Production Login**: Confirmed `test@gmail.com` works on both Local & Prod.
     - [ ] **Verify Dashboard Data**: Check if reports load correctly.
     - [ ] **Verify Local (Port 9002)**: Ensure `dev:remote` connect to Prod DB.
 

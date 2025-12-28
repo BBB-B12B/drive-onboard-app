@@ -97,3 +97,86 @@
  GET /api/auth/session 200 in 123ms
  ✓ Compiled in 6.9s (1330 modules)
  GET /dashboard/daily-report 200 in 114ms
+ GET /api/auth/session 200 in 179ms
+ GET /api/auth/session 200 in 161ms
+ GET /api/auth/csrf 200 in 65ms
+ POST /api/auth/signout 200 in 57ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 4.2s (3884 modules)
+ GET /login 200 in 4709ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 597ms (2562 modules)
+ GET /favicon.ico 200 in 826ms
+ GET /api/auth/session 200 in 444ms
+ GET /api/auth/providers 200 in 153ms
+ GET /api/auth/csrf 200 in 23ms
+ POST /api/auth/callback/credentials 200 in 1563ms
+ GET /api/auth/session 200 in 43ms
+ ○ Compiling /api/applications ...
+ ✓ Compiled /api/applications in 620ms (2564 modules)
+ GET /api/applications 200 in 1243ms
+ ○ Compiling /api/daily-reports/summary ...
+ ✓ Compiled /api/daily-reports/summary in 808ms (2571 modules)
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 1782ms
+ GET /dashboard 200 in 3284ms
+ GET /api/auth/session 200 in 154ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 95ms
+ GET /api/auth/session 200 in 331ms
+ GET /api/auth/session 200 in 83ms
+ GET /api/auth/session 200 in 185ms
+ GET /dashboard/daily-report 200 in 391ms
+ ○ Compiling /api/daily-reports ...
+ ✓ Compiled /dashboard/users in 2.4s (2562 modules)
+ ✓ Compiled in 5.8s (1330 modules)
+ GET /favicon.ico 200 in 12310ms
+ GET /api/daily-reports?email=admin%40driveonboard.test&date=2025-12-28 200 in 14176ms
+ GET /api/users 200 in 15923ms
+ GET /api/users 200 in 2045ms
+ GET /api/daily-reports/summary?email=admin%40driveonboard.test&month=2025-12 200 in 15818ms
+ GET /api/users 200 in 2050ms
+ GET /dashboard/users 200 in 13547ms
+ GET /dashboard/users 200 in 15337ms
+ GET /api/users 200 in 16007ms
+ GET /api/users 200 in 594ms
+ GET /dashboard/users 200 in 715ms
+ GET /login 200 in 571ms
+ POST /api/users 200 in 433ms
+ GET /api/users 200 in 275ms
+ GET /dashboard/users 200 in 422ms
+ GET /api/auth/session 200 in 145ms
+ GET /api/auth/session 200 in 144ms
+ GET /api/auth/session 200 in 80ms
+ GET /api/auth/session 200 in 74ms
+ GET /api/users 200 in 989ms
+ GET /dashboard/users 200 in 1155ms
+ GET /favicon.ico 200 in 32ms
+ GET /api/auth/session 200 in 60ms
+ GET /api/auth/session 200 in 193ms
+ GET /api/auth/session 200 in 56ms
+ POST /api/users 200 in 880ms
+ GET /api/users 200 in 275ms
+ GET /dashboard/users 200 in 405ms
+ GET /favicon.ico 200 in 241ms
+ GET /api/auth/session 200 in 113ms
+ GET /api/auth/csrf 200 in 51ms
+ POST /api/auth/signout 200 in 45ms
+ GET /login 200 in 218ms
+ GET /favicon.ico 200 in 84ms
+ GET /api/auth/session 200 in 49ms
+ GET /api/auth/providers 200 in 50ms
+ GET /api/auth/csrf 200 in 27ms
+[AuthDebug] Verifying password for hash: present
+[AuthDebug] Password match: true
+ POST /api/auth/callback/credentials 200 in 723ms
+ GET /api/auth/session 200 in 26ms
+ ○ Compiling /api/applications ...
+ ✓ Compiled /api/applications in 1136ms (2586 modules)
+ GET /api/applications 200 in 1636ms
+ ✓ Compiled /api/daily-reports/summary in 433ms (2593 modules)
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 1289ms
+ GET /dashboard 200 in 3047ms
+ GET /api/auth/session 200 in 543ms
+ GET /api/auth/session 200 in 143ms
+ ✓ Compiled in 1216ms (1344 modules)
+ GET /dashboard 200 in 503ms

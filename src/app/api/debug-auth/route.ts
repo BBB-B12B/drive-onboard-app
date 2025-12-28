@@ -40,6 +40,11 @@ export async function GET(req: NextRequest) {
             "admin@driveonboard.test" // Also check this one
         ];
 
+        const queryEmail = req.nextUrl.searchParams.get("email");
+        if (queryEmail) {
+            targetEmails.push(queryEmail);
+        }
+
         const testPassword = "123456";
 
         for (const email of targetEmails) {

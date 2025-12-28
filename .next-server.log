@@ -2,7 +2,10 @@
 > nextn@0.1.0 dev
 > next dev -p 9002
 
-   ▲ Next.js 15.3.3
+ ⚠ Invalid next.config.mjs options detected: 
+ ⚠     Unrecognized key(s) in object: 'outputFileTracing'
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+   ▲ Next.js 15.5.9
    - Local:        http://localhost:9002
    - Network:      http://192.168.1.240:9002
    - Environments: .env.local, .env
@@ -10,141 +13,84 @@
  ✓ Starting...
  ✓ Ready in 3.7s
  ○ Compiling / ...
- ✓ Compiled / in 2.8s (897 modules)
- GET / 200 in 3429ms
- ✓ Compiled in 663ms (388 modules)
- GET / 200 in 112ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 1299ms (1115 modules)
- GET /api/auth/session 200 in 2815ms
- ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 1442ms (3573 modules)
- ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 563ms (3845 modules)
-[getDb] Checking connection mode...
-[getDb] USE_REMOTE_D1: 'true'
- GET /api/applications 200 in 3189ms
- ○ Compiling /api/daily-reports/summary ...
- ✓ Compiled /api/daily-reports/summary in 758ms (3853 modules)
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-27 200 in 1732ms
- GET /dashboard 200 in 6625ms
-[getDb] Checking connection mode...
-[getDb] USE_REMOTE_D1: 'true'
- GET /api/auth/session 200 in 44ms
- GET /api/applications 200 in 351ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-27 200 in 267ms
- GET /dashboard 200 in 772ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-27 200 in 347ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-27 200 in 432ms
- ○ Compiling /api/daily-reports ...
- ✓ Compiled /api/daily-reports in 1238ms (4277 modules)
- GET /api/daily-reports/summary?email=driver2%40example.com&month=2025-12 200 in 1461ms
- GET /api/daily-reports/summary?email=driver2%40example.com&month=2025-12 200 in 1462ms
- GET /api/daily-reports?email=driver2%40example.com&date=2025-12-04 200 in 1684ms
- GET /api/daily-reports?email=driver2%40example.com&date=2025-12-04 200 in 1684ms
- GET /api/users 200 in 1695ms
- GET /api/users 200 in 1698ms
- GET /api/auth/session 200 in 125ms
- ✓ Compiled in 1111ms (2202 modules)
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 1205ms (2206 modules)
- GET /api/auth/session 200 in 1786ms
- GET /api/auth/session 200 in 91ms
- GET /api/auth/session 200 in 30ms
- GET /api/auth/session 200 in 62ms
- ✓ Compiled in 1444ms (2202 modules)
- ✓ Compiled in 741ms (2202 modules)
- ✓ Compiled in 3.4s (3847 modules)
- GET /dashboard 200 in 399ms
+ ✓ Compiled / in 5.3s (788 modules)
+ GET / 200 in 6658ms
+ ✓ Compiled in 1236ms (316 modules)
  ○ Compiling /favicon.ico ...
- ✓ Compiled /favicon.ico in 778ms (2478 modules)
+ ✓ Compiled /favicon.ico in 558ms (489 modules)
+ GET /favicon.ico 200 in 828ms
  ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 2.2s (2480 modules)
- GET /api/auth/session 200 in 2464ms
- GET /api/auth/session 200 in 77ms
- GET /api/auth/session 200 in 177ms
- GET /api/auth/session 200 in 117ms
- GET /api/auth/session 200 in 62ms
- GET /api/auth/session 200 in 85ms
- ✓ Compiled in 2.9s (2462 modules)
- ✓ Compiled in 341ms (2462 modules)
- ✓ Compiled in 921ms (2462 modules)
- ✓ Compiled in 310ms (2462 modules)
- ⚠ Found a change in next.config.mjs. Restarting the server to apply the changes...
-   ▲ Next.js 15.3.3
-   - Local:        http://localhost:9002
-   - Network:      http://192.168.1.240:9002
-   - Environments: .env.local, .env
-
- ✓ Starting...
- ✓ Ready in 6.8s
-[Error: Cannot find module 'next/dist/compiled/cookie'
-Require stack:
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/api-utils/get-cookie-parser.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/shared/lib/router/utils/prepare-destination.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/shared/lib/router/utils/middleware-route-matcher.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/router-utils/filesystem.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/router-server.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/start-server.js] {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: [Array]
-}
-[Error: Cannot find module 'next/dist/compiled/cookie'
-Require stack:
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/api-utils/get-cookie-parser.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/shared/lib/router/utils/prepare-destination.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/shared/lib/router/utils/middleware-route-matcher.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/router-utils/filesystem.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/router-server.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/start-server.js] {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: [Array]
-}
-[Error: Cannot find module 'next/dist/compiled/cookie'
-Require stack:
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/api-utils/get-cookie-parser.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/shared/lib/router/utils/prepare-destination.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/shared/lib/router/utils/middleware-route-matcher.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/router-utils/filesystem.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/router-server.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/start-server.js] {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: [Array]
-}
-[Error: Cannot find module 'next/dist/compiled/cookie'
-Require stack:
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/api-utils/get-cookie-parser.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/shared/lib/router/utils/prepare-destination.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/shared/lib/router/utils/middleware-route-matcher.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/router-utils/filesystem.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/router-server.js
-- /Volumes/BriteBrain/Projects/DriverDailyReport/node_modules/next/dist/server/lib/start-server.js] {
-  code: 'MODULE_NOT_FOUND',
-  requireStack: [Array]
-}
- ⚠ Found a change in next.config.mjs. Restarting the server to apply the changes...
-   ▲ Next.js 15.5.9
-   - Local:        http://localhost:9002
-   - Network:      http://192.168.1.240:9002
-   - Environments: .env.local, .env
-
- ✓ Starting...
- ✓ Ready in 9.9s
- ⚠ Found a change in next.config.mjs. Restarting the server to apply the changes...
-   ▲ Next.js 15.5.9
-   - Local:        http://localhost:9002
-   - Network:      http://192.168.1.240:9002
-   - Environments: .env.local, .env
-   - Experiments (use with caution):
-     · outputFileTracingExcludes
-
- ✓ Starting...
- ✓ Ready in 7.8s
- ⚠ Found a change in next.config.mjs. Restarting the server to apply the changes...
-   ▲ Next.js 15.5.9
-   - Local:        http://localhost:9002
-   - Network:      http://192.168.1.240:9002
-   - Environments: .env.local, .env
-
- ✓ Starting...
- ✓ Ready in 5.5s
+ ✓ Compiled /api/auth/[...nextauth] in 1509ms (1380 modules)
+ GET /api/auth/session 200 in 2996ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 4s (3872 modules)
+ ○ Compiling /api/applications ...
+ ✓ Compiled /api/applications in 641ms (3874 modules)
+ GET /api/applications 200 in 2233ms
+ ○ Compiling /api/daily-reports/summary ...
+ GET /api/applications 200 in 3014ms
+ ✓ Compiled /api/daily-reports/summary in 755ms (3881 modules)
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 687ms
+ GET /dashboard 200 in 8244ms
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 1684ms
+ GET /dashboard 200 in 8461ms
+ GET /favicon.ico 200 in 65ms
+ GET /api/auth/session 200 in 274ms
+ ○ Compiling /dashboard/daily-report ...
+ ✓ Compiled /dashboard/daily-report in 689ms (3888 modules)
+ GET /dashboard/daily-report 200 in 914ms
+ ○ Compiling /api/daily-reports ...
+ ✓ Compiled /api/daily-reports in 2.7s (3893 modules)
+ GET /api/daily-reports/summary?email=admin%40driveonboard.test&month=2025-12 200 in 3420ms
+ GET /api/users 200 in 3430ms
+ GET /api/users 200 in 3436ms
+ GET /api/daily-reports?email=admin%40driveonboard.test&date=2025-12-28 200 in 3536ms
+ ○ Compiling /api/daily-reports/sign-put ...
+ ✓ Compiled /api/daily-reports/sign-put in 819ms (1601 modules)
+ POST /api/daily-reports/sign-put 200 in 1126ms
+ GET / 200 in 493ms
+ GET /api/auth/session 200 in 411ms
+ GET /dashboard/daily-report 200 in 579ms
+ POST /api/auth/_log 200 in 107ms
+ GET /favicon.ico 200 in 64ms
+ GET /favicon.ico 200 in 28ms
+ GET /api/auth/session 200 in 28ms
+ GET /api/daily-reports?email=admin%40driveonboard.test&date=2025-12-28 200 in 538ms
+ GET /api/daily-reports/summary?email=admin%40driveonboard.test&month=2025-12 200 in 2438ms
+ GET /api/users 200 in 2644ms
+ GET /api/users 200 in 2651ms
+ POST /api/daily-reports/sign-put 200 in 65ms
+ ✓ Compiled in 277ms
+ GET /dashboard/daily-report 200 in 212ms
+ GET /favicon.ico 200 in 39ms
+ GET /api/auth/session 200 in 51ms
+ GET /api/daily-reports?email=admin%40driveonboard.test&date=2025-12-28 200 in 481ms
+ GET /api/daily-reports/summary?email=admin%40driveonboard.test&month=2025-12 200 in 2069ms
+ GET /api/users 200 in 2199ms
+ GET /api/users 200 in 2204ms
+ GET /api/daily-reports?email=driver2%40example.com&date=2025-12-28 200 in 265ms
+ GET /api/daily-reports/summary?email=driver2%40example.com&month=2025-12 200 in 481ms
+ ○ Compiling /api/daily-reports/sign-put ...
+ ✓ Compiled /api/daily-reports/sign-put in 812ms (285 modules)
+ POST /api/daily-reports/sign-put 200 in 1070ms
+ GET /dashboard/daily-report 200 in 60ms
+ GET /api/auth/session 200 in 219ms
+ ✓ Compiled in 119ms
+ GET /dashboard/daily-report 200 in 687ms
+ GET /favicon.ico 200 in 51ms
+ GET /favicon.ico 200 in 28ms
+ GET /api/auth/session 200 in 118ms
+ GET /api/daily-reports?email=admin%40driveonboard.test&date=2025-12-28 200 in 551ms
+ GET /api/daily-reports/summary?email=admin%40driveonboard.test&month=2025-12 200 in 2175ms
+ GET /api/users 200 in 2253ms
+ GET /api/users 200 in 2297ms
+ ○ Compiling /api/daily-reports/sign-put ...
+ ✓ Compiled /api/daily-reports/sign-put in 1421ms (285 modules)
+ POST /api/daily-reports/sign-put 200 in 1740ms
+ GET /dashboard/daily-report 200 in 39ms
+ POST /api/daily-reports 200 in 1691ms
+ GET /api/auth/session 200 in 378ms
+ GET /api/auth/session 200 in 219ms
+ GET /api/auth/session 200 in 122ms
+ GET /api/auth/session 200 in 126ms
+ GET /api/auth/session 200 in 87ms

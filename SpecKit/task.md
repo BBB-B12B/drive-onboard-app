@@ -19,6 +19,19 @@
         - [x] อัปเดต `package.json` scripts (`dev:all`)
 
 - [x] **[T-003] Establish SpecKit Standards**
+
+## Environment Comparison (ความต่างของระบบ)
+
+| Feature | Local Dev (Port 9002) | Production (Cloudflare Pages) | Status |
+| :--- | :--- | :--- | :--- |
+| **Run Command** | `npm run dev:all` | `wrangler pages deploy` | ✅ Aligned |
+| **Build System** | Next.js Server (Node.js) | OpenNext (Adapts to Edge) | ⚠️ Fundamental Difference |
+| **Authentication** | `next-auth` (Node.js Runtime) | `next-auth` (Edge Compatible) | ✅ Aligned (via `node:crypto`) |
+| **Database** | Local SQLite (`.wrangler/...`) | Cloudflare D1 (Global) | ⚠️ Data Mismatch (Expected) |
+| **File Storage** | R2 Proxy (Local Wrangler) | R2 Bucket (Direct/Proxy) | ✅ Aligned (via `.dev.vars`) |
+| **Secrets** | `.dev.vars` | Cloudflare Dashboard / `wrangler secret` | ✅ Aligned (Synced manually) |
+| **API Handling** | `localhost:8787` wrapper | Internal Service Binding | ✅ Aligned (via `d1-client`) |
+
     - **Concept/Goal (แนวคิด)**: วางมาตรฐานเอกสารแบบ "Paystub Model" หรือ Spec-First
     - **Principles (หลักการ)**: Single Source of Truth (ความจริงหนึ่งเดียว), Traceability (ตรวจสอบย้อนกลับได้)
     - **Implementation Details (รายละเอียดการพัฒนา)**:
@@ -155,35 +168,80 @@
 
 - [ ] **[T-040] Final UI Polish (เก็บงาน UI/Mobile)**
 - [x] **[T-041] Production Deployment Setup (ตั้งค่า Deploy จริง)**
-    - **Concept/Goal**: เตรียมระบบให้พร้อมสำหรับ Cloudflare Stack (Pages + Workers + D1 + R2)
-    - **Status**: Completed (2025-12-27)
-    - **Implementation Details**:
-        - **Env Vars**: ตั้งค่า `NEXTAUTH_URL`, `WORKER_URL`, และ Keys ต่างๆ ใน Cloudflare Dashboard
-        - **Secrets**: ใช้ `wrangler secret bulk` สำหรับ Pages และ Worker (Sync from `.env`)
-        - **Database**: Fixed OpenNext Binding issue via `getCloudflareContext`
-    - **Sub-tasks**:
-        - [x] Create Cloudflare Project (Pages & Workers)
-        - [x] Configure Environment Variables on Pages
-        - [x] Upload Secrets to Worker (Secret, R2 Keys) - **Executed via `sync-secrets.js`**
-            - **Audit**: Verified exact match between Local (`.env`) and Production Secrets.
-        - [x] Execute Production D1 Migration
-        - [x] **Fix Production Specific Bugs**:
-            - **Incident: Empty Database in Prod**:
-                - **Cause**: OpenNext's `process.env.DB` was undefined. `getDb()` fell back to ephemeral SQLite.
-                - **Fix**: Updated `src/lib/db.ts` to use `@opennextjs/cloudflare` context.
-            - **Incident: Stale Deployment (Missing Fixes)**:
-                - **Cause**: User assumption that `wrangler pages deploy` builds the code. It does NOT. It only uploads existing `.open-next`.
-                - **Result**: Fixes for `db.ts` and `dashboard` were never uploaded.
-                - **Fix**: Implemented `npx @opennextjs/cloudflare build` before deploy.
-            - **Incident: Build Failure (Native Modules)**:
-                - **Cause**: `better-sqlite3` caused `copyTracedFiles` error in OpenNext build.
-                - **Fix**: Externalized `better-sqlite3` in `next.config.mjs` and used dynamic imports.
-            - **Incident: `next-on-pages` "Ma" Error**:
-                - **Cause**: JSON parse failure during trace (possibly corrupted cache or config conflict).
-                - **Fix**: Reverting to OpenNext with fully cleaned environment (`rm -rf .next ...`) and `output: standalone` removed.
-            - **Incident: Persistent Trace Error**:
-                - **Fix**: Added `outputFileTracingExcludes` to `next.config.mjs` (Corrected to top-level for Next.js 15).
-                - **Final Attempt**: Removed `better-sqlite3` from `package.json` entirely to prevent valid trace path.
+    - [x] Create Cloudflare Project (Pages & Workers)
+    - [x] Configure Environment Variables on Pages
+    - [x] Upload Secrets to Worker (Secret, R2 Keys)
+    - [x] Execute Production D1 Migration
+    - [x] **Fix Production Build Errors**:
+        - **Incident: Login 401 (Monitoring)**:
+            - **Verification**: Recovered and deployed `/api/debug-auth` (removed `runtime=edge` to fix Webpack error) to diagnose Production Auth state.
+        - **Incident: Login 401 (Data Mismatch)**:
+            - Cause: Production D1 had different seed data than Local SQLite.
+            - Fix: Forced password hash update via `wrangler d1 execute`.
+        - **Incident: Stale Code / Build Cache**:
+            - Cause: `GET /api/users` logs confirmed old code was running.
+            - Fix: Nuked `.open-next` and `.next` folder before build.
+        - **Incident: Mac AppleDouble (`._`) & `nft.json`**:
+            - Cause: `._` files confused OpenNext; `nft.json` creation failed on external volume.
+            - Fix: Split Build (`next build` -> Clean -> `opennext build`) + `outputFileTracing: false`.
+            - **Incident: Login 401 (Runtime Config)**:
+                - Cause: `src/app/api/auth/[...nextauth]/route.ts` used `runtime="nodejs"`, conflicting with Cloudflare Worker.
+                - Fix: Removed `runtime` export to let OpenNext handle adaptation (same as successfully deployed diagnostics).
+            - **Incident: Local Image Corrupt / Signature Missing**:
+                - Cause: Missing `Secret` in Local Worker env.
+                - Fix: Created `.dev.vars` with `Secret="dev-secret-token"` to match frontend default.
+        - **Incident: Production Upload Failed (fs.readFile)**:
+            - Cause: Suspect missing R2 Credentials in OpenNext Env, causing AWS SDK to fallback to filesystem.
+            - Verification: Deployed `/api/debug-r2` to check Env Vars and isolated AWS SDK behavior.
+            - Fix: Updated `next.config.mjs` to explicitly fallback `fs: false` in webpack config to prevent AWS SDK from triggering `fs.readFile` in generic shim.
+        - **Incident: Production Login Mismatch (Specific User)**:
+            - Cause: User `admin@drivetoonboard.co` works locally (via Proxy) but failed on Prod due to password hash mismatch (Local and Prod DBs are divergent).
+            - Verification: Enhanced `/api/debug-auth` to check specific Admin account. Confirmed Mismatch.
+            - Fix: Updated `/api/debug-auth` with `?fix=true` to copy valid hash from `p.pongsada` to `admin@drivetoonboard.co`. **Verified MATCH**.
+            - Note: `admin@driveonboard.test` exists in Local but NOT in Prod. User should log in with `admin@drivetoonboard.co`.
+        - [x] **Production R2 Upload Failure** (`fs.readFile`)
+    - [x] **Analysis**: The root cause is confirmed to be the AWS SDK trying to load config files in a Worker environment where `fs` is not available.
+    - [x] **Action**: Refactor upload logic to remove `@aws-sdk` dependency entirely. (RESOLVED 2025-12-28)
+    - [x] **Implementation**:
+        - [x] Create `src/lib/r2/signer.ts` (Pure JS V4 Signer).
+        - [x] Create `src/lib/r2/binding.ts` (Native OpenNext Binding).
+        - [x] Refactor `sign-put-applicant`.
+        - [x] Refactor `daily-reports/sign-put`.
+        - [x] Refactor `daily-reports/route.ts` (JSON DB).
+        - [x] Refactor `daily-reports/summary`.
+        - [x] Refactor `r2/delete-objects`.
+        - [x] Refactor `download-form`.
+        - [x] **Delete**: `src/app/api/r2/_client.ts` and uninstall `@aws-sdk/client-s3`.
+    - [x] **Environment Standardization**:
+        - Added `npm run dev:remote` to allow Local App to use Production Data directly.
+    - [x] **Local R2 Proxy (Ultimate Simulation)**:
+        - Implemented `R2ProxyBindings` to bridge Local Node.js to Remote Worker (Port 8787).
+        - Added `/api/r2-proxy` endpoints to Worker.
+        - Result: `dev:all` now supports Real R2 List/Get/Put/Delete via Proxy.
+
+    - [x] **[T-055] Production Deployment (Final Round) (การ Deploy ขึ้น Production ครั้งสุดท้าย)**
+        - [x] **Pre-flight Check (ตรวจสอบความพร้อมก่อนขึ้น)**:
+            - [x] **Code Checks**:
+                - [x] AWS SDK Removed? YES (ถอด AWS SDK ออกหมดแล้ว)
+                - [x] `fs.readFile` Removed from Runtime? YES (ไม่มีการเรียกใช้ fs module)
+                - [x] `runtime` config adjusted for OpenNext? YES (ตั้งค่าถูกต้อง)
+                - [x] Local Build (`npm run build` + `opennextjs-cloudflare build`) Passing? YES (Build ผ่าน)
+            - [x] **R2 Connectivity Verified (ตรวจสอบการเชื่อมต่อ R2)**:
+                - [x] **Secret Sync**: แก้ไข `.dev.vars` ให้ตรงกับ `.env.final` (Port 9002 คุยกับ 8787 ได้จริง)
+                - [x] **CORS Resolved**: แก้ไข Policy บน Dashboard ให้รองรับ Localhost และ Production Domain
+                - [x] **Signature Mismatch Resolved**: แก้ไข Logic ใน `signer.ts` ให้เรียง Header (Sort) ตามมาตรฐาน AWS V4
+        - [ ] **Deploy Action (ดำเนินการ Deploy)**:
+            - `wrangler pages deploy .open-next/assets` (หรือ Deploy ผ่าน CI/CD)
+
+- [ ] **[T-060] End-to-End System Verification (ตรวจสอบระบบโดยรวม)**
+    - [ ] **Verify Production Login**: `p.pongsada@gmail.com` / `123456`
+    - [ ] **Verify Dashboard Data**: Check if reports load correctly.
+    - [ ] **Verify Local (Port 9002)**: Ensure `dev:remote` connect to Prod DB.
+
+    - **Next Actions (สิ่งที่จะทำต่อไป)**:
+        - [x] **Deploy Updated Code**: Run CORRECTED build command (Split Build Strategy).
+        - [x] **Fix Local Signals**: Restored `crypto` import and added `.dev.vars`.
+        - [ ] **Verify Local**: Restart `npm run dev:all` and check port 9002.
 
 - [ ] **[T-060] End-to-End System Verification (ตรวจสอบระบบโดยรวม)**
     - **Concept/Goal**: ตรวจสอบความถูกต้องและเสถียรภาพของระบบในมุมมอง User ทุกระดับ

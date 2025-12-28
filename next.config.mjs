@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: "standalone",
+    outputFileTracing: false, // Required for OpenNext build stability
     typescript: {
         ignoreBuildErrors: true,
     },
@@ -37,6 +39,24 @@ const nextConfig = {
                 pathname: '/**',
             }
         ],
+    },
+    webpack: (config, { isServer }) => {
+        if (!isServer) {
+            config.resolve.fallback = {
+                ...config.resolve.fallback,
+                fs: false,
+                net: false,
+                tls: false,
+            };
+        }
+        // Force fs to false even for server if running in Edge-like environment (OpenNext)
+        // Check if this breaks Node-based build steps. OpenNext uses 'edge' or 'worker' runtime.
+        // For purely client-side or edge-compatible bundles:
+        config.resolve.fallback = {
+            ...config.resolve.fallback,
+            fs: false, // Important for AWS SDK v3 in Worker
+        };
+        return config;
     },
 };
 

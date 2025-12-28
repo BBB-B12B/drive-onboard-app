@@ -1,21 +1,14 @@
-import { d1Request, isD1Enabled } from "./d1-client";
-import type { DailyReportSummaryRow, DailyReportProgressStatus } from "./daily-report";
+import { isD1Enabled } from "./d1-client"; // Keep for legacy local check if needed
+import { getDb } from "@/lib/db";
+import { dailyReportSummary } from "@/db/schema";
+import { and, eq, gte, lte, sql } from "drizzle-orm";
+import type { DailyReportProgressStatus } from "./daily-report";
 
-export type D1DailyReportRow = {
-  email: string;
-  date: string;
-  full_name?: string | null;
-  app_id?: string | null;
-  uploaded_count: number;
-  total_slots: number;
-  last_updated?: string | null;
-  status: DailyReportProgressStatus;
-  notes?: string | null;
-};
-
-const TABLE = "daily_report_summary";
+// Type matching existing usage if needed (though we return explicit objects)
+export type { DailyReportProgressStatus };
 
 export function isD1DailyReportEnabled() {
+  if (process.env.NODE_ENV === "production") return true;
   return isD1Enabled();
 }
 
@@ -32,33 +25,46 @@ export async function upsertDailyReportSummary(
     notes?: string;
   }
 ) {
-  if (!isD1DailyReportEnabled()) return;
-  const res = await d1Request(`/api/${TABLE}`, {
-    method: "POST",
-    body: {
+  const db = await getDb();
+  if (!db) return;
+
+  try {
+    await db.insert(dailyReportSummary).values({
       email: row.email,
       date: row.date,
-      full_name: row.fullName ?? row.email,
-      app_id: row.appId ?? row.email,
-      uploaded_count: row.uploadedCount,
-      total_slots: row.totalSlots,
-      last_updated: row.lastUpdated ?? new Date().toISOString(),
+      fullName: row.fullName ?? row.email,
+      appId: row.appId ?? row.email,
+      uploadedCount: row.uploadedCount,
+      totalSlots: row.totalSlots,
+      lastUpdated: row.lastUpdated ?? new Date().toISOString(),
       status: row.status,
       notes: row.notes,
-    },
-  });
-  if (res.error) {
-    console.error("[D1] upsertDailyReportSummary error:", res.error);
+    }).onConflictDoUpdate({
+      target: [dailyReportSummary.email, dailyReportSummary.date],
+      set: {
+        fullName: row.fullName ?? row.email,
+        appId: row.appId ?? row.email,
+        uploadedCount: row.uploadedCount,
+        totalSlots: row.totalSlots,
+        lastUpdated: row.lastUpdated ?? new Date().toISOString(),
+        status: row.status,
+        notes: row.notes,
+      },
+    });
+  } catch (error) {
+    console.error("[D1] upsertDailyReportSummary error:", error);
   }
 }
 
 export async function deleteDailyReportSummary(email: string, date: string) {
-  if (!isD1DailyReportEnabled()) return;
-  const res = await d1Request(`/api/${TABLE}?email=${encodeURIComponent(email)}&date=${encodeURIComponent(date)}`, {
-    method: "DELETE",
-  });
-  if (res.error) {
-    console.error("[D1] deleteDailyReportSummary error:", res.error);
+  const db = await getDb();
+  if (!db) return;
+  try {
+    await db.delete(dailyReportSummary).where(
+      and(eq(dailyReportSummary.email, email), eq(dailyReportSummary.date, date))
+    );
+  } catch (error) {
+    console.error("[D1] deleteDailyReportSummary error:", error);
   }
 }
 
@@ -66,27 +72,36 @@ export async function fetchDailyReportSummaryRange(
   startDate: string,
   endDate: string,
   email?: string
-): Promise<DailyReportSummaryRow[] | null> {
-  if (!isD1DailyReportEnabled()) return null;
-  const search = new URLSearchParams({ startDate, endDate });
-  if (email) search.set("email", email);
+) {
+  const db = await getDb();
+  if (!db) return null;
 
-  const res = await d1Request<D1DailyReportRow[]>(`/api/${TABLE}?${search.toString()}`);
-  if (res.error || !res.data) {
-    console.error("[D1] fetchDailyReportSummaryRange error:", res.error);
+  try {
+    const conditions = [
+      gte(dailyReportSummary.date, startDate),
+      lte(dailyReportSummary.date, endDate)
+    ];
+
+    if (email) {
+      conditions.push(eq(dailyReportSummary.email, email));
+    }
+
+    const rows = await db.select().from(dailyReportSummary).where(and(...conditions));
+
+    return rows.map((row) => ({
+      appId: row.appId ?? row.email,
+      fullName: row.fullName ?? row.email,
+      email: row.email,
+      phone: null,
+      date: row.date,
+      uploadedCount: row.uploadedCount,
+      totalSlots: row.totalSlots,
+      lastUpdated: row.lastUpdated || undefined,
+      status: row.status as DailyReportProgressStatus,
+      notes: row.notes || undefined,
+    }));
+  } catch (error) {
+    console.error("[D1] fetchDailyReportSummaryRange error:", error);
     return null;
   }
-
-  return res.data.map((row) => ({
-    appId: row.app_id ?? row.email,
-    fullName: row.full_name ?? row.email,
-    email: row.email,
-    phone: null,
-    date: row.date,
-    uploadedCount: row.uploaded_count,
-    totalSlots: row.total_slots,
-    lastUpdated: row.last_updated ?? undefined,
-    status: row.status,
-    notes: row.notes ?? undefined,
-  }));
 }

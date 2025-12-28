@@ -1,13 +1,12 @@
-
 import { NextRequest, NextResponse } from "next/server";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
 import { z } from "zod";
-import { getR2Client } from "../_client";
+// import { getR2Client } from "../_client"; // Removed AWS SDK dependency
+// import { PutObjectCommand } from "@aws-sdk/client-s3"; // Removed
+// import { getSignedUrl } from "@aws-sdk/s3-request-presigner"; // Removed
 import { assertApplicantOwner } from "../_auth";
 import { requireR2Bucket } from "@/lib/r2/env";
-
-import { normalizeFileName } from "@/lib/daily-report";
+import { createPresignedUrl } from "@/lib/r2/signer";
 
 const Body = z.object({
   applicationId: z.string(),
@@ -26,21 +25,13 @@ export async function POST(req: NextRequest) {
   try {
     const bucket = requireR2Bucket();
 
-    // DEBUG: Check R2 Env Vars
-    console.log("[DEBUG] R2 Config Check:", {
-      hasBucket: !!bucket,
-      hasEndpoint: !!process.env.R2_ENDPOINT,
-      hasAccessKey: !!process.env.R2_ACCESS_KEY_ID,
-      hasSecret: !!process.env.R2_SECRET_ACCESS_KEY,
-      endpoint: process.env.R2_ENDPOINT, // Safe to log endpoint
-    });
-
-    if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY) {
-      throw new Error("R2 Access Keys are missing from process.env");
+    if (!process.env.R2_ACCESS_KEY_ID || !process.env.R2_SECRET_ACCESS_KEY || !process.env.R2_ENDPOINT) {
+      console.error("[R2 Error] Missing Environment Variables");
+      throw new Error("R2 Configuration Missing");
     }
 
     const { applicationId, docType, fileName, mime, size, md5 } = Body.parse(await req.json());
-    await assertApplicantOwner(applicationId, req); // ตรวจว่าเป็นเจ้าของจริง
+    await assertApplicantOwner(applicationId, req);
 
     const ACCEPTED_MIMES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif", "application/pdf"];
     if (!ACCEPTED_MIMES.includes(mime)) {
@@ -55,26 +46,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `PDF size cannot exceed ${MAX_PDF_SIZE / 1024 / 1024}MB.` }, { status: 400 });
     }
 
-
-
-
-    // Generate sanitized filename: [Timestamp]_[DocType]_[Random].[ext]
-    // Ignore original fileName (except for extension) to prevent encoding issues.
     const ext = fileName.split('.').pop()?.toLowerCase() || 'bin';
     const randomSuffix = Math.random().toString(36).substring(2, 8);
     const safeFileName = `${Date.now()}_${docType}_${randomSuffix}.${ext}`;
-
     const key = `applications/${applicationId}/${docType}/${safeFileName}`;
 
-    const cmd = new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      ContentType: mime,
-      ...(md5 ? { ContentMD5: md5 } : {})
-    });
+    console.log("[R2] Generating Signed URL (Native) for:", key);
 
-    const r2 = getR2Client();
-    const url = await getSignedUrl(r2, cmd, { expiresIn: Number(process.env.R2_PRESIGN_PUT_TTL || 600) });
+    const url = await createPresignedUrl({
+      method: "PUT",
+      bucket,
+      key,
+      accessKeyId: process.env.R2_ACCESS_KEY_ID,
+      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
+      endpoint: process.env.R2_ENDPOINT,
+      contentType: mime,
+      contentMD5: md5,
+      expiresIn: Number(process.env.R2_PRESIGN_PUT_TTL || 600)
+    });
 
     return NextResponse.json({ url, key });
 
@@ -84,7 +73,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid request body", details: error.issues }, { status: 400 });
     }
     const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-    // Make sure to return a JSON response with an 'error' key
     return NextResponse.json({ error: `Could not create upload URL. Reason: ${errorMessage}` }, { status: 500 });
   }
 }

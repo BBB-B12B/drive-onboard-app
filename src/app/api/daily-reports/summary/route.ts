@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  GetObjectCommand,
-  ListObjectsV2Command,
-} from "@aws-sdk/client-s3";
-import { getR2Client } from "@/app/api/r2/_client";
+import { getR2Binding } from "@/lib/r2/binding";
 import {
   DailyReportDateSchema,
   DailyReportEmailSchema,
@@ -18,19 +14,15 @@ import { parseISO, eachDayOfInterval, startOfMonth, endOfMonth, format } from "d
 import { fetchDailyReportSummaryRange, isD1DailyReportEnabled } from "@/lib/d1-daily-report";
 import { fetchAllUsers, isD1UsersEnabled } from "@/lib/d1-users";
 
-async function getJson(bucket: string, key: string): Promise<any | null> {
+async function getJson(bucket: any, key: string): Promise<any | null> {
   try {
-    const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-    const r2 = getR2Client();
-    const response = await r2.send(command);
-    const content = await response.Body?.transformToString();
-    if (!content) return null;
-    return JSON.parse(content);
+    const object = await bucket.get(key);
+    if (!object) return null;
+    return await object.json();
   } catch (error: any) {
     if (error.name === "NoSuchKey") {
       return null;
     }
-    // Don't re-throw, just return null and log
     console.error(`Failed to get JSON for ${key}`, error);
     return null;
   }
@@ -76,7 +68,6 @@ export async function GET(req: NextRequest) {
   if (isD1DailyReportEnabled()) {
     const d1Rows = await fetchDailyReportSummaryRange(clampedStartStr, clampedEndStr, email);
     if (d1Rows) {
-      // เติมวันที่ที่ขาดหายไปให้ครบช่วง
       const fillMissingForEmail = (targetEmail: string, sourceRows: any[]): any[] => {
         const byDate = new Map(sourceRows.map((r) => [r.date, r]));
         return days.map((day) => {
@@ -103,19 +94,16 @@ export async function GET(req: NextRequest) {
         return NextResponse.json(filled);
       }
 
-      // admin: ต้องรู้รายชื่อพนักงานทั้งหมด
       let employees: string[] = [];
       if (isD1UsersEnabled()) {
         const users = await fetchAllUsers();
         employees = users.filter((u) => u.role === "employee").map((u) => u.email);
         const phoneMap = new Map(users.map((u) => [u.email.toLowerCase(), u.phone]));
-        // attach phone into existing rows
         for (const row of d1Rows) {
           const phone = phoneMap.get((row.email || "").toLowerCase());
           if (phone) (row as any).phone = phone;
         }
       }
-      // fallback: ใช้อีเมลที่มีใน d1Rows
       if (employees.length === 0) {
         employees = Array.from(new Set(d1Rows.map((r) => r.email).filter(Boolean)));
       }
@@ -129,7 +117,7 @@ export async function GET(req: NextRequest) {
         });
         filledAll.push(...filled);
       }
-      // เรียงวันที่แล้วชื่อ
+
       filledAll.sort((a, b) => {
         const dA = parseISO(a.date).getTime();
         const dB = parseISO(b.date).getTime();
@@ -140,46 +128,20 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Admin view: aggregate across employees
-  if (!email) {
-    const bucket = process.env.R2_BUCKET;
-    // If no bucket, fallback to sample employees
-    if (!bucket) {
-      const rows = days.flatMap((d) =>
-        sampleAccounts
-          .filter((acc) => acc.role === "employee")
-          .map((acc) => {
-            const dateStr = format(d, "yyyy-MM-dd");
-            const sample = getSampleDailyReport(acc.email, dateStr);
-            const uploadedCount = sample.slots.filter((s) => s.r2Key || s.url).length;
-            const app = sampleApplications.find((a) => a.appId === acc.appId);
-            const status = getDailyReportProgressStatus(uploadedCount, TOTAL_DAILY_REPORT_SLOTS);
-            return {
-              appId: acc.appId ?? acc.email,
-              fullName: acc.name,
-              email: acc.email,
-              phone: acc.phone ?? app?.phone ?? null,
-              date: dateStr,
-              uploadedCount,
-              totalSlots: TOTAL_DAILY_REPORT_SLOTS,
-              status,
-            } as const;
-          })
-      );
-      return NextResponse.json(rows);
-    }
+  // Fallback: R2 Direct Listing (Legacy)
+  try {
+    const bucket = await getR2Binding();
 
-    try {
+    // Admin view: aggregate across employees
+    if (!email) {
       // List all email segments under daily-reports/
-      const listEmails = new ListObjectsV2Command({
-        Bucket: bucket,
-        Prefix: "daily-reports/",
-        Delimiter: "/",
+      const listResponse = await bucket.list({
+        prefix: "daily-reports/",
+        delimiter: "/",
       });
-      const r2 = getR2Client();
-      const listResponse = await r2.send(listEmails);
+
       const emailSegments =
-        listResponse.CommonPrefixes?.map((p) => p.Prefix?.split("/")[1]).filter(Boolean) ?? [];
+        listResponse.delimitedPrefixes?.map((p) => p.split("/")[1]).filter(Boolean) ?? [];
 
       const rows: any[] = [];
       for (const segment of emailSegments) {
@@ -203,39 +165,9 @@ export async function GET(req: NextRequest) {
         }
       }
       return NextResponse.json(rows);
-    } catch (error) {
-      console.error("[DailyReport Summary GET admin] error", error);
-      return NextResponse.json(
-        { error: "Failed to fetch daily report summary" },
-        { status: 500 }
-      );
     }
-  }
 
-  // Employee view: fetch per-day reports within range
-  const bucket = process.env.R2_BUCKET;
-  if (!bucket) {
-    // fallback sample
-    const rows = days.map((d) => {
-      const dateStr = format(d, "yyyy-MM-dd");
-      const sample = getSampleDailyReport(email, dateStr);
-      const uploadedCount = sample.slots.filter((s) => s.r2Key || s.url).length;
-      return {
-        appId: email,
-        fullName: sample.userEmail,
-        email,
-        phone: null,
-        date: dateStr,
-        uploadedCount,
-        totalSlots: TOTAL_DAILY_REPORT_SLOTS,
-        status: getDailyReportProgressStatus(uploadedCount, TOTAL_DAILY_REPORT_SLOTS),
-        lastUpdated: sample.updatedAt,
-      };
-    });
-    return NextResponse.json(rows);
-  }
-
-  try {
+    // Employee view: fetch per-day reports within range
     const emailSegment = sanitizeEmailForPath(email);
     const rows: any[] = [];
 
@@ -259,11 +191,50 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json(rows);
+
   } catch (error) {
-    console.error("[DailyReport Summary GET] error", error);
-    return NextResponse.json(
-      { error: "Failed to fetch daily report summary" },
-      { status: 500 }
-    );
+    // Use Sample Data if R2 Fails (e.g. binding not found locally)
+    if (!email) {
+      const rows = days.flatMap((d) =>
+        sampleAccounts
+          .filter((acc) => acc.role === "employee")
+          .map((acc) => {
+            const dateStr = format(d, "yyyy-MM-dd");
+            const sample = getSampleDailyReport(acc.email, dateStr);
+            const uploadedCount = sample.slots.filter((s) => s.r2Key || s.url).length;
+            const app = sampleApplications.find((a) => a.appId === acc.appId);
+            const status = getDailyReportProgressStatus(uploadedCount, TOTAL_DAILY_REPORT_SLOTS);
+            return {
+              appId: acc.appId ?? acc.email,
+              fullName: acc.name,
+              email: acc.email,
+              phone: acc.phone ?? app?.phone ?? null,
+              date: dateStr,
+              uploadedCount,
+              totalSlots: TOTAL_DAILY_REPORT_SLOTS,
+              status,
+            } as const;
+          })
+      );
+      return NextResponse.json(rows);
+    } else {
+      const rows = days.map((d) => {
+        const dateStr = format(d, "yyyy-MM-dd");
+        const sample = getSampleDailyReport(email, dateStr);
+        const uploadedCount = sample.slots.filter((s) => s.r2Key || s.url).length;
+        return {
+          appId: email,
+          fullName: sample.userEmail,
+          email,
+          phone: null,
+          date: dateStr,
+          uploadedCount,
+          totalSlots: TOTAL_DAILY_REPORT_SLOTS,
+          status: getDailyReportProgressStatus(uploadedCount, TOTAL_DAILY_REPORT_SLOTS),
+          lastUpdated: sample.updatedAt,
+        };
+      });
+      return NextResponse.json(rows);
+    }
   }
 }

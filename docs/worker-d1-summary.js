@@ -54,6 +54,21 @@ export default {
       if (request.method === "DELETE") return handleDeleteSummary(url, env);
     }
 
+    // R2 Proxy Routes (For Local Dev Bridge)
+    // Protected by same Bearer Secret
+    if (url.pathname.startsWith("/api/r2-proxy")) {
+      const auth = request.headers.get("authorization") || "";
+      if (!auth.startsWith("Bearer ") || auth.slice(7) !== env.Secret) {
+        return new Response("Unauthorized Proxy Access", { status: 401 });
+      }
+
+      // Handle R2 Proxy
+      if (request.method === "GET" && url.pathname === "/api/r2-proxy/list") return handleProxyList(url, env);
+      if (request.method === "GET") return handleProxyGet(url, env);
+      if (request.method === "PUT") return handleProxyPut(request, url, env);
+      if (request.method === "DELETE") return handleProxyDelete(url, env);
+    }
+
     // User Management Routes
     if (url.pathname.startsWith("/api/users")) {
       if (request.method === "GET") return handleGetUsers(url, env);
@@ -72,6 +87,66 @@ export default {
     return new Response("Not Found", { status: 404 });
   },
 };
+
+// --- R2 Proxy Handlers (Bridge for Local Node.js) ---
+
+async function handleProxyList(url, env) {
+  const prefix = url.searchParams.get("prefix") || "";
+  const delimiter = url.searchParams.get("delimiter");
+  const limit = url.searchParams.get("limit");
+
+  // R2 List Options
+  const options = {
+    prefix,
+    limit: limit ? parseInt(limit) : undefined,
+    delimiter: delimiter || undefined
+  };
+
+  const result = await env.R2.list(options);
+  return json(result);
+}
+
+async function handleProxyGet(url, env) {
+  // Path: /api/r2-proxy/<key>
+  const key = decodeURIComponent(url.pathname.slice("/api/r2-proxy/".length));
+  if (!key) return new Response("Missing Key", { status: 400 });
+
+  const object = await env.R2.get(key);
+  if (!object) return new Response("Object Not Found", { status: 404 });
+
+  // Return raw body
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set("etag", object.httpEtag);
+
+  return new Response(object.body, { headers });
+}
+
+async function handleProxyPut(request, url, env) {
+  // Path: /api/r2-proxy/<key>
+  const key = decodeURIComponent(url.pathname.slice("/api/r2-proxy/".length));
+  if (!key) return new Response("Missing Key", { status: 400 });
+
+  const contentType = request.headers.get("content-type");
+
+  // Put stream
+  await env.R2.put(key, request.body, {
+    httpMetadata: {
+      contentType: contentType || undefined,
+    }
+  });
+
+  return json({ ok: true, key });
+}
+
+async function handleProxyDelete(url, env) {
+  // Path: /api/r2-proxy/<key>
+  const key = decodeURIComponent(url.pathname.slice("/api/r2-proxy/".length));
+  if (!key) return new Response("Missing Key", { status: 400 });
+
+  await env.R2.delete(key);
+  return json({ ok: true, deleted: key });
+}
 
 // --- Daily Report Summary Handlers ---
 

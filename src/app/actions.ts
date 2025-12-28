@@ -1,6 +1,6 @@
 'use server'
 
-import { r2 } from '@/app/api/r2/_client';
+// import { r2 } from '@/app/api/r2/_client';
 import type { Manifest, VerificationStatus } from '@/lib/types';
 import { revalidateTag } from 'next/cache';
 import { getDb } from '@/lib/db';

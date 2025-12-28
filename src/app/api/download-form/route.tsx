@@ -3,9 +3,7 @@ export const runtime = 'nodejs'; // Use Node.js runtime
 
 import { NextRequest, NextResponse } from 'next/server';
 import type { Manifest } from '@/lib/types';
-import { GetObjectCommand } from '@aws-sdk/client-s3';
-import { getR2Client } from '@/app/api/r2/_client';
-import { requireR2Bucket } from '@/lib/r2/env';
+import { getR2Binding } from "@/lib/r2/binding";
 
 // Import aot templates 
 import {
@@ -19,21 +17,15 @@ const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz-K0rRj8ibF1aa
 // Helper: Fetch image from R2 and convert to Base64
 async function fetchImageBase64(r2Key: string): Promise<string | null> {
   try {
-    const bucket = requireR2Bucket();
-    const command = new GetObjectCommand({
-      Bucket: bucket,
-      Key: r2Key,
-    });
-    const r2 = await getR2Client();
-    const response = await r2.send(command);
-    if (!response.Body) return null;
+    const bucket = await getR2Binding();
+    const object = await bucket.get(r2Key);
 
-    // Convert stream to buffer
-    // @ts-ignore - transformToByteArray exists in newer SDKs but sometimes TS complains
-    const byteArray = await response.Body.transformToByteArray();
-    const buffer = Buffer.from(byteArray);
+    if (!object) return null;
+
+    const arrayBuffer = await object.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
     const base64 = buffer.toString('base64');
-    const mimeType = response.ContentType || 'image/png';
+    const mimeType = object.httpMetadata?.contentType || 'image/png';
 
     return `data:${mimeType};base64,${base64}`;
   } catch (error) {

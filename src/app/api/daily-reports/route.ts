@@ -1,13 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import {
-  GetObjectCommand,
-  PutObjectCommand,
-  DeleteObjectCommand,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { differenceInDays, startOfDay } from "date-fns";
-import { getR2Client } from "@/app/api/r2/_client";
+import { getR2Binding } from "@/lib/r2/binding";
+import { getWorkerFileUrl } from "@/lib/worker-url";
 import {
   DailyReportDateSchema,
   DailyReportEmailSchema,
@@ -37,74 +32,49 @@ const deleteSchema = z.object({
   slotId: z.enum(dailyReportSlotIds),
 });
 
-async function getJson(bucket: string, key: string): Promise<any | null> {
+async function getJson(bucket: any, key: string): Promise<any | null> {
   try {
-    const r2 = getR2Client();
-    const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-    const response = await r2.send(command);
-    const content = await response.Body?.transformToString();
-    if (!content) return null;
-    return JSON.parse(content);
+    const object = await bucket.get(key);
+    if (!object) return null;
+    return await object.json();
   } catch (error: any) {
-    if (error.name === "NoSuchKey") {
-      return null;
-    }
-    throw error;
+    console.warn(`[DailyReport] Failed to get JSON for ${key}`, error);
+    return null;
   }
 }
 
-async function putJson(bucket: string, key: string, data: unknown) {
-  const command = new PutObjectCommand({
-    Bucket: bucket,
-    Key: key,
-    Body: JSON.stringify(data),
-    ContentType: "application/json",
+async function putJson(bucket: any, key: string, data: unknown) {
+  await bucket.put(key, JSON.stringify(data), {
+    httpMetadata: { contentType: "application/json" }
   });
-  const r2 = getR2Client();
-  await r2.send(command);
 }
 
-async function toResponse(
-  record: DailyReportRecord,
-  bucket: string
-): Promise<DailyReportResponse> {
-  const expiresIn = Number(process.env.R2_PRESIGN_GET_TTL || 600);
-  const slots = await Promise.all(
-    dailyReportSlotOrder.map(async (slot) => {
-      const slotData = record.slots[slot.id] ?? {
-        id: slot.id,
-        label: slot.label,
-      };
+function toResponse(
+  record: DailyReportRecord
+): DailyReportResponse {
+  // const expiresIn = Number(process.env.R2_PRESIGN_GET_TTL || 600);
+  const slots = dailyReportSlotOrder.map((slot) => {
+    const slotData = record.slots[slot.id] ?? {
+      id: slot.id,
+      label: slot.label,
+    };
 
-      let url: string | undefined;
-      if (slotData.r2Key) {
-        try {
-          const r2 = getR2Client();
-          const signed = await getSignedUrl(
-            r2,
-            new GetObjectCommand({ Bucket: bucket, Key: slotData.r2Key }),
-            { expiresIn }
-          );
-          url = signed;
-        } catch (error) {
-          console.error(
-            `[DailyReport] Failed to sign GET URL for ${record.userEmail} ${record.date} ${slot.id}`,
-            error
-          );
-        }
-      }
+    let url: string | undefined;
+    if (slotData.r2Key) {
+      // Use Worker Proxy URL instead of Signed URL
+      url = getWorkerFileUrl(slotData.r2Key);
+    }
 
-      return {
-        id: slotData.id,
-        label: slotData.label || slot.label,
-        r2Key: slotData.r2Key,
-        fileName: slotData.fileName,
-        uploadedAt: slotData.uploadedAt,
-        group: slotData.group ?? slot.group,
-        url,
-      };
-    })
-  );
+    return {
+      id: slotData.id,
+      label: slotData.label || slot.label,
+      r2Key: slotData.r2Key,
+      fileName: slotData.fileName,
+      uploadedAt: slotData.uploadedAt,
+      group: slotData.group ?? slot.group,
+      url,
+    };
+  });
 
   return {
     userEmail: record.userEmail,
@@ -119,23 +89,15 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const email = DailyReportEmailSchema.parse(searchParams.get("email"));
   const date = DailyReportDateSchema.parse(searchParams.get("date"));
-  const bucket = process.env.R2_BUCKET;
-  if (!bucket) {
-    console.warn(
-      "R2_BUCKET environment variable is not set. Using sample daily report response."
-    );
-    const sample = getSampleDailyReport(email, date);
-    return NextResponse.json(sample);
-  }
 
   try {
-
+    const bucket = await getR2Binding();
     const emailSegment = sanitizeEmailForPath(email);
     const reportKey = `daily-reports/${emailSegment}/${date}/report.json`;
     const data = await getJson(bucket, reportKey);
 
     const record = normalizeDailyReportRecord(email, date, data);
-    const response = await toResponse(record, bucket);
+    const response = toResponse(record);
 
     return NextResponse.json(response);
   } catch (error) {
@@ -153,20 +115,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const bucket = process.env.R2_BUCKET;
-  if (!bucket) {
-    return NextResponse.json(
-      {
-        error:
-          "R2_BUCKET environment variable is not set. การอัปโหลด Daily Report ต้องตั้งค่า Cloudflare R2 ก่อน",
-      },
-      { status: 501 }
-    );
-  }
-
   try {
+    const bucket = await getR2Binding();
     const input = putSchema.parse(await req.json());
-
     const { email, date, slotId, r2Key, fileName } = input;
 
     const emailSegment = sanitizeEmailForPath(email);
@@ -210,7 +161,7 @@ export async function POST(req: NextRequest) {
       console.warn("[DailyReport] failed to upsert D1 summary index", e);
     }
 
-    const response = await toResponse(record, bucket);
+    const response = toResponse(record);
     return NextResponse.json(response);
   } catch (error) {
     console.error("[DailyReport POST] error", error);
@@ -220,6 +171,13 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+    if (error instanceof Error && error.message.includes("Binding")) {
+      return NextResponse.json(
+        { error: "R2 Configuration Error. Please contact admin." },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Failed to update daily report" },
       { status: 500 }
@@ -228,18 +186,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const bucket = process.env.R2_BUCKET;
-  if (!bucket) {
-    return NextResponse.json(
-      {
-        error:
-          "R2_BUCKET environment variable is not set. การลบไฟล์ใน Daily Report ต้องตั้งค่า Cloudflare R2 ก่อน",
-      },
-      { status: 501 }
-    );
-  }
-
   try {
+    const bucket = await getR2Binding();
     const input = deleteSchema.parse(await req.json());
     const { email, date, slotId } = input;
 
@@ -251,12 +199,7 @@ export async function DELETE(req: NextRequest) {
     const slotToDelete = record.slots[slotId];
 
     if (slotToDelete?.r2Key) {
-      const deleteCmd = new DeleteObjectCommand({
-        Bucket: bucket,
-        Key: slotToDelete.r2Key,
-      });
-      const r2 = getR2Client();
-      await r2.send(deleteCmd);
+      await bucket.delete(slotToDelete.r2Key);
     }
 
     record.slots[slotId] = {
@@ -291,7 +234,7 @@ export async function DELETE(req: NextRequest) {
       console.warn("[DailyReport] failed to upsert D1 summary index after delete", e);
     }
 
-    const response = await toResponse(record, bucket);
+    const response = toResponse(record);
     return NextResponse.json(response);
   } catch (error) {
     console.error("[DailyReport DELETE] error", error);

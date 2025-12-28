@@ -230,6 +230,9 @@
                 - [x] **Secret Sync**: แก้ไข `.dev.vars` ให้ตรงกับ `.env.final` (Port 9002 คุยกับ 8787 ได้จริง)
                 - [x] **CORS Resolved**: แก้ไข Policy บน Dashboard ให้รองรับ Localhost และ Production Domain
                 - [x] **Signature Mismatch Resolved**: แก้ไข Logic ใน `signer.ts` ให้เรียง Header (Sort) ตามมาตรฐาน AWS V4
+                - [x] **Fix Build Failure (Edge Runtime Conflict)**:
+                    - **Error**: `app/api/.../route cannot use the edge runtime`
+                    - **Fix**: Removed `export const runtime = 'edge'` from `daily-reports/sign-put` and `debug-r2` to let OpenNext handle adaptation.
         - [ ] **Deploy Action (ดำเนินการ Deploy)**:
             - `wrangler pages deploy .open-next/assets` (หรือ Deploy ผ่าน CI/CD)
 

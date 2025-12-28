@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getR2Binding } from "@/lib/r2/binding";
 
-export const runtime = 'edge';
+
 
 export async function GET() {
     const debug: any = {

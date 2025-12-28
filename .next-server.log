@@ -94,3 +94,6 @@
  GET /api/auth/session 200 in 122ms
  GET /api/auth/session 200 in 126ms
  GET /api/auth/session 200 in 87ms
+ GET /api/auth/session 200 in 123ms
+ ✓ Compiled in 6.9s (1330 modules)
+ GET /dashboard/daily-report 200 in 114ms

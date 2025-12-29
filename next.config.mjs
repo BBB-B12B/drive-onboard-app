@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     output: "standalone",
-    outputFileTracing: false, // Required for OpenNext build stability
     typescript: {
         ignoreBuildErrors: true,
     },
@@ -9,7 +8,13 @@ const nextConfig = {
         ignoreDuringBuilds: true,
     },
     outputFileTracingExcludes: {
-        '*': ['better-sqlite3', 'node_modules/better-sqlite3', 'drizzle-orm/better-sqlite3']
+        '*': [
+            'better-sqlite3',
+            'node_modules/better-sqlite3',
+            'drizzle-orm/better-sqlite3',
+            '**/._*',
+            '**/**/._*',
+        ]
     },
     serverExternalPackages: ['better-sqlite3'],
     images: {
@@ -50,12 +55,17 @@ const nextConfig = {
             };
         }
         // Force fs to false even for server if running in Edge-like environment (OpenNext)
-        // Check if this breaks Node-based build steps. OpenNext uses 'edge' or 'worker' runtime.
-        // For purely client-side or edge-compatible bundles:
         config.resolve.fallback = {
             ...config.resolve.fallback,
-            fs: false, // Important for AWS SDK v3 in Worker
+            fs: false, // Important for AWS SDK v3 in Worker and sqlite
         };
+
+        // NUCLEAR OPTION: Tell webpack that better-sqlite3 does not exist.
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            "better-sqlite3": false,
+        };
+
         return config;
     },
 };

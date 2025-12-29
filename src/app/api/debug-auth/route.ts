@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         debug.db_binding = "Connected";
 
         // 1. Get Known Good Hash (from p.pongsada)
-        const pongsada = await db.select().from(users).where(eq(users.email, "p.pongsada@gmail.com")).limit(1).then(r => r[0]);
+        const pongsada = await db.select().from(users).where(eq(users.email, "p.pongsada@gmail.com")).limit(1).then((r: any[]) => r[0]);
         let knownGoodHash = "";
 
         if (pongsada && pongsada.password_hash) {
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
         const testPassword = "123456";
 
         for (const email of targetEmails) {
-            let user = await db.select().from(users).where(eq(users.email, email)).limit(1).then(r => r[0]);
+            let user = await db.select().from(users).where(eq(users.email, email)).limit(1).then((r: any[]) => r[0]);
 
             // Auto-fix if user exists and we have a good hash and fixMode is ON
             if (user && fixMode && knownGoodHash) {
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
                     debug.fix_applied = true;
                     debug.fix_details = `Updated hash for ${email} to match p.pongsada`;
                     // Re-fetch
-                    user = await db.select().from(users).where(eq(users.email, email)).limit(1).then(r => r[0]);
+                    user = await db.select().from(users).where(eq(users.email, email)).limit(1).then((r: any[]) => r[0]);
                 } catch (err: any) {
                     debug.fix_error = err.message;
                 }

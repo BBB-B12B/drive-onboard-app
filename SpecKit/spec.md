@@ -16,6 +16,9 @@
 | **[F-011]** | Data Export (ส่งออกข้อมูล) | Admin สามารถ Export รายงานเป็น CSV ได้ |
 | **[F-012]** | Idle Timeout Protection (ระบบล็อคเมื่อไม่ใช้งาน) | จับเวลาการใช้งาน หากนิ่งเกิน 3 นาทีให้ขึ้นหน้าจอ Blue Screen บังข้อมูลไว้ |
 | **[F-013]** | Dashboard UX Refinement (ปรับปรุงการใช้งาน Dashboard) | Infinite Scroll, Fixed Height Container, Sortable Columns, Order by Date DESC |
+| **[F-014]** | **Mobile Responsiveness** | รองรับการใช้งานมือถือเต็มรูปแบบ พร้อม Mobile Navigation และ Responsive Tables |
+| **[F-015]** | **Smart Image Handling** | ลดขนาดรูปอัตโนมัติ (WebP/JPEG Fallback), จัดโฟลเดอร์ใน R2, ลบไฟล์เก่าอัตโนมัติ, เน้นการใช้กล้องถ่ายรูป |
+| **[F-016]** | **Form Safety** | ระบบป้องกันข้อมูลหาย (Unsaved Changes Warning) เมื่อออกจากหน้า Apply |
 
 ## 2. Data Models (Simplified Data Structure)
 ### Drivers / Applications (คนขับ/ใบสมัคร)

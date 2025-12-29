@@ -125,6 +125,16 @@ export async function POST(req: NextRequest) {
     const existing = await getJson(bucket, reportKey);
     const record = normalizeDailyReportRecord(email, date, existing);
 
+    const existingSlot = record.slots[slotId];
+    if (existingSlot?.r2Key && existingSlot.r2Key !== r2Key) {
+      try {
+        console.log(`[DailyReport] Deleting old file: ${existingSlot.r2Key} to replace with ${r2Key}`);
+        await bucket.delete(existingSlot.r2Key);
+      } catch (delErr) {
+        console.warn(`[DailyReport] Failed to delete old file ${existingSlot.r2Key}`, delErr);
+      }
+    }
+
     record.slots[slotId] = {
       id: slotId,
       label:

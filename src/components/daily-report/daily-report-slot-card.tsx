@@ -3,7 +3,14 @@
 import { useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Trash2, UploadCloud } from "lucide-react";
+import { Loader2, Trash2, UploadCloud, MoreHorizontal, Eye, Download } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { DailyReportResponseSlot } from "@/lib/daily-report";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -57,20 +64,39 @@ export function DailyReportSlotCard({
                 className="aspect-video w-full rounded-md object-cover"
               />
               {!disabled && (
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="absolute top-2 right-2 h-8 w-8"
-                  onClick={onDelete}
-                  disabled={isBusy}
-                  aria-label="Delete image"
-                >
+                <div className="absolute top-2 right-2">
                   {deleting ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-md bg-background/80">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    </div>
                   ) : (
-                    <Trash2 className="h-4 w-4" />
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="secondary" size="icon" className="h-8 w-8 bg-background/80 hover:bg-background/90" disabled={isBusy}>
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Open menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => window.open(slot.url, '_blank')}>
+                          <Eye className="mr-2 h-4 w-4" />
+                          <span>View</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <a href={slot.url} download={slot.fileName} target="_blank" rel="noopener noreferrer">
+                            <Download className="mr-2 h-4 w-4" />
+                            <span>Download</span>
+                          </a>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={onDelete} className="text-destructive focus:text-destructive">
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          <span>Delete</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )}
-                </Button>
+                </div>
               )}
             </>
           ) : (
@@ -91,6 +117,7 @@ export function DailyReportSlotCard({
           ref={inputRef}
           type="file"
           accept="image/*"
+          capture="environment"
           className="hidden"
           onChange={handleFileChange}
           disabled={isBusy || disabled}

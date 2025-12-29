@@ -2,181 +2,276 @@
 > nextn@0.1.0 dev
 > next dev -p 9002
 
- ⚠ Invalid next.config.mjs options detected: 
- ⚠     Unrecognized key(s) in object: 'outputFileTracing'
- ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
    ▲ Next.js 15.5.9
    - Local:        http://localhost:9002
    - Network:      http://192.168.1.240:9002
    - Environments: .env.local, .env
 
  ✓ Starting...
- ✓ Ready in 3.7s
+ ✓ Ready in 14.5s
  ○ Compiling / ...
- ✓ Compiled / in 5.3s (788 modules)
- GET / 200 in 6658ms
- ✓ Compiled in 1236ms (316 modules)
+ ✓ Compiled / in 28s (806 modules)
+ GET / 200 in 32166ms
+ ✓ Compiled in 4.5s (316 modules)
  ○ Compiling /favicon.ico ...
- ✓ Compiled /favicon.ico in 558ms (489 modules)
- GET /favicon.ico 200 in 828ms
- ○ Compiling /api/auth/[...nextauth] ...
- ✓ Compiled /api/auth/[...nextauth] in 1509ms (1380 modules)
- GET /api/auth/session 200 in 2996ms
+ ✓ Compiled /api/auth/[...nextauth] in 8.8s (489 modules)
+ ✓ Compiled in 1823ms (302 modules)
+ GET /favicon.ico 200 in 19265ms
+ GET /api/auth/session 200 in 19134ms
  ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 4s (3872 modules)
+ ✓ Compiled /dashboard in 21.7s (3872 modules)
  ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 641ms (3874 modules)
- GET /api/applications 200 in 2233ms
+ ✓ Compiled /api/applications in 5.7s (3874 modules)
+ GET /api/applications 200 in 8450ms
  ○ Compiling /api/daily-reports/summary ...
- GET /api/applications 200 in 3014ms
- ✓ Compiled /api/daily-reports/summary in 755ms (3881 modules)
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 687ms
- GET /dashboard 200 in 8244ms
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 1684ms
- GET /dashboard 200 in 8461ms
- GET /favicon.ico 200 in 65ms
- GET /api/auth/session 200 in 274ms
- ○ Compiling /dashboard/daily-report ...
- ✓ Compiled /dashboard/daily-report in 689ms (3888 modules)
- GET /dashboard/daily-report 200 in 914ms
- ○ Compiling /api/daily-reports ...
- ✓ Compiled /api/daily-reports in 2.7s (3893 modules)
- GET /api/daily-reports/summary?email=admin%40driveonboard.test&month=2025-12 200 in 3420ms
- GET /api/users 200 in 3430ms
- GET /api/users 200 in 3436ms
- GET /api/daily-reports?email=admin%40driveonboard.test&date=2025-12-28 200 in 3536ms
- ○ Compiling /api/daily-reports/sign-put ...
- ✓ Compiled /api/daily-reports/sign-put in 819ms (1601 modules)
- POST /api/daily-reports/sign-put 200 in 1126ms
- GET / 200 in 493ms
- GET /api/auth/session 200 in 411ms
- GET /dashboard/daily-report 200 in 579ms
- POST /api/auth/_log 200 in 107ms
- GET /favicon.ico 200 in 64ms
- GET /favicon.ico 200 in 28ms
- GET /api/auth/session 200 in 28ms
- GET /api/daily-reports?email=admin%40driveonboard.test&date=2025-12-28 200 in 538ms
- GET /api/daily-reports/summary?email=admin%40driveonboard.test&month=2025-12 200 in 2438ms
- GET /api/users 200 in 2644ms
- GET /api/users 200 in 2651ms
- POST /api/daily-reports/sign-put 200 in 65ms
- ✓ Compiled in 277ms
- GET /dashboard/daily-report 200 in 212ms
- GET /favicon.ico 200 in 39ms
- GET /api/auth/session 200 in 51ms
- GET /api/daily-reports?email=admin%40driveonboard.test&date=2025-12-28 200 in 481ms
- GET /api/daily-reports/summary?email=admin%40driveonboard.test&month=2025-12 200 in 2069ms
- GET /api/users 200 in 2199ms
- GET /api/users 200 in 2204ms
- GET /api/daily-reports?email=driver2%40example.com&date=2025-12-28 200 in 265ms
- GET /api/daily-reports/summary?email=driver2%40example.com&month=2025-12 200 in 481ms
- ○ Compiling /api/daily-reports/sign-put ...
- ✓ Compiled /api/daily-reports/sign-put in 812ms (285 modules)
- POST /api/daily-reports/sign-put 200 in 1070ms
- GET /dashboard/daily-report 200 in 60ms
- GET /api/auth/session 200 in 219ms
- ✓ Compiled in 119ms
- GET /dashboard/daily-report 200 in 687ms
- GET /favicon.ico 200 in 51ms
- GET /favicon.ico 200 in 28ms
- GET /api/auth/session 200 in 118ms
- GET /api/daily-reports?email=admin%40driveonboard.test&date=2025-12-28 200 in 551ms
- GET /api/daily-reports/summary?email=admin%40driveonboard.test&month=2025-12 200 in 2175ms
- GET /api/users 200 in 2253ms
- GET /api/users 200 in 2297ms
- ○ Compiling /api/daily-reports/sign-put ...
- ✓ Compiled /api/daily-reports/sign-put in 1421ms (285 modules)
- POST /api/daily-reports/sign-put 200 in 1740ms
- GET /dashboard/daily-report 200 in 39ms
- POST /api/daily-reports 200 in 1691ms
- GET /api/auth/session 200 in 378ms
- GET /api/auth/session 200 in 219ms
- GET /api/auth/session 200 in 122ms
- GET /api/auth/session 200 in 126ms
- GET /api/auth/session 200 in 87ms
- GET /api/auth/session 200 in 123ms
- ✓ Compiled in 6.9s (1330 modules)
- GET /dashboard/daily-report 200 in 114ms
- GET /api/auth/session 200 in 179ms
- GET /api/auth/session 200 in 161ms
- GET /api/auth/csrf 200 in 65ms
- POST /api/auth/signout 200 in 57ms
- ○ Compiling /login ...
- ✓ Compiled /login in 4.2s (3884 modules)
- GET /login 200 in 4709ms
- ○ Compiling /favicon.ico ...
- ✓ Compiled /favicon.ico in 597ms (2562 modules)
- GET /favicon.ico 200 in 826ms
- GET /api/auth/session 200 in 444ms
- GET /api/auth/providers 200 in 153ms
- GET /api/auth/csrf 200 in 23ms
- POST /api/auth/callback/credentials 200 in 1563ms
- GET /api/auth/session 200 in 43ms
- ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 620ms (2564 modules)
- GET /api/applications 200 in 1243ms
- ○ Compiling /api/daily-reports/summary ...
- ✓ Compiled /api/daily-reports/summary in 808ms (2571 modules)
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 1782ms
- GET /dashboard 200 in 3284ms
- GET /api/auth/session 200 in 154ms
- GET /api/auth/session 200 in 32ms
- GET /api/auth/session 200 in 95ms
- GET /api/auth/session 200 in 331ms
+ ✓ Compiled /api/daily-reports/summary in 2.8s (3881 modules)
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 3813ms
+ GET /dashboard 200 in 41307ms
+ GET /api/applications 200 in 1189ms
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 798ms
+ GET /dashboard 200 in 2939ms
+ ○ Compiling /dashboard/applications/[id] ...
+ ✓ Compiled /dashboard/applications/[id] in 17.1s (3999 modules)
+ ○ Compiling /api/applications/[id] ...
+ ✓ Compiled /api/applications/[id] in 13.9s (4016 modules)
+ GET /api/applications/app-1766770595249 200 in 20720ms
+ GET /dashboard/applications/app-1766770595249 200 in 46037ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 4.2s (4021 modules)
+ POST /api/r2/sign-get 404 in 5914ms
+ POST /api/r2/sign-get 404 in 5777ms
+ POST /api/r2/sign-get 404 in 5942ms
+ POST /api/r2/sign-get 404 in 6078ms
+ POST /api/r2/sign-get 404 in 5642ms
+ POST /api/r2/sign-get 404 in 5618ms
+ POST /api/r2/sign-get 404 in 1790ms
+ POST /api/r2/sign-get 404 in 1851ms
+ POST /api/r2/sign-get 404 in 1825ms
+ POST /api/r2/sign-get 404 in 1833ms
+ POST /api/r2/sign-get 404 in 1864ms
+ POST /api/r2/sign-get 404 in 1865ms
+ POST /api/r2/sign-get 404 in 959ms
+ POST /api/r2/sign-get 404 in 923ms
+ POST /api/r2/sign-get 404 in 1075ms
+ POST /api/r2/sign-get 404 in 1058ms
+ POST /api/r2/sign-get 404 in 1029ms
+ POST /api/r2/sign-get 404 in 921ms
+ POST /api/r2/sign-get 404 in 638ms
+ POST /api/r2/sign-get 404 in 646ms
+ POST /api/r2/sign-get 404 in 644ms
+ POST /api/r2/sign-get 404 in 644ms
+ POST /api/r2/sign-get 404 in 603ms
+ POST /api/r2/sign-get 404 in 71ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 3.5s (2611 modules)
+ GET /api/auth/session 200 in 5135ms
+ GET /api/auth/session 200 in 659ms
  GET /api/auth/session 200 in 83ms
- GET /api/auth/session 200 in 185ms
- GET /dashboard/daily-report 200 in 391ms
- ○ Compiling /api/daily-reports ...
- ✓ Compiled /dashboard/users in 2.4s (2562 modules)
- ✓ Compiled in 5.8s (1330 modules)
- GET /favicon.ico 200 in 12310ms
- GET /api/daily-reports?email=admin%40driveonboard.test&date=2025-12-28 200 in 14176ms
- GET /api/users 200 in 15923ms
- GET /api/users 200 in 2045ms
- GET /api/daily-reports/summary?email=admin%40driveonboard.test&month=2025-12 200 in 15818ms
- GET /api/users 200 in 2050ms
- GET /dashboard/users 200 in 13547ms
- GET /dashboard/users 200 in 15337ms
- GET /api/users 200 in 16007ms
- GET /api/users 200 in 594ms
- GET /dashboard/users 200 in 715ms
- GET /login 200 in 571ms
- POST /api/users 200 in 433ms
- GET /api/users 200 in 275ms
- GET /dashboard/users 200 in 422ms
- GET /api/auth/session 200 in 145ms
- GET /api/auth/session 200 in 144ms
- GET /api/auth/session 200 in 80ms
- GET /api/auth/session 200 in 74ms
- GET /api/users 200 in 989ms
- GET /dashboard/users 200 in 1155ms
- GET /favicon.ico 200 in 32ms
- GET /api/auth/session 200 in 60ms
- GET /api/auth/session 200 in 193ms
- GET /api/auth/session 200 in 56ms
- POST /api/users 200 in 880ms
- GET /api/users 200 in 275ms
- GET /dashboard/users 200 in 405ms
- GET /favicon.ico 200 in 241ms
- GET /api/auth/session 200 in 113ms
- GET /api/auth/csrf 200 in 51ms
- POST /api/auth/signout 200 in 45ms
- GET /login 200 in 218ms
- GET /favicon.ico 200 in 84ms
- GET /api/auth/session 200 in 49ms
- GET /api/auth/providers 200 in 50ms
- GET /api/auth/csrf 200 in 27ms
-[AuthDebug] Verifying password for hash: present
-[AuthDebug] Password match: true
- POST /api/auth/callback/credentials 200 in 723ms
- GET /api/auth/session 200 in 26ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1916ms (4009 modules)
+ POST /api/r2/sign-put-applicant 404 in 2248ms
+ GET /api/auth/session 200 in 306ms
+ GET /api/auth/session 200 in 445ms
+ ○ Compiling /api/applications/[id] ...
+ ✓ Compiled /api/applications/[id] in 1875ms (2625 modules)
+ GET /api/applications/app-1766770595249 200 in 4887ms
+ GET /dashboard/applications/app-1766770595249 200 in 5804ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1520ms (2627 modules)
+ GET /favicon.ico 200 in 5050ms
+ GET /api/auth/session 200 in 4844ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 776ms (4025 modules)
+ POST /api/r2/sign-get 404 in 2270ms
+ POST /api/r2/sign-get 404 in 2279ms
+ POST /api/r2/sign-get 404 in 2277ms
+ POST /api/r2/sign-get 404 in 2276ms
+ POST /api/r2/sign-get 404 in 2277ms
+ POST /api/r2/sign-get 404 in 2278ms
+ POST /api/r2/sign-get 404 in 295ms
+ POST /api/r2/sign-get 404 in 294ms
+ POST /api/r2/sign-get 404 in 295ms
+ POST /api/r2/sign-get 404 in 304ms
+ POST /api/r2/sign-get 404 in 303ms
+ POST /api/r2/sign-get 404 in 304ms
+ POST /api/r2/sign-get 404 in 376ms
+ POST /api/r2/sign-get 404 in 385ms
+ POST /api/r2/sign-get 404 in 384ms
+ POST /api/r2/sign-get 404 in 387ms
+ POST /api/r2/sign-get 404 in 402ms
+ POST /api/r2/sign-get 404 in 400ms
+ POST /api/r2/sign-get 404 in 346ms
+ POST /api/r2/sign-get 404 in 344ms
+ POST /api/r2/sign-get 404 in 351ms
+ POST /api/r2/sign-get 404 in 356ms
+ POST /api/r2/sign-get 404 in 343ms
+ POST /api/r2/sign-get 404 in 31ms
+ GET /api/auth/session 200 in 704ms
+ GET /api/auth/session 200 in 116ms
+ GET /dashboard/applications/app-1766770595249 200 in 460ms
+ GET /api/auth/session 200 in 41ms
+ GET /api/applications/app-1766770595249 200 in 2506ms
+ GET /api/applications/app-1766770595249 200 in 2563ms
+ GET /dashboard/applications/app-1766770595249 200 in 2875ms
+ GET /favicon.ico 200 in 41ms
+ POST /api/r2/sign-get 404 in 290ms
+ POST /api/r2/sign-get 404 in 288ms
+ POST /api/r2/sign-get 404 in 297ms
+ POST /api/r2/sign-get 404 in 293ms
+ POST /api/r2/sign-get 404 in 289ms
+ POST /api/r2/sign-get 404 in 284ms
+ POST /api/r2/sign-get 404 in 200ms
+ POST /api/r2/sign-get 404 in 161ms
+ POST /api/r2/sign-get 404 in 161ms
+ POST /api/r2/sign-get 404 in 163ms
+ POST /api/r2/sign-get 404 in 203ms
+ POST /api/r2/sign-get 404 in 161ms
+ POST /api/r2/sign-get 404 in 144ms
+ POST /api/r2/sign-get 404 in 150ms
+ POST /api/r2/sign-get 404 in 150ms
+ POST /api/r2/sign-get 404 in 157ms
+ POST /api/r2/sign-get 404 in 152ms
+ POST /api/r2/sign-get 404 in 157ms
+ POST /api/r2/sign-get 404 in 1028ms
+ POST /api/r2/sign-get 404 in 1030ms
+ POST /api/r2/sign-get 404 in 1031ms
+ POST /api/r2/sign-get 404 in 1030ms
+ POST /api/r2/sign-get 404 in 112ms
+ POST /api/r2/sign-get 404 in 100ms
+ ⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/dashboard/applications/app-1766770595249'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 8.7s (4338 modules)
+ GET /dashboard/applications/app-1766770595249 500 in 7399ms
+ GET /dashboard/applications/app-1766770595249 200 in 285ms
+ GET /dashboard/applications/app-1766770595249 200 in 75ms
+ GET /dashboard/applications/app-1766770595249 200 in 74ms
+ GET /dashboard/applications/app-1766770595249 200 in 95ms
+ GET /dashboard/applications/app-1766770595249 200 in 87ms
+ ○ Compiling /api/applications/[id] ...
+ ✓ Compiled /api/applications/[id] in 524ms (2812 modules)
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 908ms (2814 modules)
+ GET /api/auth/session 200 in 1225ms
+ GET /api/applications/app-1766770595249 200 in 4602ms
+ GET /dashboard/applications/app-1766770595249 200 in 4938ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 1352ms (2816 modules)
+ GET /favicon.ico 200 in 1490ms
+ ○ Compiling /api/r2/sign-get ...
+ ✓ Compiled /api/r2/sign-get in 2.1s (4362 modules)
+ POST /api/r2/sign-get 200 in 2244ms
+ POST /api/r2/sign-get 200 in 2245ms
+ POST /api/r2/sign-get 200 in 2244ms
+ POST /api/r2/sign-get 200 in 2243ms
+ POST /api/r2/sign-get 200 in 2243ms
+ POST /api/r2/sign-get 200 in 2248ms
+ POST /api/r2/sign-get 200 in 23ms
+ POST /api/r2/sign-get 200 in 53ms
+ POST /api/r2/sign-get 200 in 53ms
+ POST /api/r2/sign-get 200 in 53ms
+ POST /api/r2/sign-get 200 in 52ms
+ POST /api/r2/sign-get 200 in 52ms
+ POST /api/r2/sign-get 200 in 67ms
+ POST /api/r2/sign-get 200 in 59ms
+ POST /api/r2/sign-get 200 in 58ms
+ POST /api/r2/sign-get 200 in 58ms
+ POST /api/r2/sign-get 200 in 58ms
+ POST /api/r2/sign-get 200 in 58ms
+ POST /api/r2/sign-get 200 in 99ms
+ POST /api/r2/sign-get 200 in 82ms
+ POST /api/r2/sign-get 200 in 82ms
+ POST /api/r2/sign-get 200 in 81ms
+ POST /api/r2/sign-get 200 in 57ms
+ POST /api/r2/sign-get 200 in 25ms
+ GET /api/auth/session 200 in 806ms
+ GET /api/auth/session 200 in 128ms
  ○ Compiling /api/applications ...
- ✓ Compiled /api/applications in 1136ms (2586 modules)
- GET /api/applications 200 in 1636ms
- ✓ Compiled /api/daily-reports/summary in 433ms (2593 modules)
- GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 1289ms
- GET /dashboard 200 in 3047ms
- GET /api/auth/session 200 in 543ms
- GET /api/auth/session 200 in 143ms
- ✓ Compiled in 1216ms (1344 modules)
- GET /dashboard 200 in 503ms
+ ✓ Compiled /api/applications in 2.6s (2722 modules)
+ GET /api/applications 200 in 3880ms
+ ○ Compiling /api/daily-reports/summary ...
+ ✓ Compiled /api/daily-reports/summary in 1413ms (2729 modules)
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 2181ms
+ GET /dashboard 200 in 6712ms
+ GET /api/applications 200 in 772ms
+ GET /api/daily-reports/summary?startDate=2025-12-01&endDate=2025-12-28 200 in 668ms
+ GET /dashboard 200 in 1612ms
+ ✓ Compiled in 11.9s (4259 modules)
+ GET /dashboard 200 in 10324ms
+ ✓ Compiled in 3s (4245 modules)
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 2.5s (2708 modules)
+ GET /api/auth/session 200 in 3468ms
+ ○ Compiling /api/applications/[id] ...
+ ✓ Compiled /favicon.ico in 5.7s (2722 modules)
+ ✓ Compiled (2724 modules)
+ GET /favicon.ico 200 in 2740ms
+ GET /dashboard/applications/app-1766770595249 200 in 3129ms
+ GET /api/applications/app-1766770595249 200 in 7880ms
+ GET /dashboard/applications/app-1766770595249 200 in 8659ms
+ GET /dashboard/applications/app-1766770595249 200 in 208ms
+ GET /dashboard/applications/app-1766770595249 200 in 175ms
+ GET /api/auth/session 200 in 295ms
+ ○ Compiling /api/r2/sign-get ...
+ ✓ Compiled /api/r2/sign-get in 2.1s (2727 modules)
+ POST /api/r2/sign-get 200 in 2212ms
+ POST /api/r2/sign-get 200 in 2203ms
+ POST /api/r2/sign-get 200 in 2198ms
+ POST /api/r2/sign-get 200 in 2195ms
+ POST /api/r2/sign-get 200 in 2195ms
+ POST /api/r2/sign-get 200 in 2219ms
+ POST /api/r2/sign-get 200 in 51ms
+ POST /api/r2/sign-get 200 in 78ms
+ POST /api/r2/sign-get 200 in 78ms
+ POST /api/r2/sign-get 200 in 78ms
+ POST /api/r2/sign-get 200 in 78ms
+ POST /api/r2/sign-get 200 in 77ms
+ POST /api/r2/sign-get 200 in 64ms
+ POST /api/r2/sign-get 200 in 82ms
+ POST /api/r2/sign-get 200 in 82ms
+ POST /api/r2/sign-get 200 in 82ms
+ POST /api/r2/sign-get 200 in 80ms
+ POST /api/r2/sign-get 200 in 80ms
+ POST /api/r2/sign-get 200 in 74ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 34ms
+ POST /api/r2/sign-get 200 in 35ms
+ POST /api/r2/sign-get 200 in 27ms
+ GET /api/auth/session 200 in 155ms
+ ○ Compiling /dashboard/users ...
+ ✓ Compiled /dashboard/users in 4s (4289 modules)
+ ○ Compiling /api/users ...
+ ✓ Compiled /api/users in 1777ms (4291 modules)
+ GET /api/auth/session 200 in 200ms
+ GET /api/auth/session 200 in 1675ms
+ GET /api/users 200 in 2492ms
+ GET /dashboard/users 200 in 7269ms
+ GET /api/auth/session 200 in 59ms
+ GET /api/auth/session 200 in 176ms
+ ✓ Compiled in 12s (4279 modules)
+ GET /dashboard/users 200 in 7235ms
+ GET /dashboard/users 200 in 434ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 2.8s (2720 modules)
+ GET /api/auth/session 200 in 3564ms
+ ✓ Compiled in 22.5s (4287 modules)
+ GET /dashboard/users 200 in 2414ms
+ ✓ Compiled in 6.5s (4294 modules)
+ GET /dashboard/users 200 in 1442ms
+ ✓ Compiled in 6.1s (1565 modules)
+ GET /dashboard/users 200 in 118ms
+ GET /dashboard/users 200 in 1139ms
+ ✓ Compiled in 10.3s (4294 modules)
+ ✓ Compiled in 983ms (1565 modules)
+ ✓ Compiled in 1598ms (1565 modules)
+ ✓ Compiled in 84.8s (4298 modules)
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 4.6s (2736 modules)
+ GET /api/auth/session 200 in 5890ms
+ GET /api/auth/session 200 in 566ms
+ GET /api/auth/session 200 in 280ms
+ ✓ Compiled in 33.6s (4298 modules)
+[?25h

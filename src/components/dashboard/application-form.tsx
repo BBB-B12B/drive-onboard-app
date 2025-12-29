@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { requiredDocumentsSchema } from "@/lib/schema";
 import { FileUp, FileCheck, X, Send, Loader2, AlertCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -144,6 +145,7 @@ export function ApplicationForm() {
     const [submissionProgress, setSubmissionProgress] = useState(0);
     const router = useRouter();
     const { toast } = useToast();
+    const { user } = useAuth();
 
     const form = useForm<FormValues>({
         resolver: zodResolver(ApplicationFormSchema),
@@ -1959,7 +1961,9 @@ export function ApplicationForm() {
                             </div>
                         )}
                         <div className="flex gap-4 w-full justify-end">
-                            <Button type="button" variant="outline" onClick={handleMockData}>Mock Data</Button>
+                            {user && (
+                                <Button type="button" variant="outline" onClick={handleMockData}>Mock Data</Button>
+                            )}
                             <Button type="submit" size="lg" disabled={isSubmitting}>
                                 {isSubmitting ? (
                                     <>

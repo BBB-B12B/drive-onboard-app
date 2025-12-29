@@ -16,7 +16,10 @@
 | **[F-010]** | Daily Report Review (ตรวจรายงาน) | [T-023], [T-024], [T-026] | `src/components/daily-report-overview/*` | Phase 2 Done, Bug Fixing |
 | **[F-011]** | Data Export (ส่งออกข้อมูล) | [T-025] | `dashboard/daily-report-tracker.tsx` | Done (เสร็จแล้ว) |
 | **[F-012]** | Idle Timeout Protection (ระบบล็อคเมื่อไม่ใช้งาน) | [T-045] | `components/idle-lock.tsx` | Done (เสร็จแล้ว) |
-| **[F-013]** | Dashboard UX Refinement (ปรับปรุงการใช้งาน Dashboard) | [T-046] | `components/dashboard/daily-report-tracker.tsx` | Done (เสร็จแล้ว) |
+| **[F-013]** | Dashboard UX Refinement (ปรับปรุงการใช้งาน Dashboard) | [T-046], [T-068] | `components/dashboard/daily-report-tracker.tsx` | Done (เสร็จแล้ว) |
+| **[F-014]** | Mobile Responsiveness (รองรับมือถือ) | [T-069], [T-070] | `components/dashboard/*`, `applications-table.tsx` | Done (เสร็จแล้ว) <br> *Fix: Menu, Tables, Overflow* |
+| **[F-015]** | Image Optimization (จัดการรูปภาพ) | [T-071], [T-072], [T-073], [T-074] | `workers/image-processor.ts`, `api/daily-reports/*` | Done (เสร็จแล้ว) <br> *Key: WebP/JPG Auto, Folders, Cleanup* |
+| **[F-016]** | Apply Page Safety (ป้องกันข้อมูลหาย) | [T-075] | `components/dashboard/application-form.tsx` | Done (เสร็จแล้ว) |
 
 ## Data/Variable Traceability (โครงข่ายตัวแปรและแหล่งข้อมูล)
 ตารางนี้ใช้ Map ระหว่าง Entity <-> ตัวแปรใน Code เพื่อให้ง่ายต่อการ Debug และพัฒนาต่อ

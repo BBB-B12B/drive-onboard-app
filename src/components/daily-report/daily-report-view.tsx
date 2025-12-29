@@ -304,6 +304,11 @@ export function DailyReportView({ overrideDate, overrideEmail, className, onUpda
 
         if (!uploadRes.ok) throw new Error("อัปโหลดไม่สำเร็จ");
 
+        // Extract the timestamp filename from R2 (e.g. "123456789.webp")
+        const timestampName = key.split('/').pop() || workingFile.name;
+        // Construct a readable filename: "check-in_123456789.webp"
+        const r2FileName = `${slotId}_${timestampName}`;
+
         const saveRes = await fetch("/api/daily-reports", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -312,7 +317,7 @@ export function DailyReportView({ overrideDate, overrideEmail, className, onUpda
             date: selectedDateStr,
             slotId,
             r2Key: key,
-            fileName: workingFile.name,
+            fileName: r2FileName, // Use the R2 filename for consistency
           }),
         });
 

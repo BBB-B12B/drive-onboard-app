@@ -23,48 +23,68 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (typeof credentials?.email !== "string" || typeof credentials?.password !== "string") {
-          return null;
-        }
+        try {
+          console.log("[Auth] Authorize called for:", credentials?.email);
 
-        const email = credentials.email.toLowerCase();
+          if (typeof credentials?.email !== "string" || typeof credentials?.password !== "string") {
+            console.log("[Auth] Invalid credentials format");
+            return null;
+          }
 
-        // Try D1 first
-        if (isD1UsersEnabled()) {
-          const d1User = await fetchUserByEmail(email);
-          if (d1User && (await verifyPassword(credentials.password, d1User.password_hash))) {
+          const email = credentials.email.toLowerCase();
+
+          // Try D1 first
+          if (isD1UsersEnabled()) {
+            console.log("[Auth] D1 Enabled. Fetching user...");
+            try {
+              const d1User = await fetchUserByEmail(email);
+              console.log("[Auth] User found:", d1User ? "YES" : "NO");
+              if (d1User) {
+                const isValid = await verifyPassword(credentials.password, d1User.password_hash);
+                console.log("[Auth] Password valid:", isValid);
+                if (isValid) {
+                  return {
+                    id: d1User.id,
+                    name: d1User.name,
+                    email: d1User.email,
+                    role: d1User.role,
+                    avatarUrl: d1User.avatar_url ?? undefined,
+                  } as User;
+                }
+              }
+            } catch (err: any) {
+              console.error("[Auth] D1 Lookup Error:", err.message, err.stack);
+              // Fallthrough to legacy
+            }
+          }
+
+          // Fallback to sample/legacy mock
+          if (process.env.NODE_ENV === "production") {
+            console.log("[Auth] Production Mode: Skipping Legacy Mock");
+            return null;
+          }
+
+          const sampleUser = sampleAccounts.find(
+            (u) => u.email.toLowerCase() === email
+          );
+          const legacyUser = getUserByEmail(email);
+          const user = sampleUser ?? legacyUser;
+
+          if (user && user.password === credentials.password) {
             return {
-              id: d1User.id,
-              name: d1User.name,
-              email: d1User.email,
-              role: d1User.role,
-              avatarUrl: d1User.avatar_url ?? undefined,
+              id: user.email,
+              name: user.name,
+              email: user.email,
+              role: user.role === "admin" ? "admin" : "employee",
+              avatarUrl: (user as any).avatarUrl,
             } as User;
           }
-        }
 
-        // Fallback to sample/legacy mock
-        if (process.env.NODE_ENV === "production") {
+          return null;
+        } catch (error: any) {
+          console.error("[Auth] CRITICAL ERROR in authorize:", error);
           return null;
         }
-
-        const sampleUser = sampleAccounts.find(
-          (u) => u.email.toLowerCase() === email
-        );
-        const legacyUser = getUserByEmail(email);
-        const user = sampleUser ?? legacyUser;
-
-        if (user && user.password === credentials.password) {
-          return {
-            id: user.email,
-            name: user.name,
-            email: user.email,
-            role: user.role === "admin" ? "admin" : "employee",
-            avatarUrl: (user as any).avatarUrl,
-          } as User;
-        }
-
-        return null;
       },
     }),
   ],

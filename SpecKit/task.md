@@ -230,9 +230,12 @@
                 - [x] **Secret Sync**: แก้ไข `.dev.vars` ให้ตรงกับ `.env.final` (Port 9002 คุยกับ 8787 ได้จริง)
                 - [x] **CORS Resolved**: แก้ไข Policy บน Dashboard ให้รองรับ Localhost และ Production Domain
                 - [x] **Signature Mismatch Resolved**: แก้ไข Logic ใน `signer.ts` ให้เรียง Header (Sort) ตามมาตรฐาน AWS V4
-                - [x] **Fix Build Failure (Edge Runtime Conflict)**:
+                - [x] Fix Build Failure (Edge Runtime Conflict):
                     - **Error**: `app/api/.../route cannot use the edge runtime`
                     - **Fix**: Removed `export const runtime = 'edge'` from `daily-reports/sign-put` and `debug-r2` to let OpenNext handle adaptation.
+                - [x] **Fix Upload Failure (Native Module)**:
+                    - **Action**: Permanently removed `better-sqlite3` from dependencies.
+                    - **Reason**: Not needed for `dev:remote` (Proxy mode) and crashes Cloudflare Build.
                 - [x] **Incident: Production Login Failed (User Mismatch)**:
                     - **Symptom**: 401 Unauthorized for `admin@driveonboard.test`.
                     - **Cause**: This user exists ONLY in Local SQLite. Production D1 has `admin@drivetoonboard.co` instead.
@@ -249,6 +252,13 @@
         - [x] **Deploy Updated Code**: Run CORRECTED build command (Split Build Strategy).
         - [x] **Fix Local Signals**: Restored `crypto` import and added `.dev.vars`.
         - [ ] **Verify Local**: Restart `npm run dev:all` and check port 9002.
+    - **Resolved Incidents**:
+        - **Incident 7: Persistent Build Failure (Mac AppleDouble `._`)**:
+            - **Symptom**: `Unknown file extension` error during OpenNext build despite multiple cleanup attempts.
+            - **Root Cause**: External volume (`/Volumes/BriteBrain`) regenerates metadata files instantly.
+            - **Solution**: Created `scripts/deploy_safe.sh` to copy source to `/tmp` (Local Disk) -> **Bundle Assets** (Worker + Server Functions) -> Deploy.
+            - **Result**: **SUCCESS** (Deployed to `https://drive-onboard-app.pages.dev/`).
+    - [x] **Verify Dashboard Data**: Check if reports load correctly.
 
 - [ ] **[T-060] End-to-End System Verification (ตรวจสอบระบบโดยรวม)**
     - **Concept/Goal**: ตรวจสอบความถูกต้องและเสถียรภาพของระบบในมุมมอง User ทุกระดับ
@@ -442,6 +452,94 @@
             - **Deployment Issue**: `Binding name 'Secret' already in use` error when running `wrangler secret put`.
                 - **Cause**: `Secret` was defined in `wrangler.toml` [vars] (plaintext), conflicting with Secret storage.
                 - **Fix**: Commented out `Secret` in `wrangler.toml` to allow CLI management.
+
         - [x] Refactor `DocumentViewer` & `DailyReportView` to use Worker URL
 
 
+- [x] **[T-061] Fix Deployment 404s (Fix Static Asset Loading)**
+    - **Incident 8: Deployment 404s for Static Assets**
+        - **Symptom**: `_next/static/...` 404 Not Found after deployment. Script loading failed.
+        - **Root Cause**: `_worker.js` (Advanced Mode) triggered "Functions only" mode, and the generated OpenNext worker does not have fallback logic for `_next/static` files. Missing `_routes.json` caused Cloudflare to route all requests to the worker.
+        - **Solution**: Patched `scripts/deploy_safe.sh` to generate `.open-next/assets/_routes.json` which explicitly excludes `/_next/static/*`, `/fonts/*`, etc. from the Worker, forcing Cloudflare Pages to serve them from the Asset Layer (CDN).
+        - **Verification**: `curl` check of live site confirmed `_next/static` files return 200 OK.
+        - **Status**: Resolved.
+- [x] [T-062] Fix Production Data Visibility (Env Var)
+    - **Incident 9: Production Dashboard Shows 0 Data**
+        - **Status**: Resolved (Added `NEXT_PUBLIC_BASE_URL` to `wrangler.toml`).
+
+- [x] [T-063] Fix Daily Report Upload 404
+    - **Incident 10: Upload Error (404 Not Found)**
+        - **Status**: Resolved. Restored missing API route.
+
+- [x] [T-064] Fix Broken Images (OpaqueResponseBlocking)
+    - **Incident 11: Images Not Loading in Production**
+        - **Status**: Resolved. Configured `WORKER_URL` in `wrangler.toml` to serve images via HTTPS.
+
+- [x] [T-065] Implement Landing Page & Mock Data Visibility
+    - **Goal**: Create a landing page with "Register" / "Login" options and hide "Mock Data" for guests.
+    - **Status**: Done. Verified Landing Page UI and Conditional Rendering logic.
+
+- [x] [T-066] Enhance Landing Page UI
+    - **Goal**: Style the Landing Page (`src/app/page.tsx`) to match the Login page aesthetics (Logo, Card, Menu).
+    - **Status**: Done. UI enhanced with Logo, Card, and consistent typography.
+
+- [x] [T-067] Add Register Button to Login Page
+    - **Goal**: Add a "Register" button below the "Login" button on `/login` page per user request.
+    - **Status**: Done. Verified UI and Link.
+
+- [x] [T-068] Implement R2 Image Proxy Route
+    - **Goal**: Resolve 404 errors for uploaded images (`/files/...`).
+    - **Status**: Done. Implemented `src/app/files/[...path]/route.ts` with Web Crypto signature verification.
+
+- [x] [T-069] Protect Dashboard Routes
+    - **Goal**: Restrict access to `/dashboard` and other menus to logged-in users only.
+    - **Status**: Done. Created `src/middleware.ts` to protect `/dashboard/**`, redirecting guests to `/login`. `/apply` remains public.
+
+- [x] [T-070] Improve Mobile Responsiveness
+    - **Goal**: Optimize UI for mobile devices (Vertical Layout & Mobile Navigation).
+    - **Status**: Done. Implemented Mobile Navigation (Sheet) and Responsive Tables/Controls.
+
+- [x] [T-071] Fix Image Resizing and Naming Consistency
+    - **Goal**: Ensure mobile camera photos are resized identically to uploads and UI filenames match R2 storage.
+    - **Status**: Done. UI now saves the unique R2 filename (e.g., `check-in_123.webp`) instead of the generic worker input name.
+
+- [x] [T-072] Optimize Mobile Image Compression
+    - **Goal**: Resolve issue where iPhone photos remain large (~2.7MB) by enforcing aggressive compression.
+    - **Status**: Done.
+        - Reduced `MAX_DIMENSION` to 1200px.
+        - Lowered `TARGET_QUALITY` to 0.5.
+        - Forced WebP conversion for all inputs (removed size-based bypass).
+
+- [x] [T-073] Restore R2 Folder Structure and Cleanup
+    - **Goal**: Organize R2 files into subfolders and delete old files on replacement.
+    - **Status**: Done.
+        - Updated `sign-put` to use `${slotId}/${timestamp}.webp` (creates folders).
+        - Updated `POST /api/daily-reports` to automatically DELETE the old `r2Key` from the bucket when a slot is updated.
+
+- [x] **[T-074] Tune Image Compression Quality**
+    - **Goal**: Improve readability of text in compressed images, specifically for JPEG fallback.
+    - **Status**: Done.
+        - Increased JPEG fallback quality from `0.5` (50%) to **`0.65` (65%)**.
+        - Maintained 800KB fallback threshold to ensure file sizes remain manageable while fixing "blurry text" on iOS/Safari.
+
+- [x] **[T-075] Prevent Accidental Navigation on Apply Page**
+    - **Goal**: Warn users if they try to leave the `/apply` page with unsaved changes.
+    - **Requirements**:
+        - Trigger warning on "Back", "Refresh", "Close Tab", or "Navigate Away".
+        - Specific "Yes/No" confirmation (browser default for unload).
+    - **Status**: Done.
+        - Implemented `useBeforeUnload` hook in `ApplicationForm` to catch dirty state and submissions.
+
+- [x] **[T-076] Fix R2 Filename Display**
+    - **Goal**: Restore descriptive filenames in the Daily Report UI (e.g., `check-in_TIMESTAMP.webp`) instead of just numbers.
+    - **Status**: Done.
+        - Updated `daily-report-view.tsx` to construct display name from `slotId + timestamp` derived from R2 Key.
+
+- [ ] **[T-077] Implement Image Action Menu (View/Download/Delete)**
+    - **Goal**: detailed image actions into a "Three-dot" dropdown menu for better UI/UX.
+    - **Requirements**:
+        - **Menu**: Dropdown with "View", "Download", "Delete".
+        - **View**: Open image in new tab / Lightbox.
+        - **Download**: Trigger browser download.
+        - **Delete**: Execute existing delete logic (move from overlay button).
+    - **Refactor**: Remove the standalone red trash icon from the image container.

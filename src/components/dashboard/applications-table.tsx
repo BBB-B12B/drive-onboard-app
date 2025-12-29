@@ -80,7 +80,7 @@ type ApplicationsTableProps = {
 };
 
 export function ApplicationsTable({ applications, onDelete, isAdmin }: ApplicationsTableProps) {
-  const [sorting, setSorting] = React.useState<SortingState>([{"id": "createdAt", "desc": true}]);
+  const [sorting, setSorting] = React.useState<SortingState>([{ "id": "createdAt", "desc": true }]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
@@ -102,18 +102,18 @@ export function ApplicationsTable({ applications, onDelete, isAdmin }: Applicati
       const result = await updateApplicationStatus(appId, status);
       if (result.success) {
         toast({
-            title: `อัปเดตสถานะสำเร็จ`,
-            description: `ใบสมัครถูกเปลี่ยนสถานะเป็น "${statusText[status]}"`,
-            variant: "default"
+          title: `อัปเดตสถานะสำเร็จ`,
+          description: `ใบสมัครถูกเปลี่ยนสถานะเป็น "${statusText[status]}"`,
+          variant: "default"
         });
         // This is the key change. router.refresh() tells Next.js to re-fetch
         // the Server Component data and update the UI.
-        router.refresh(); 
+        router.refresh();
       } else {
         toast({
-            title: "อัปเดตสถานะล้มเหลว",
-            description: result.error,
-            variant: "destructive"
+          title: "อัปเดตสถานะล้มเหลว",
+          description: result.error,
+          variant: "destructive"
         });
       }
       setUpdatingId(null);
@@ -135,109 +135,109 @@ export function ApplicationsTable({ applications, onDelete, isAdmin }: Applicati
 
   const columns: ColumnDef<AppRow>[] = [
     {
-        accessorKey: "fullName",
-        header: "ผู้สมัคร",
-        cell: ({ row }) => <div>{row.getValue("fullName")}</div>,
+      accessorKey: "fullName",
+      header: "ผู้สมัคร",
+      cell: ({ row }) => <div>{row.getValue("fullName")}</div>,
     },
     {
-        accessorKey: "status",
-        header: "สถานะ",
-        cell: ({ row }) => {
-            const status = row.getValue("status") as VerificationStatus;
-            return <Badge variant={statusVariantMap[status]}>{statusText[status]}</Badge>;
-        },
+      accessorKey: "status",
+      header: "สถานะ",
+      cell: ({ row }) => {
+        const status = row.getValue("status") as VerificationStatus;
+        return <Badge variant={statusVariantMap[status]}>{statusText[status]}</Badge>;
+      },
     },
     {
-        accessorKey: "createdAt",
-        header: "วันที่ส่ง",
-        cell: ({ row }) => {
-            return <div>{format(new Date(row.getValue("createdAt")), "PPP", { locale: th })}</div>;
-        },
+      accessorKey: "createdAt",
+      header: "วันที่ส่ง",
+      cell: ({ row }) => {
+        return <div>{format(new Date(row.getValue("createdAt")), "PPP", { locale: th })}</div>;
+      },
     },
     {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-            const application = row.original;
-            const admin = Boolean(isAdmin);
-            const isCurrentUpdating = isPending && updatingId === application.appId;
-            const status = application.status;
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const application = row.original;
+        const admin = Boolean(isAdmin);
+        const isCurrentUpdating = isPending && updatingId === application.appId;
+        const status = application.status;
 
-            return (
-                <div className="flex items-center justify-end gap-2">
-                    <Button asChild variant="outline" size="sm">
-                        <Link href={`/dashboard/applications/${application.appId}`}>
-                            <Eye className="mr-1 h-4 w-4" /> ดูข้อมูล
-                        </Link>
-                    </Button>
-                    
-                    {admin && status === 'pending' && (
-                        <>
-                            <Button variant="success" size="sm" onClick={() => handleUpdateStatus(application.appId, 'approved')} disabled={isCurrentUpdating}>
-                                {isCurrentUpdating ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Check className="mr-1 h-4 w-4" />}
-                                อนุมัติ
-                            </Button>
-                            <Button variant="destructive" size="sm" onClick={() => handleUpdateStatus(application.appId, 'rejected')} disabled={isCurrentUpdating}>
-                                {isCurrentUpdating ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <XCircle className="mr-1 h-4 w-4" />}
-                                ปฏิเสธ
-                            </Button>
-                        </>
-                    )}
-                    
-                    {admin && status === 'approved' && (
-                        <Button variant="secondary" size="sm" onClick={() => handleUpdateStatus(application.appId, 'terminated')} disabled={isCurrentUpdating}>
-                            {isCurrentUpdating ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <UserX className="mr-1 h-4 w-4" />}
-                            เลิกจ้าง
-                        </Button>
-                    )}
+        return (
+          <div className="flex items-center justify-end gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/dashboard/applications/${application.appId}`}>
+                <Eye className="mr-1 h-4 w-4" /> ดูข้อมูล
+              </Link>
+            </Button>
 
-                    {admin && <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0" disabled={isCurrentUpdating}>
-                                <span className="sr-only">เปิดเมนู</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions เพิ่มเติม</DropdownMenuLabel>
-                            {status !== 'pending' && (
-                                <DropdownMenuItem onClick={() => handleUpdateStatus(application.appId, 'pending')}>
-                                    <FileClock className="mr-2 h-4 w-4" />
-                                    <span>เปลี่ยนเป็น "รอตรวจสอบ"</span>
-                                </DropdownMenuItem>
-                            )}
-                             {status !== 'approved' && status !== 'pending' && (
-                                <DropdownMenuItem onClick={() => handleUpdateStatus(application.appId, 'approved')}>
-                                    <Check className="mr-2 h-4 w-4" />
-                                    <span>เปลี่ยนเป็น "อนุมัติ"</span>
-                                </DropdownMenuItem>
-                            )}
-                            {status !== 'rejected' && status !== 'pending' && (
-                                <DropdownMenuItem onClick={() => handleUpdateStatus(application.appId, 'rejected')}>
-                                    <XCircle className="mr-2 h-4 w-4" />
-                                    <span>เปลี่ยนเป็น "ปฏิเสธ"</span>
-                                </DropdownMenuItem>
-                            )}
-                            {status !== 'terminated' && status !== 'pending' && (
-                                <DropdownMenuItem onClick={() => handleUpdateStatus(application.appId, 'terminated')}>
-                                    <UserX className="mr-2 h-4 w-4" />
-                                    <span>เปลี่ยนเป็น "เลิกจ้าง"</span>
-                                </DropdownMenuItem>
-                            )}
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem 
-                                className="text-destructive focus:text-destructive focus:bg-destructive/10"
-                                onClick={() => handleOpenDeleteDialog(application)}
-                            >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                <span>ลบใบสมัคร</span>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>}
-                    
-                </div>
-            );
-        },
+            {admin && status === 'pending' && (
+              <>
+                <Button variant="success" size="sm" onClick={() => handleUpdateStatus(application.appId, 'approved')} disabled={isCurrentUpdating}>
+                  {isCurrentUpdating ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Check className="mr-1 h-4 w-4" />}
+                  อนุมัติ
+                </Button>
+                <Button variant="destructive" size="sm" onClick={() => handleUpdateStatus(application.appId, 'rejected')} disabled={isCurrentUpdating}>
+                  {isCurrentUpdating ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <XCircle className="mr-1 h-4 w-4" />}
+                  ปฏิเสธ
+                </Button>
+              </>
+            )}
+
+            {admin && status === 'approved' && (
+              <Button variant="secondary" size="sm" onClick={() => handleUpdateStatus(application.appId, 'terminated')} disabled={isCurrentUpdating}>
+                {isCurrentUpdating ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <UserX className="mr-1 h-4 w-4" />}
+                เลิกจ้าง
+              </Button>
+            )}
+
+            {admin && <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0" disabled={isCurrentUpdating}>
+                  <span className="sr-only">เปิดเมนู</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions เพิ่มเติม</DropdownMenuLabel>
+                {status !== 'pending' && (
+                  <DropdownMenuItem onClick={() => handleUpdateStatus(application.appId, 'pending')}>
+                    <FileClock className="mr-2 h-4 w-4" />
+                    <span>เปลี่ยนเป็น "รอตรวจสอบ"</span>
+                  </DropdownMenuItem>
+                )}
+                {status !== 'approved' && status !== 'pending' && (
+                  <DropdownMenuItem onClick={() => handleUpdateStatus(application.appId, 'approved')}>
+                    <Check className="mr-2 h-4 w-4" />
+                    <span>เปลี่ยนเป็น "อนุมัติ"</span>
+                  </DropdownMenuItem>
+                )}
+                {status !== 'rejected' && status !== 'pending' && (
+                  <DropdownMenuItem onClick={() => handleUpdateStatus(application.appId, 'rejected')}>
+                    <XCircle className="mr-2 h-4 w-4" />
+                    <span>เปลี่ยนเป็น "ปฏิเสธ"</span>
+                  </DropdownMenuItem>
+                )}
+                {status !== 'terminated' && status !== 'pending' && (
+                  <DropdownMenuItem onClick={() => handleUpdateStatus(application.appId, 'terminated')}>
+                    <UserX className="mr-2 h-4 w-4" />
+                    <span>เปลี่ยนเป็น "เลิกจ้าง"</span>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                  onClick={() => handleOpenDeleteDialog(application)}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  <span>ลบใบสมัคร</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>}
+
+          </div>
+        );
+      },
     },
   ];
 
@@ -272,59 +272,59 @@ export function ApplicationsTable({ applications, onDelete, isAdmin }: Applicati
       const toDate = date.to ? new Date(date.to.setHours(23, 59, 59, 999)) : new Date();
       table.getColumn('createdAt')?.setFilterValue([date.from, toDate]);
     } else {
-        table.getColumn('createdAt')?.setFilterValue(undefined);
+      table.getColumn('createdAt')?.setFilterValue(undefined);
     }
   }, [date, table]);
 
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4 gap-2">
+      <div className="flex flex-col md:flex-row items-start md:items-center py-4 gap-4">
         <Input
           placeholder="ค้นหาชื่อผู้สมัคร..."
           value={(table.getColumn("fullName")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("fullName")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm"
+          className="w-full md:max-w-sm"
         />
-        <div className="relative">
+        <div className="relative w-full md:w-auto">
           <Popover>
-              <PopoverTrigger asChild>
-                  <Button
-                  id="date"
-                  variant={"outline"}
-                  className={cn(
-                      "w-[300px] justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
-                  )}
-                  >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date?.from ? (
-                      date.to ? (
-                      <>
-                          {format(date.from, "d MMM yyyy", { locale: th })} -{" "}
-                          {format(date.to, "d MMM yyyy", { locale: th })}
-                      </>
-                      ) : (
-                      format(date.from, "d MMM yyyy", { locale: th })
-                      )
+            <PopoverTrigger asChild>
+              <Button
+                id="date"
+                variant={"outline"}
+                className={cn(
+                  "w-full md:w-[300px] justify-start text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date?.from ? (
+                  date.to ? (
+                    <>
+                      {format(date.from, "d MMM yyyy", { locale: th })} -{" "}
+                      {format(date.to, "d MMM yyyy", { locale: th })}
+                    </>
                   ) : (
-                      <span>เลือกช่วงวันที่</span>
-                  )}
-                  </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={date?.from}
-                  selected={date}
-                  onSelect={setDate}
-                  numberOfMonths={2}
-                  locale={th}
-                  />
-              </PopoverContent>
+                    format(date.from, "d MMM yyyy", { locale: th })
+                  )
+                ) : (
+                  <span>เลือกช่วงวันที่</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={date?.from}
+                selected={date}
+                onSelect={setDate}
+                numberOfMonths={2}
+                locale={th}
+              />
+            </PopoverContent>
           </Popover>
           {date && (
             <Button
@@ -338,7 +338,7 @@ export function ApplicationsTable({ applications, onDelete, isAdmin }: Applicati
           )}
         </div>
         {isAdmin && (
-          <Button asChild className="ml-auto">
+          <Button asChild className="w-full md:w-auto ml-auto">
             <Link href="/apply">
               <PlusCircle className="mr-2 h-4 w-4" />
               สร้างใบสมัครใหม่
@@ -346,7 +346,7 @@ export function ApplicationsTable({ applications, onDelete, isAdmin }: Applicati
           </Button>
         )}
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -357,9 +357,9 @@ export function ApplicationsTable({ applications, onDelete, isAdmin }: Applicati
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}
@@ -425,7 +425,7 @@ export function ApplicationsTable({ applications, onDelete, isAdmin }: Applicati
             <AlertDialogTitle>ยืนยันการลบใบสมัคร</AlertDialogTitle>
             <AlertDialogDescription>
               คุณแน่ใจหรือไม่ว่าต้องการลบใบสมัครของ{" "}
-              <span className="font-semibold">{applicationToDelete?.fullName}</span>? 
+              <span className="font-semibold">{applicationToDelete?.fullName}</span>?
               การกระทำนี้ไม่สามารถย้อนกลับได้ (ในตอนนี้จะเป็นการลบจากหน้าจอเท่านั้น)
             </AlertDialogDescription>
           </AlertDialogHeader>

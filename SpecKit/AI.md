@@ -117,14 +117,36 @@
 >
 > 3.  **Action**: สรุปสถานะล่าสุดเป็น **ภาษาไทย** และรอคำสั่งยืนยันจากเราก่อนเริ่มเขียน Code"
 
+
 ---
 
-## ✅ Summary Checklist for New Project Setup
-- [ ] Folder `SpecKit/` created
-- [ ] `AI.md` (System OS) created
-- [ ] `spec.md` (Requirements) initialized
-- [ ] `instruction.md` (Tech Stack) initialized
-- [ ] `task.md` (Roadmap) initialized
-- [ ] `traceability.md` (Map) initialized
-- [ ] `implement.md` (AI Protocol) initialized
+## 🚀 Phase 4: Deployment & Environment Protocol (Cloudflare Pages)
+
+คู่มือการ Deploy และตรวจสอบระบบ เพื่อป้องกันปัญหาที่เคยเกิดขึ้นในอดีต (Lessons Learned Incidents 8-11):
+
+### 1. Static Asset Handling (Incident 8)
+> **Rule**: เมื่อใช้ `open-next` บน Cloudflare Pages (Advanced Mode), Worker จะดักจับทุก Request ทำให้ Static Files (js/css/images) โหลดไม่ขึ้น (404).
+> **Check**:
+> - ต้องมี `_routes.json` ในโฟลเดอร์ Output (`.open-next/assets/_routes.json`) ก่อน Deploy เสมอ
+> - ต้องระบุ `exclude` path ให้ครอบคลุม: `/_next/static/*`, `/fonts/*`, `/favicon.ico`
+> - **Prevention**: ใช้ Script `deploy_safe.sh` ที่มีการ auto-generate `_routes.json` เสมอ ห้าม Deploy มือเปล่า
+
+### 2. Environment Variables (Incident 9 & 11)
+> **Rule**: Production Environment ไม่มีไฟล์ `.env` ผู้พัฒนาต้องตั้งค่าผ่าน Cloudflare Variable หรือ `wrangler.toml`
+> **Critical Vars**:
+> - `NEXT_PUBLIC_BASE_URL`: ต้องเป็น URL จริงของ Production (e.g. `https://xxx.pages.dev`) ห้ามปล่อยว่างหรือใช้ `localhost`
+> - `WORKER_URL`: ต้องเป็น URL เดียวกับ Base URL (สำหรับ Cloudflare Pages) เพื่อแก้ปัญหา Mixed Content / OpaqueResponseBlocking
+> **Prevention**: ตรวจสอบ `wrangler.toml` หมวด `[vars]` ก่อน Deploy ทุกครั้ง
+
+### 3. API Route Persistence (Incident 10)
+> **Rule**: การ Refactor โฟลเดอร์ (Move/Rename) มีความเสี่ยงที่ไฟล์จะหาย หรือไม่ได้ถูกย้ายไปด้วย (Git Tracking Issue)
+> **Check**:
+> - ก่อน Deploy ฟีเจอร์สำคัญ (เช่น Upload), ให้ double check ว่าไฟล์ `route.ts` อยู่ครบหรือไม่
+> - ทดสอบ `curl -I <prod_url>/api/xxx` หลัง Deploy ทันที เพื่อยืนยันว่า API มีตัวตน (ไม่ 404)
+
+### 4. Database Parity (Binding)
+> **Rule**: Local และ Production ใช้ Database คนละตัว (Local D1 vs Cloud D1)
+> **Check**:
+> - ตรวจสอบ `database_id` ใน `wrangler.toml` ว่าตรงกับที่ต้องการ
+> - ห้ามแก้ Schema ใน Production โดยไม่ผ่าน Migration Script
 

@@ -12,6 +12,7 @@ compatibility_flags = ["nodejs_compat"]
 binding = "DB"
 database_name = "driver_management"
 database_id = "1361567d-a87f-4772-9b7e-72b25ea6d2c7"
+migrations_dir = "drizzle"
 
 [[r2_buckets]]
 binding = "R2"

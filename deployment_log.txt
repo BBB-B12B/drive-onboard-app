@@ -1,0 +1,4 @@
+REMOVED: outputFileTracing: false
+REMOVED: outputFileTracingExcludes (better-sqlite3)
+REMOVED: fs: false (webpack)
+Added: Logging to auth.ts for 500 error debugging

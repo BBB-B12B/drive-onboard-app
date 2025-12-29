@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/d1';
 
-import { drizzle as drizzleProxy } from 'drizzle-orm/sqlite-proxy';
+// import { drizzle as drizzleProxy } from 'drizzle-orm/sqlite-proxy'; // Moved to dynamic
 
 import * as schema from '@/db/schema';
 import { mapKeys, camelCase } from 'lodash';
@@ -43,6 +43,8 @@ export const getDb = async () => {
     // Requires: CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_DATABASE_ID, CLOUDFLARE_D1_TOKEN
     if (process.env.USE_REMOTE_D1 === 'true') {
         if (!global._dbPromiseRemote) {
+            const { drizzle: drizzleProxy } = await import('drizzle-orm/sqlite-proxy'); // Dynamic Import
+
             const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
             const databaseId = process.env.CLOUDFLARE_DATABASE_ID;
             const token = process.env.CLOUDFLARE_D1_TOKEN;

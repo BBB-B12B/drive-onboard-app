@@ -17,8 +17,8 @@
 This document serves as the Standard Operating Procedure (SOP) for development, debugging, and system improvements, ensuring consistency with SpecKit standards.
 (เอกสารนี้ใช้เป็นแนวทางปฏิบัติ เมื่อ AI เริ่มต้นทำงานพัฒนา แก้ไข หรือปรับปรุงระบบ เพื่อให้งานเป็นไปอย่างมีระบบและสอดคล้องกับมาตรฐาน SpecKit)
 
-> **Language Note**: When recording data in all `SpecKit` documents, use **Mixed English-Thai** format to ensure clarity for the Thai development team.
-> (ในการบันทึกข้อมูลลงในเอกสาร `SpecKit` ทั้งหมด ให้ใช้รูปแบบ **Mixed English-Thai** เพื่อความเข้าใจที่ชัดเจนสำหรับทีมพัฒนาชาวไทย)
+> **Language Note**: When recording data in all `SpecKit` documents, use **Mixed English-Thai** not English Only Plase. format to ensure clarity for the Thai development team.
+> **ในการบันทึกข้อมูลลงในเอกสาร `SpecKit` ทั้งหมด ให้ใช้รูปแบบ **Mixed English-Thai** เพื่อความเข้าใจที่ชัดเจนสำหรับทีมพัฒนาชาวไทย**
 
 ---
 
@@ -146,6 +146,25 @@ Whenever there is development, a fix, or a change, you **MUST** update the relev
 *   **Incident 5: Build Failure & Native Modules**
     *   **Root Cause**: `better-sqlite3` traced into production build.
     *   **Fix**: Use Dynamic Import + `serverExternalPackages`.
+
+*   **Incident 6: "Upload Failed" (Deployment Blocked by Localhost)**
+    *   **Date**: 2025-12-28
+    *   **Symptom**: `npm run build` fails with `rm: .next: Directory not empty` or `copyTracedFiles` error.
+    *   **Root Cause 1 (File Lock)**: `npm run dev` (Localhost) locks `.next` folder, preventing Build Script from cleaning it.
+    *   **Root Cause 2 (Native Module)**: `better-sqlite3` (used for Local D1) gets traced into Production Build, causing OpenNext to fail on Edge.
+    *   **Resolution**:
+        1.  **Stop Localhost** (Kill Port 9002) before Building.
+        2.  **Webpack Alias**: Set `better-sqlite3: false` in `next.config.mjs` to forcibly exclude it.
+    *   **Prevention**:
+        *   Do not run Build and Dev Server simultaneously.
+        *   Always check `next.config.mjs` exclusion rules if Build fails on `copyTracedFiles`.
+
+*   **Incident 7: macOS Metadata Files (._*) Breaking OpenNext Build**
+    *   **Date**: 2025-12-28
+    *   **Symptom**: Build fails with `WARN Unknown file extension` and `Error: app/._page cannot use the edge runtime`.
+    *   **Root Cause**: macOS creates hidden `._` files on external drives (AppleDouble). OpenNext tries to bundle them as source files.
+    *   **Fix**: Run `find . -type f -name "._*" -delete` before building.
+    *   **Prevention**: Added cleanup step to `deploy_prod.sh`.
 
 ---
 

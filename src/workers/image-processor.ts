@@ -2,8 +2,8 @@
 
 import SparkMD5 from "spark-md5";
 
-const MAX_DIMENSION = 1400;
-const TARGET_QUALITY = 0.6;
+const MAX_DIMENSION = 1200;
+const TARGET_QUALITY = 0.5;
 
 self.onmessage = async (e: MessageEvent) => {
     const { id, file } = e.data;
@@ -22,21 +22,33 @@ self.onmessage = async (e: MessageEvent) => {
 
                 const scale = Math.min(1, MAX_DIMENSION / Math.max(width, height));
 
-                if (scale < 1) {
-                    width = Math.max(1, Math.round(width * scale));
-                    height = Math.max(1, Math.round(height * scale));
+                const newWidth = Math.max(1, Math.round(width * scale));
+                const newHeight = Math.max(1, Math.round(height * scale));
 
-                    // Use OffscreenCanvas if available
-                    if (typeof OffscreenCanvas !== "undefined") {
-                        const canvas = new OffscreenCanvas(width, height);
-                        const ctx = canvas.getContext("2d");
-                        if (ctx) {
-                            ctx.drawImage(bitmap, 0, 0, width, height);
-                            const blob = await canvas.convertToBlob({
-                                type: "image/webp",
-                                quality: TARGET_QUALITY
+                // Use OffscreenCanvas if available
+                if (typeof OffscreenCanvas !== "undefined") {
+                    const canvas = new OffscreenCanvas(newWidth, newHeight);
+                    const ctx = canvas.getContext("2d");
+                    if (ctx) {
+                        ctx.drawImage(bitmap, 0, 0, newWidth, newHeight);
+
+                        // First attempt: WebP
+                        let blob = await canvas.convertToBlob({
+                            type: "image/webp",
+                            quality: TARGET_QUALITY // 0.5
+                        });
+
+                        // Fallback logic: If WebP is too large (likely iOS falling back to PNG), try JPEG
+                        if (blob.size > 800 * 1024) { // > 800KB
+                            console.warn("WebP compression ineffective (size > 800KB). Falling back to JPEG.");
+                            blob = await canvas.convertToBlob({
+                                type: "image/jpeg",
+                                quality: 0.65 // Increased from 0.5 to 0.65 for readability
                             });
-
+                            // Rename to .jpg for consistency with content
+                            const compressedName = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+                            processedFile = new File([blob], compressedName, { type: "image/jpeg" });
+                        } else {
                             const compressedName = file.name.replace(/\.[^.]+$/, "") + ".webp";
                             processedFile = new File([blob], compressedName, { type: "image/webp" });
                         }

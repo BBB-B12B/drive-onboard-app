@@ -48,3 +48,7 @@ firestore-debug.log
 # SpecKit secrets
 SpecKit/deployment_guide.md
 .env.final
+scripts/restore_secrets.sh
+.open-next
+.wrangler
+backup_hidden
